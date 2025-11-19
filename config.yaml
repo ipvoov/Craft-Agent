@@ -1,0 +1,41 @@
+
+# 智能体递归调用限制
+AGENT_RECURSION_LIMIT: 20
+
+# 基础模型配置
+BASIC_MODEL:
+  base_url: https://apis.iflow.cn/v1
+  model: "deepseek-v3"
+  api_key: sk-a0799a99010b4be6e06350412b309197
+
+
+
+# 推理模型配置
+REASONING_MODEL:
+  base_url: https://apis.iflow.cn/v1
+  model: "deepseek-r1"
+  api_key: sk-a0799a99010b4be6e06350412b309197
+  max_retries: 3 # LLM 调用的最大重试次数
+
+# # 推理模型配置
+# REASONING_MODEL:
+#   base_url: https://ark.cn-beijing.volces.com/api/v3
+#   model: doubao-seed-1-6-251015
+#   api_key: 834f797f-8d7b-4cc6-958d-2a02226416bb
+#   max_retries: 3 # LLM 调用的最大重试次数
+
+
+
+# # 推理模型配置
+# REASONING_MODEL:
+#   base_url: https://apis.iflow.cn/v1
+#   model: "deepseek-r1"
+#   api_key: sk-a0799a99010b4be6e06350412b309197
+#   max_retries: 3 # LLM 调用的最大重试次数
+
+# Tavily 搜索 API 配置     获取API密钥 See https://app.tavily.com/playground
+TAVILY_API_KEY: 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
+TAVILY_MAX_RESULTS: 3  # 搜索结果的最大数量
+
+# Jina API 配置      获取API密钥 See https://jina.ai/reader .
+JINA_API_KEY: jina_b974221115d645f2a40bfca0d1d78531v1rEFO5sjafqbUniqNMYfQqFREsf

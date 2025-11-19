@@ -1,0 +1,85 @@
+<component name="InspectionProjectProfileManager">
+  <profile version="1.0">
+    <option name="myName" value="Project Default" />
+    <inspection_tool class="Eslint" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="PyPackageRequirementsInspection" enabled="true" level="WARNING" enabled_by_default="true">
+      <option name="ignoredPackages">
+        <list>
+          <option value="lxml" />
+          <option value="beautifulsoup4" />
+          <option value="bs4" />
+          <option value="soupsieve" />
+          <option value="typing-extensions" />
+          <option value="requests" />
+          <option value="alembic" />
+          <option value="annotated-types" />
+          <option value="anyio" />
+          <option value="bandit" />
+          <option value="bcrypt" />
+          <option value="black" />
+          <option value="certifi" />
+          <option value="cfgv" />
+          <option value="charset-normalizer" />
+          <option value="cryptography" />
+          <option value="dataclasses-json" />
+          <option value="distlib" />
+          <option value="distro" />
+          <option value="duckduckgo-search" />
+          <option value="ecdsa" />
+          <option value="email-validator" />
+          <option value="fastapi" />
+          <option value="flake8" />
+          <option value="gitdb" />
+          <option value="gitpython" />
+          <option value="h11" />
+          <option value="httpcore" />
+          <option value="httpx" />
+          <option value="idna" />
+          <option value="isort" />
+          <option value="jsonpatch" />
+          <option value="jsonpointer" />
+          <option value="langchain-community" />
+          <option value="langchain-openai" />
+          <option value="langchain-text-splitters" />
+          <option value="loguru" />
+          <option value="mako" />
+          <option value="mccabe" />
+          <option value="mdurl" />
+          <option value="mypy" />
+          <option value="mypy-extensions" />
+          <option value="nodeenv" />
+          <option value="openai" />
+          <option value="packaging" />
+          <option value="passlib" />
+          <option value="pathspec" />
+          <option value="pre-commit" />
+          <option value="psycopg" />
+          <option value="pyasn1" />
+          <option value="pycodestyle" />
+          <option value="pyflakes" />
+          <option value="pygments" />
+          <option value="pytest" />
+          <option value="pytest-asyncio" />
+          <option value="python-dotenv" />
+          <option value="python-jose" />
+          <option value="python-multipart" />
+          <option value="pyyaml" />
+          <option value="redis" />
+          <option value="rich" />
+          <option value="rsa" />
+          <option value="six" />
+          <option value="smmap" />
+          <option value="sniffio" />
+          <option value="socksio" />
+          <option value="sqlalchemy" />
+          <option value="starlette" />
+          <option value="tenacity" />
+          <option value="tqdm" />
+          <option value="typing-inspect" />
+          <option value="uvicorn" />
+          <option value="virtualenv" />
+        </list>
+      </option>
+    </inspection_tool>
+  </profile>
+</component>
