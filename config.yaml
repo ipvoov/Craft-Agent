@@ -5,7 +5,7 @@ AGENT_RECURSION_LIMIT: 20
 # 基础模型配置
 BASIC_MODEL:
   base_url: https://apis.iflow.cn/v1
-  model: "deepseek-v3"
+  model: "qwen3-coder-plus"
   api_key: sk-a0799a99010b4be6e06350412b309197
 
 

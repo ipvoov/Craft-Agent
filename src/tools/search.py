@@ -4,6 +4,7 @@ from langchain_core.tools import tool
 from tavily import TavilyClient
 from typing import Annotated
 from src.config.config import Config
+from src.tools.search_postprocessor import SearchResultPostProcessor
 
 @tool
 def web_search(
@@ -36,7 +37,8 @@ def web_search(
                 "title": result.get("title", ""),
                 "url": result.get("url", ""),
                 "content": result.get("content", ""),
-                "raw_content": result.get("raw_content", "")
+                "raw_content": result.get("raw_content", ""),
+                "score": result.get("score", 0),
             })
             
     # 处理图片结果
@@ -47,14 +49,21 @@ def web_search(
                 results.append({
                     "type": "image",
                     "image_url": image,
-                    "image_description": ""
+                    "image_description": "",
                 })
             elif isinstance(image, dict):
                 results.append({
                     "type": "image",
                     "image_url": image.get("url", ""),
-                    "image_description": image.get("description", "")
+                    "image_description": image.get("description", ""),
                 })
+
+    # 对搜索结果进行后处理：去重、过滤低质量结果、截断过长内容等
+    processor = SearchResultPostProcessor(
+        min_score_threshold=0.0,
+        max_content_length_per_page=4000,
+    )
+    results = processor.process_results(results)
     
     # 如果没有结果，但 response 本身不是空的，尝试将其转换为 JSON 字符串以便调试
     if not results and response:

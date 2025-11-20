@@ -15,8 +15,10 @@ dependencies = [
     "langchain-experimental>=0.4.0",
     "langchain-openai>=1.0.3",
     "langgraph>=1.0.3",
+    "markdownify>=1.1.0",
     "matplotlib>=3.9.0",
     "python-dotenv>=1.2.1",
+    "readabilipy>=0.3.0",
     "tavily>=1.1.0",
     "uvicorn>=0.34.0",
 ]

@@ -49,6 +49,9 @@ const DEFAULT_CONFIG: DeerFlowConfig = {
   models: { basic: [], reasoning: [] },
 };
 
+let configCache: DeerFlowConfig | null = null;
+let configPromise: Promise<DeerFlowConfig> | null = null;
+
 export function useConfig(): {
   config: DeerFlowConfig;
   loading: boolean;
@@ -62,7 +65,7 @@ export function useConfig(): {
       return;
     }
 
-    const fetchConfigWithRetry = async () => {
+    const fetchConfigWithRetry = async (): Promise<DeerFlowConfig> => {
       const maxRetries = 2;
       let lastError: Error | null = null;
 
@@ -76,10 +79,8 @@ export function useConfig(): {
             throw new Error(`HTTP ${res.status}: ${res.statusText}`);
           }
 
-          const configData = await res.json();
-          setConfig(configData);
-          setLoading(false);
-          return; // Success, exit retry loop
+          const configData: DeerFlowConfig = await res.json();
+          return configData; // Success, exit retry loop
         } catch (err) {
           lastError = err instanceof Error ? err : new Error(String(err));
 
@@ -103,11 +104,38 @@ export function useConfig(): {
       console.warn(
         `[Config] Using default config after ${maxRetries + 1} attempts. Last error: ${lastError?.message ?? "Unknown"}`,
       );
-      setConfig(DEFAULT_CONFIG);
-      setLoading(false);
+      return DEFAULT_CONFIG;
     };
 
-    void fetchConfigWithRetry();
+    const loadConfig = async () => {
+      try {
+        if (!configPromise) {
+          configPromise = fetchConfigWithRetry().then((cfg) => {
+            configCache = cfg;
+            return cfg;
+          });
+        }
+
+        const cfg = await configPromise;
+        setConfig(cfg);
+      } catch (error) {
+        console.warn(
+          "[Config] Using default config because fetch failed in hook:",
+          error,
+        );
+        setConfig(DEFAULT_CONFIG);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (configCache) {
+      setConfig(configCache);
+      setLoading(false);
+      return;
+    }
+
+    void loadConfig();
   }, []);
 
   return { config, loading };

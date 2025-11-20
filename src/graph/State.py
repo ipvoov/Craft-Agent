@@ -26,7 +26,11 @@ class State(MessagesState):
     clarification_rounds: int = 0  # 当前澄清轮数
     clarification_history: list[str] = field(default_factory=list)  # 澄清对话历史
     is_clarification_complete: bool = False  # 澄清是否完成
-    max_clarification_rounds: int = 1  # 最大澄清轮数
+    max_clarification_rounds: int = 2  # 最大澄清轮数
 
     # 工作流控制
     goto: str = "planner"  # 下一个节点名称
+
+
+class WebGenState(MessagesState):
+    goto:str
