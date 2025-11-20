@@ -2,21 +2,13 @@
 // SPDX-License-Identifier: MIT
 
 import { BadgeInfo } from "lucide-react";
-import { useLocale, useTranslations } from "next-intl";
 
-import { Markdown } from "~/components/deer-flow/markdown";
-
-import aboutEn from "./about-en.md";
-import aboutZh from "./about-zh.md";
 import type { Tab } from "./types";
 
+// 当前项目中设置页只保留 General 选项卡，AboutTab 不再被使用。
+// 这里保留一个空实现以避免导入被删除的 markdown 文件时产生编译错误。
 export const AboutTab: Tab = () => {
-  const locale = useLocale();
-  //const t = useTranslations("settings.about");
-
-  const aboutContent = locale === "zh" ? aboutZh : aboutEn;
-
-  return <Markdown>{aboutContent}</Markdown>;
+  return null;
 };
 AboutTab.icon = BadgeInfo;
 AboutTab.displayName = "About";

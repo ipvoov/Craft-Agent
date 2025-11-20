@@ -84,6 +84,34 @@ class ChatRequest(BaseModel):
     )
 
 
+class WebChatRequest(BaseModel):
+    """Web 代码生成 Agent 的对话请求模型"""
+
+    messages: Optional[List[ChatMessage]] = Field(
+        default_factory=list,
+        description="History of messages between the user and the web generator agent",
+    )
+    thread_id: Optional[str] = Field(
+        "__default__", description="A specific conversation identifier for web agent",
+    )
+    locale: Optional[str] = Field(
+        "zh-CN",
+        description="Language locale for the conversation (e.g., en-US, zh-CN)",
+    )
+    name: Optional[str] = Field(
+        None,
+        description="项目名称",
+    )
+    number: Optional[str] = Field(
+        "",
+        description="项目编号",
+    )
+    tree: Optional[str] = Field(
+        None,
+        description="项目目录结构",
+    )
+
+
 class EnhancePromptRequest(BaseModel):
     """提示词增强请求模型"""
     prompt: str = Field(..., description="要增强的原始提示词")

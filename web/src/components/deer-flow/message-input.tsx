@@ -79,7 +79,14 @@ function formatItem(item: JSONContent): {
 
 const MessageInput = forwardRef<MessageInputRef, MessageInputProps>(
   (
-    { className, loading, config, onChange, onEnter }: MessageInputProps,
+    {
+      className,
+      placeholder,
+      loading,
+      config,
+      onChange,
+      onEnter,
+    }: MessageInputProps,
     ref,
   ) => {
     const t = useTranslations("messageInput");
@@ -122,6 +129,13 @@ const MessageInput = forwardRef<MessageInputRef, MessageInputProps>(
       handleEnterRef.current = onEnter;
     }, [onEnter]);
 
+    const placeholderText = useMemo(
+      () =>
+        placeholder ??
+        (config?.rag?.provider ? t("placeholderWithRag") : t("placeholder")),
+      [config?.rag?.provider, t, placeholder],
+    );
+
     const extensions = useMemo(() => {
       const extensions = [
         StarterKit,
@@ -137,7 +151,7 @@ const MessageInput = forwardRef<MessageInputRef, MessageInputProps>(
         }),
         Placeholder.configure({
           showOnlyCurrent: false,
-          placeholder: config?.rag.provider ? t("placeholderWithRag") : t("placeholder"),
+          placeholder: placeholderText,
           emptyEditorClass: "placeholder",
         }),
         Extension.create({
@@ -157,7 +171,7 @@ const MessageInput = forwardRef<MessageInputRef, MessageInputProps>(
           },
         }),
       ];
-      if (config?.rag.provider) {
+      if (config?.rag?.provider) {
         extensions.push(
           Mention.configure({
             HTMLAttributes: {
@@ -168,7 +182,7 @@ const MessageInput = forwardRef<MessageInputRef, MessageInputProps>(
         );
       }
       return extensions;
-    }, [config]);
+    }, [config, placeholderText]);
 
     if (loading) {
       return (

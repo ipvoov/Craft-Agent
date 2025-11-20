@@ -1,16 +1,16 @@
-# 🦌 DeerFlow Web UI
+# 📺 DeepCraft Web UI
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 > Originated from Open Source, give back to Open Source.
 
-This is the web UI for [`DeerFlow`](https://github.com/bytedance/deer-flow).
+This is the web UI for [`DeepCraft`](https://github.com/bytedance/deer-flow).
 
 ## Quick Start
 
 ### Prerequisites
 
-- [`DeerFlow`](https://github.com/bytedance/deer-flow)
+- [`DeepCraft`](https://github.com/bytedance/deer-flow)
 - Node.js (v22.14.0+)
 - pnpm (v10.6.2+) as package manager
 
@@ -28,7 +28,7 @@ cp .env.example .env
 
 ## How to Install
 
-DeerFlow Web UI uses `pnpm` as its package manager.
+DeepCraft Web UI uses `pnpm` as its package manager.
 To install the dependencies, run:
 
 ```bash
@@ -100,7 +100,7 @@ This project is open source and available under the [MIT License](../LICENSE).
 ## Acknowledgments
 
 We extend our heartfelt gratitude to the open source community for their invaluable contributions.
-DeerFlow is built upon the foundation of these outstanding projects:
+DeepCraft is built upon the foundation of these outstanding projects:
 
 In particular, we want to express our deep appreciation for:
 

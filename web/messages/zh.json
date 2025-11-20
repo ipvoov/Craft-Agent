@@ -12,25 +12,25 @@
     "noResult": "无结果"
   },
   "messageInput": {
-    "placeholder": "我能帮你做什么？",
-    "placeholderWithRag": "我能帮你做什么？\n你可以通过 @ 引用 RAG 资源。"
+    "placeholder": "请描述您的研究任务或问题…",
+    "placeholderWithRag": "请描述您的研究任务或问题…\n你可以通过 @ 引用 RAG 资源。"
   },
   "header": {
-    "title": "DeerFlow"
+    "title": "DeepCraft"
   },
   "hero": {
     "title": "深度研究",
     "subtitle": "触手可及",
-    "description": "认识 DeerFlow，您的个人深度研究助手。凭借搜索引擎、网络爬虫、Python 和 MCP 服务等强大工具，它能提供即时洞察、全面报告，甚至制作引人入胜的播客。",
+    "description": "认识 DeepCraft，您的个人深度研究助手。凭借搜索引擎、网络爬虫、Python 和 MCP 服务等强大工具，它能提供即时洞察、全面报告，甚至制作引人入胜的播客。",
     "footnote": "* DEER 代表深度探索和高效研究。"
   },
   "settings": {
-    "title": "DeerFlow 设置",
-    "description": "在这里管理您的 DeerFlow 设置。",
+    "title": "DeepCraft 设置",
+    "description": "在这里管理您的 DeepCraft 设置。",
     "cancel": "取消",
     "addServers": "添加服务器",
     "addNewMCPServers": "添加新的 MCP 服务器",
-    "mcpConfigDescription": "DeerFlow 使用标准 JSON MCP 配置来创建新服务器。",
+    "mcpConfigDescription": "DeepCraft 使用标准 JSON MCP 配置来创建新服务器。",
     "pasteConfigBelow": "将您的配置粘贴到下面，然后点击\"添加\"来添加新服务器。",
     "add": "添加",
     "general": {
@@ -48,7 +48,7 @@
     },
     "mcp": {
       "title": "MCP 服务器",
-      "description": "模型上下文协议通过集成外部工具来增强 DeerFlow，用于私域搜索、网页浏览、订餐等任务。点击这里",
+      "description": "模型上下文协议通过集成外部工具来增强 DeepCraft，用于私域搜索、网页浏览、订餐等任务。点击这里",
       "learnMore": "了解更多关于 MCP 的信息。",
       "enableDisable": "启用/禁用服务器",
       "deleteServer": "删除服务器",
@@ -84,17 +84,17 @@
   "footer": {
     "quote": "源于开源，回馈开源。",
     "license": "基于 MIT 许可证授权",
-    "copyright": "DeerFlow"
+    "copyright": "DeepCraft"
   },
   "chat": {
     "page": {
-      "loading": "正在加载 DeerFlow...",
+      "loading": "正在加载 DeepCraft...",
       "welcomeUser": "欢迎，{username}",
       "starOnGitHub": "在 GitHub 上点赞"
     },
     "welcome": {
       "greeting": "👋 你好！",
-      "description": "欢迎来到 🦌 DeerFlow，一个基于前沿语言模型构建的深度研究助手，帮助您搜索网络、浏览信息并处理复杂任务。"
+      "description": "欢迎来到 📺 DeepCraft，一个基于前沿语言模型构建的深度研究助手，帮助您搜索网络、浏览信息并处理复杂任务。"
     },
     "conversationStarters": [
       "埃菲尔铁塔比世界最高建筑高多少倍？",
@@ -106,12 +106,12 @@
       "deepThinking": "深度思考",
       "deepThinkingTooltip": {
         "title": "深度思考模式：{status}",
-        "description": "启用后，DeerFlow 将使用推理模型（{model}）生成更深思熟虑的计划。"
+        "description": "启用后，DeepCraft 将使用推理模型（{model}）生成更深思熟虑的计划。"
       },
       "investigation": "调研",
       "investigationTooltip": {
         "title": "调研模式：{status}",
-        "description": "启用后，DeerFlow 将在规划前进行快速搜索。这对于与时事和新闻相关的研究很有用。"
+        "description": "启用后，DeepCraft 将在规划前进行快速搜索。这对于与时事和新闻相关的研究很有用。"
       },
       "enhancePrompt": "用 AI 增强提示",
       "on": "开启",
@@ -146,9 +146,9 @@
     },
     "messages": {
       "replaying": "回放中",
-      "replayDescription": "DeerFlow 正在回放对话...",
+      "replayDescription": "DeepCraft 正在回放对话...",
       "replayHasStopped": "回放已停止。",
-      "replayModeDescription": "您现在处于 DeerFlow 的回放模式。点击右侧的\"播放\"按钮开始。",
+      "replayModeDescription": "您现在处于 DeepCraft 的回放模式。点击右侧的\"播放\"按钮开始。",
       "play": "播放",
       "fastForward": "快进",
       "demoNotice": "* 此网站仅用于演示目的。如果您想尝试自己的问题，请",
@@ -165,7 +165,7 @@
   "landing": {
     "caseStudies": {
       "title": "案例研究",
-      "description": "通过回放查看 DeerFlow 的实际应用。",
+      "description": "通过回放查看 DeepCraft 的实际应用。",
       "clickToWatch": "点击观看回放",
       "cases": [
         {
@@ -204,7 +204,7 @@
     },
     "coreFeatures": {
       "title": "核心功能",
-      "description": "了解是什么让 DeerFlow 如此有效。",
+      "description": "了解是什么让 DeepCraft 如此有效。",
       "features": [
         {
           "name": "深入挖掘，触及更广",
@@ -233,8 +233,8 @@
       "description": "通过我们的监督者 + 交接设计模式体验智能体团队合作。"
     },
     "joinCommunity": {
-      "title": "加入 DeerFlow 社区",
-      "description": "贡献精彩想法，塑造 DeerFlow 的未来。协作、创新并产生影响。",
+      "title": "加入 DeepCraft 社区",
+      "description": "贡献精彩想法，塑造 DeepCraft 的未来。协作、创新并产生影响。",
       "contributeNow": "立即贡献"
     }
   }

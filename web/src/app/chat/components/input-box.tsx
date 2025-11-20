@@ -32,6 +32,9 @@ export function InputBox({
   onSend,
   onCancel,
   onRemoveFeedback,
+  showModeToggles = true,
+  placeholder,
+  enableConfig = true,
 }: {
   className?: string;
   size?: "large" | "normal";
@@ -46,6 +49,9 @@ export function InputBox({
   ) => void;
   onCancel?: () => void;
   onRemoveFeedback?: () => void;
+  showModeToggles?: boolean;
+  placeholder?: string;
+  enableConfig?: boolean;
 }) {
   const t = useTranslations("chat.inputBox");
   const tCommon = useTranslations("common");
@@ -55,7 +61,7 @@ export function InputBox({
   const backgroundInvestigation = useSettingsStore(
     (state) => state.general.enableBackgroundInvestigation,
   );
-  const { config, loading } = useConfig();
+  const { config, loading } = useConfig(enableConfig);
   const reportStyle = useSettingsStore((state) => state.general.reportStyle);
   const containerRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<MessageInputRef>(null);
@@ -208,74 +214,82 @@ export function InputBox({
           ref={inputRef}
           loading={loading}
           config={config}
+          placeholder={placeholder}
           onEnter={handleSendMessage}
           onChange={setCurrentPrompt}
         />
       </div>
       <div className="flex items-center px-4 py-2">
-        <div className="flex grow gap-2">
-          {config?.models?.reasoning && config.models.reasoning.length > 0 && (
+        {showModeToggles && (
+          <div className="flex grow gap-2">
+            {config?.models?.reasoning && config.models.reasoning.length > 0 && (
+              <Tooltip
+                className="max-w-60"
+                title={
+                  <div>
+                    <h3 className="mb-2 font-bold">
+                      {t("deepThinkingTooltip.title", {
+                        status: enableDeepThinking ? t("on") : t("off"),
+                      })}
+                    </h3>
+                    <p>
+                      {t("deepThinkingTooltip.description", {
+                        model: config.models.reasoning[0] ?? "",
+                      })}
+                    </p>
+                  </div>
+                }
+              >
+                <Button
+                  className={cn(
+                    "rounded-2xl",
+                    enableDeepThinking && "!border-brand !text-brand",
+                  )}
+                  variant="outline"
+                  onClick={() => {
+                    setEnableDeepThinking(!enableDeepThinking);
+                  }}
+                >
+                  <Lightbulb /> {t("deepThinking")}
+                </Button>
+              </Tooltip>
+            )}
+
             <Tooltip
               className="max-w-60"
               title={
                 <div>
                   <h3 className="mb-2 font-bold">
-                    {t("deepThinkingTooltip.title", {
-                      status: enableDeepThinking ? t("on") : t("off"),
+                    {t("investigationTooltip.title", {
+                      status: backgroundInvestigation ? t("on") : t("off"),
                     })}
                   </h3>
-                  <p>
-                    {t("deepThinkingTooltip.description", {
-                      model: config.models.reasoning[0] ?? "",
-                    })}
-                  </p>
+                  <p>{t("investigationTooltip.description")}</p>
                 </div>
               }
             >
               <Button
                 className={cn(
                   "rounded-2xl",
-                  enableDeepThinking && "!border-brand !text-brand",
+                  backgroundInvestigation && "!border-brand !text-brand",
                 )}
                 variant="outline"
-                onClick={() => {
-                  setEnableDeepThinking(!enableDeepThinking);
-                }}
+                onClick={() =>
+                  setEnableBackgroundInvestigation(!backgroundInvestigation)
+                }
               >
-                <Lightbulb /> {t("deepThinking")}
+                <Detective /> {t("investigation")}
               </Button>
             </Tooltip>
+            <ReportStyleDialog />
+          </div>
+        )}
+        <div
+          className={cn(
+            "flex shrink-0 items-center gap-2",
+            !showModeToggles && "ml-auto",
           )}
-
-          <Tooltip
-            className="max-w-60"
-            title={
-              <div>
-                <h3 className="mb-2 font-bold">
-                  {t("investigationTooltip.title", {
-                    status: backgroundInvestigation ? t("on") : t("off"),
-                  })}
-                </h3>
-                <p>{t("investigationTooltip.description")}</p>
-              </div>
-            }
-          >
-            <Button
-              className={cn(
-                "rounded-2xl",
-                backgroundInvestigation && "!border-brand !text-brand",
-              )}
-              variant="outline"
-              onClick={() =>
-                setEnableBackgroundInvestigation(!backgroundInvestigation)
-              }
-            >
-              <Detective /> {t("investigation")}
-            </Button>
-          </Tooltip>
-          <ReportStyleDialog />
-        </div>
-        <div className="flex shrink-0 items-center gap-2">
+        >
           <Tooltip title={t("enhancePrompt")}>
             <Button
               variant="ghost"

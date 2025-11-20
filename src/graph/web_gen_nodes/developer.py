@@ -1,4 +1,5 @@
 from langchain_core.messages import SystemMessage
+from langchain_core.runnables import RunnableConfig
 from langgraph.types import Command
 from typing import Literal
 from src.graph.State import WebGenState
@@ -6,12 +7,14 @@ from src.llms.llm import get_llm_by_type
 from src.config.agents import AGENT_LLM_MAP
 from src.tools.file import Tools
 
-async def developer_node(state:WebGenState)->Command[Literal["tools", "__end__"]]:
+async def developer_node(
+        state:WebGenState,
+        config: RunnableConfig
+)->Command[Literal["tools", "__end__"]]:
     """Agent 节点：调用模型进行推理"""
     # 绑定工具到模型
     model = get_llm_by_type(AGENT_LLM_MAP["developer"]).bind_tools(Tools)
     message = state["messages"]
-
     # 调用模型
     result = await model.ainvoke(input=message)
 

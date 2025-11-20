@@ -5,9 +5,9 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
 from typing import Optional, List
-from langchain_core.messages import ToolMessage, AIMessageChunk
+from langchain_core.messages import ToolMessage, AIMessageChunk, HumanMessage, SystemMessage, AIMessage
 from langgraph.types import Command
-from .chat_req import ChatRequest, EnhancePromptRequest
+from .chat_req import ChatRequest, EnhancePromptRequest, WebChatRequest
 import logging
 from .config_req import ConfigResponse, ModelConfig, RagConfig
 from ..config import Config
@@ -94,6 +94,26 @@ async def chat_stream(request: ChatRequest):
             request.max_clarification_rounds,
             request.locale,
             request.interrupt_before_tools,
+        ),
+        media_type="text/event-stream",
+    )
+
+
+@app.post("/api/chat/web/stream")
+async def web_chat_stream(request: WebChatRequest):
+    """Web 代码生成 Agent 的流式对话接口"""
+
+    thread_id = request.thread_id
+    if thread_id == "__default__":
+        thread_id = str(uuid4())
+    return StreamingResponse(
+        _astream_webgen_generator(
+            request.model_dump()["messages"],
+            thread_id,
+            request.name,
+            request.number,
+            request.tree,
+            request.locale,
         ),
         media_type="text/event-stream",
     )
@@ -303,6 +323,63 @@ async def _astream_workflow_generator(
     ):
         yield event
     logger.debug(f"[{safe_thread_id}] 图事件流传输完成")
+
+
+async def _astream_webgen_generator(
+        messages: List[dict],
+        thread_id: str,
+        name: Optional[str],
+        number: Optional[str],
+        tree: Optional[str],
+        locale: str = "zh-CN",
+):
+    """WebGenAgent 的异步流式生成器"""
+
+    safe_thread_id = thread_id
+    logger.debug(
+        f"[{safe_thread_id}] WebGen 工作流生成器启动: "
+        f"消息数量={len(messages)}, locale={locale}"
+    )
+
+    # 将 ChatRequest 消息转换为 LangChain 消息对象
+    lc_messages = []
+    for msg in messages or []:
+        role = msg.get("role")
+        content = msg.get("content", "")
+        if role == "user":
+            lc_messages.append(HumanMessage(content=content))
+        elif role == "assistant":
+            lc_messages.append(AIMessage(content=content))
+        elif role == "system":
+            lc_messages.append(SystemMessage(content=content))
+        elif role == "tool":
+            lc_messages.append(
+                ToolMessage(
+                    content=content,
+                    tool_call_id=msg.get("tool_call_id", ""),
+                )
+            )
+        else:
+            lc_messages.append(HumanMessage(content=content))
+
+    workflow_input = {
+        "messages": lc_messages,
+        "name": name,
+        "number": number,
+        "tree": tree,
+    }
+
+    workflow_config = {
+        "thread_id": thread_id,
+        "recursion_limit": Config.get("AGENT_RECURSION_LIMIT", 20),
+    }
+
+    logger.debug(f"[{safe_thread_id}] 开始流式传输 WebGen 图执行事件")
+    async for event in _stream_graph_events(
+            WebGenGraph, workflow_input, workflow_config, thread_id
+    ):
+        yield event
+    logger.debug(f"[{safe_thread_id}] WebGen 图事件流传输完成")
 
 
 async def _stream_graph_events(

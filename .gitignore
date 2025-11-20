@@ -14,5 +14,4 @@ logs/
 *.log
 .backend.pid
 .frontend.pid
-deer-flow/
 test/

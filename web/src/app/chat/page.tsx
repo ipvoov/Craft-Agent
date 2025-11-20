@@ -10,6 +10,7 @@ import { useTranslations } from "next-intl";
 import { Suspense } from "react";
 
 import { Button } from "~/components/ui/button";
+import { cn } from "~/lib/utils";
 
 import { Logo } from "../../components/deer-flow/logo";
 import { ThemeToggle } from "../../components/deer-flow/theme-toggle";
@@ -29,7 +30,11 @@ export default function HomePage() {
   const t = useTranslations("chat.page");
 
   return (
-    <div className="flex h-screen w-screen justify-center overscroll-none">
+    <div
+      className={cn(
+        "flex h-screen w-screen justify-center overscroll-none",
+      )}
+    >
       <header className="fixed top-0 left-0 flex h-12 w-full items-center justify-between px-4">
         <Logo />
         <div className="flex items-center">

@@ -1,10 +1,14 @@
 from langchain_core.messages import ToolMessage
+from langchain_core.runnables import RunnableConfig
 from langgraph.types import Command
 from src.graph.State import WebGenState
 from src.tools.file import Tools
 from typing import Literal
 
-async def tool_node(state:WebGenState)->Command[Literal["developer"]]:
+async def tool_node(
+        state:WebGenState,
+        config: RunnableConfig
+)->Command[Literal["developer"]]:
     """工具节点：执行工具调用"""
     # 获取最后一条消息（包含 tool_calls）
     last_message = state["messages"][-1]

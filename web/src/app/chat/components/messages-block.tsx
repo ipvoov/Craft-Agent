@@ -4,6 +4,7 @@
 import { motion } from "framer-motion";
 import { FastForward, Play } from "lucide-react";
 import { useTranslations } from "next-intl";
+import { usePathname } from "next/navigation";
 import { useCallback, useRef, useState } from "react";
 
 import { RainbowText } from "~/components/deer-flow/rainbow-text";
@@ -22,13 +23,17 @@ import { sendMessage, useMessageIds, useStore } from "~/core/store";
 import { env } from "~/env";
 import { cn } from "~/lib/utils";
 
-import { ConversationStarter } from "./conversation-starter";
 import { InputBox } from "./input-box";
 import { MessageListView } from "./message-list-view";
 import { Welcome } from "./welcome";
+import { VibeHome } from "./vibe-home";
+import { WebDevHome } from "./web-dev-home";
 
 export function MessagesBlock({ className }: { className?: string }) {
   const t = useTranslations("chat.messages");
+  const pathname = usePathname();
+  const isWebDev = pathname?.startsWith("/web-dev");
+  const HomeComponent = isWebDev ? WebDevHome : VibeHome;
   const messageIds = useMessageIds();
   const messageCount = messageIds.length;
   const responding = useStore((state) => state.responding);
@@ -85,23 +90,12 @@ export function MessagesBlock({ className }: { className?: string }) {
     setFastForwarding(!fastForwarding);
     fastForwardReplay(!fastForwarding);
   }, [fastForwarding]);
+  const showLanding = !isReplay && !responding && messageCount === 0;
   return (
-    <div className={cn("flex h-full flex-col", className)}>
-      <MessageListView
-        className="flex flex-grow"
-        onFeedback={handleFeedback}
-        onSendMessage={handleSend}
-      />
-      {!isReplay ? (
-        <div className="relative flex h-42 shrink-0 pb-4">
-          {!responding && messageCount === 0 && (
-            <ConversationStarter
-              className="absolute top-[-218px] left-0"
-              onSend={handleSend}
-            />
-          )}
-          <InputBox
-            className="h-full w-full"
+    <div className={cn("relative flex h-full flex-col", className)}>
+      {showLanding && (
+        <div className="pointer-events-auto absolute inset-0 z-10 flex flex-col">
+          <HomeComponent
             responding={responding}
             feedback={feedback}
             onSend={handleSend}
@@ -109,8 +103,38 @@ export function MessagesBlock({ className }: { className?: string }) {
             onRemoveFeedback={handleRemoveFeedback}
           />
         </div>
-      ) : (
-        <>
+      )}
+      <div
+        className={cn(
+          "flex h-full flex-col transition-opacity duration-300",
+          showLanding && "pointer-events-none opacity-0",
+        )}
+      >
+        <MessageListView
+          className="flex flex-grow"
+          onFeedback={handleFeedback}
+          onSendMessage={handleSend}
+        />
+        {!isReplay ? (
+          <div className="relative flex h-42 shrink-0 pb-4">
+            <InputBox
+              className="h-full w-full"
+              responding={responding}
+              feedback={feedback}
+              onSend={handleSend}
+              onCancel={handleCancel}
+              onRemoveFeedback={handleRemoveFeedback}
+              showModeToggles={!isWebDev}
+              placeholder={
+                isWebDev
+                  ? "请描述你想生成的网站或页面，例如结构、内容和风格…"
+                  : undefined
+              }
+              enableConfig={!isWebDev}
+            />
+          </div>
+        ) : (
+          <>
           <div
             className={cn(
               "fixed bottom-[calc(50vh+80px)] left-0 transition-all duration-500 ease-out",
@@ -189,24 +213,25 @@ export function MessagesBlock({ className }: { className?: string }) {
                   </div>
                 )}
               </div>
-            </Card>
-            {!replayStarted && env.NEXT_PUBLIC_STATIC_WEBSITE_ONLY && (
-              <div className="text-muted-foreground w-full text-center text-xs">
-                {t("demoNotice")}{" "}
-                <a
-                  className="underline"
-                  href="https://github.com/bytedance/deer-flow"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  {t("clickHere")}
-                </a>{" "}
-                {t("cloneLocally")}
-              </div>
-            )}
-          </motion.div>
-        </>
-      )}
+              </Card>
+              {!replayStarted && env.NEXT_PUBLIC_STATIC_WEBSITE_ONLY && (
+                <div className="text-muted-foreground w-full text-center text-xs">
+                  {t("demoNotice")}{" "}
+                  <a
+                    className="underline"
+                    href="https://github.com/bytedance/deer-flow"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    {t("clickHere")}
+                  </a>{" "}
+                  {t("cloneLocally")}
+                </div>
+              )}
+            </motion.div>
+          </>
+        )}
+      </div>
     </div>
   );
 }

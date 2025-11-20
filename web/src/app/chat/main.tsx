@@ -20,7 +20,7 @@ export default function Main() {
   return (
     <div
       className={cn(
-        "flex h-full w-full justify-center-safe px-4 pt-12 pb-4",
+        "flex h-full w-full justify-center-safe px-4 pt-12 pb-4 text-[15px] md:text-[16px]",
         doubleColumnMode && "gap-8",
       )}
     >

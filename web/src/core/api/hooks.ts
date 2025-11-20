@@ -29,13 +29,13 @@ export function useReplayMetadata() {
         setError(false);
         setTitle(title ?? null);
         if (title) {
-          document.title = `${title} - DeerFlow`;
+          document.title = `${title} - DeepCraft`;
         }
       })
       .catch(() => {
         setError(true);
         setTitle("Error: the replay is not available.");
-        document.title = "DeerFlow";
+        document.title = "DeepCraft";
       })
       .finally(() => {
         isLoading.current = false;
@@ -52,14 +52,19 @@ const DEFAULT_CONFIG: DeerFlowConfig = {
 let configCache: DeerFlowConfig | null = null;
 let configPromise: Promise<DeerFlowConfig> | null = null;
 
-export function useConfig(): {
+export function useConfig(enabled: boolean = true): {
   config: DeerFlowConfig;
   loading: boolean;
 } {
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(enabled);
   const [config, setConfig] = useState<DeerFlowConfig>(DEFAULT_CONFIG);
 
   useEffect(() => {
+    if (!enabled) {
+      setLoading(false);
+      return;
+    }
+
     if (env.NEXT_PUBLIC_STATIC_WEBSITE_ONLY) {
       setLoading(false);
       return;
@@ -136,7 +141,7 @@ export function useConfig(): {
     }
 
     void loadConfig();
-  }, []);
+  }, [enabled]);
 
   return { config, loading };
 }
