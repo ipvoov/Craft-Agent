@@ -29,8 +29,6 @@ def coordinator_node(
     3. 将明确的任务转交给 Planner
     """
     logger.info("Coordinator 开始处理")
-    # 从配置中提取配置对象
-    configurable = config.get("configurable", {})
 
     # ========== 状态初始化 ==========
     # 获取用户原始研究主题
@@ -181,7 +179,6 @@ def coordinator_node(
                     "messages": updated_messages,
                     "locale": locale,
                     "research_topic": research_topic,
-                    # "resources": configurable.resources,
                     "clarification_rounds": clarification_rounds,
                     "clarification_history": clarification_history,
                     "clarified_research_topic": clarified_topic,

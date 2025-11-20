@@ -13,13 +13,7 @@ logger = logging.getLogger(__name__)
 def crawl_tool(
     url: Annotated[str, "要爬取的网页 URL 地址"],
 ) -> str:
-    """使用此工具爬取指定 URL 并获取 Markdown 格式的可读内容。
-
-    对齐 deer-flow 的实现：
-    - 使用 Crawler 调用 Jina 抓取原始 HTML
-    - 使用 Readability 提取正文并转换为 Markdown
-    - 返回包含 url 和 crawled_content 的 JSON 字符串
-    """
+    """使用此工具爬取指定 URL 并获取 Markdown 格式的可读内容。"""
     try:
         crawler = Crawler()
         article = crawler.crawl(url)

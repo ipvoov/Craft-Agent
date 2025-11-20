@@ -12,12 +12,16 @@ import logging
 from .config_req import ConfigResponse, ModelConfig, RagConfig
 from ..config import Config
 from ..config.report_style import ReportStyle
-from ..graph.builder import build_graph_with_memory, build_prompt_enhancer_graph
+from ..graph.builder import build_graph_with_memory, build_prompt_enhancer_graph, build_web_gent_graph_with_memory
 from ..graph.utils import reconstruct_clarification_history, build_clarified_topic_from_history
 
 load_dotenv()  # noqa: E402
 
 logger = logging.getLogger(__name__)
+
+graph = build_graph_with_memory()
+
+WebGenGraph = build_web_gent_graph_with_memory()
 
 
 
@@ -55,8 +59,6 @@ app.add_middleware(
     allow_headers=["*"],  # 允许所有请求头
 )
 
-graph = build_graph_with_memory()
-
 
 @app.get("/api/config", response_model=ConfigResponse)
 async def config():
@@ -65,8 +67,6 @@ async def config():
         models=get_configured_llm_models(),
         rag=RagConfig(provider=""),  # 暂不使用RAG,返回空字符串
     )
-
-
 
 
 @app.post("/api/chat/stream")

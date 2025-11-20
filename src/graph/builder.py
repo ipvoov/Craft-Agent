@@ -1,9 +1,11 @@
 from langgraph.graph import StateGraph,START,END
 from langgraph.graph.state import CompiledStateGraph
-from langgraph.store.memory import InMemoryStore
 from langgraph.checkpoint.memory import MemorySaver
 
-from src.graph.State import State
+from src.graph.web_gen_nodes.developer import developer_node
+from src.graph.web_gen_nodes.tool import tool_node
+from src.prompt_enhancer.graph.builder import build_graph as build_enhancer_graph
+from src.graph.State import State,WebGenState
 from src.prompts.planner_model import StepType
 
 # 导入节点
@@ -88,7 +90,7 @@ def build_prompt_enhancer_graph():
     Returns:
         CompiledGraph: 编译后的提示词增强工作流图
     """
-    from src.prompt_enhancer.graph.builder import build_graph as build_enhancer_graph
+
     return build_enhancer_graph()
 
 
@@ -105,6 +107,30 @@ def build_graph():
     # build state graph
     graph = _build_base_graph()
     return graph.compile()
+
+
+
+# WebGenAgent
+def _build_web_gent_graph() -> StateGraph:
+    build = StateGraph(WebGenState)
+
+    build.add_node("developer", developer_node)
+    build.add_node("tools", tool_node)
+
+    build.add_edge(START, "developer")
+    build.add_edge("developer", "tools")
+    build.add_edge("tools", "developer")
+    build.add_edge("developer", END)
+    return build
+
+
+def build_web_gent_graph_with_memory() ->  CompiledStateGraph:
+    """构建并返回带有内存和存储的代理工作流图。"""
+    # 创建checkpointer用于保存对话历史记录
+    checkpointer = MemorySaver()
+    # build state graph
+    graph = _build_web_gent_graph()
+    return graph.compile(checkpointer=checkpointer)
 
 if __name__ == "__main__":
     DeepAgent = build_graph_with_memory()

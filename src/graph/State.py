@@ -6,14 +6,13 @@ from src.prompts.planner_model import Plan
 # from src.rag import Resource
 
 class State(MessagesState):
-    """Agent 系统的状态类，继承 MessagesState 并扩展了额外字段"""
+    """DeepResearchAgent 系统的状态类，继承 MessagesState 并扩展了额外字段"""
 
     # 运行时变量
     locale: str = "zh-CN"  # 语言环境，如 "zh-CN" 或 "en-US"
     research_topic: str = ""  # 用户原始研究主题
     clarified_research_topic: str = ""  # 澄清后的完整研究主题
     observations: list[str] = []  # 研究过程中的观察记录
-    # resources: list[Resource] = []  # RAG 资源列表
     plan_iterations: int = 0  # 计划迭代次数
     current_plan: Plan | str = None  # 当前执行的计划
     final_report: str = ""  # 最终研究报告
@@ -33,4 +32,8 @@ class State(MessagesState):
 
 
 class WebGenState(MessagesState):
-    goto:str
+    """WebGenAgent 系统的状态类，继承 MessagesState 并扩展了额外字段"""
+    name:str = None # 项目名称
+    number:str = "" # 项目编号
+    tree:str = None # 项目目录结构
+    goto:str = None # 下一个节点名称

@@ -17,6 +17,14 @@ REASONING_MODEL:
   api_key: sk-a0799a99010b4be6e06350412b309197
   max_retries: 3 # LLM 调用的最大重试次数
 
+
+# Coder模型配置
+CODER_MODEL:
+  base_url: https://apis.iflow.cn/v1
+  model: "qwen3-coder-plus"
+  api_key: sk-a0799a99010b4be6e06350412b309197
+  # max_retries: 3 # LLM 调用的最大重试次数
+
 # # 推理模型配置
 # REASONING_MODEL:
 #   base_url: https://ark.cn-beijing.volces.com/api/v3
