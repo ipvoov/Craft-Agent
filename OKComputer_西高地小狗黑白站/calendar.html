@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI写真日历 - 西高地小狗</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.7.0/p5.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700&family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            background: #FFFFFF;
+            color: #000000;
+        }
+        .hero-title {
+            font-family: 'Noto Serif SC', serif;
+            font-weight: 700;
+        }
+        .text-gradient {
+            background: linear-gradient(45deg, #000000, #808080, #000000);
+            background-size: 200% 200%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: gradientShift 3s ease-in-out infinite;
+        }
+        @keyframes gradientShift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+        .calendar-container {
+            background: white;
+            border: 2px solid #000;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        .calendar-header {
+            background: #000;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+        .calendar-header h3 {
+            font-size: 24px;
+            font-weight: bold;
+            margin: 0;
+        }
+        .calendar-image {
+            height: 300px;
+            overflow: hidden;
+            border-bottom: 1px solid #eee;
+        }
+        .calendar-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .calendar-grid {
+            padding: 20px;
+        }
+        .calendar-weekdays {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+        .weekday {
+            text-align: center;
+            font-weight: bold;
+            color: #666;
+            padding: 8px;
+        }
+        .calendar-days {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 10px;
+        }
+        .day {
+            aspect-ratio: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid #eee;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+        .day:hover {
+            background: #f5f5f5;
+            border-color: #000;
+        }
+        .day.empty {
+            border: none;
+        }
+        .day.today {
+            background: #000;
+            color: white;
+            font-weight: bold;
+        }
+        .control-panel {
+            background: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 24px;
+        }
+        .style-option {
+            cursor: pointer;
+            padding: 12px;
+            border: 2px solid transparent;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+        .style-option:hover {
+            border-color: #ccc;
+        }
+        .style-option.selected {
+            border-color: #000;
+            background: #f0f0f0;
+        }
+        .modern { font-family: 'Noto Sans SC', sans-serif; }
+        .vintage { font-family: 'Noto Serif SC', serif; }
+        .artistic { 
+            font-family: 'ZCOOL XiaoWei', cursive;
+            .calendar-header { background: linear-gradient(45deg, #000, #666); }
+        }
+        .festive { 
+            .calendar-header { 
+                background: linear-gradient(45deg, #D4AF37, #B8860B);
+                color: #000;
+            }
+        }
+        #p5-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: -1;
+            opacity: 0.1;
+        }
+    </style>
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav class="fixed top-0 w-full bg-white/95 backdrop-blur-sm z-50 border-b border-gray-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center">
+                    <h1 class="text-xl font-bold text-gradient">西高地小狗</h1>
+                </div>
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-8">
+                        <a href="index.html" class="text-gray-600 hover:text-black px-3 py-2 text-sm font-medium hover:border-b-2 hover:border-gray-300">首页</a>
+                        <a href="calendar.html" class="text-black hover:text-gray-600 px-3 py-2 text-sm font-medium border-b-2 border-black">AI写真日历</a>
+                        <a href="care.html" class="text-gray-600 hover:text-black px-3 py-2 text-sm font-medium hover:border-b-2 hover:border-gray-300">卷毛实验室</a>
+                        <a href="shop.html" class="text-gray-600 hover:text-black px-3 py-2 text-sm font-medium hover:border-b-2 hover:border-gray-300">周边商城</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 页面标题 -->
+    <section class="pt-24 pb-12 bg-gradient-to-br from-gray-50 to-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <h1 class="hero-title text-4xl md:text-6xl mb-6 text-gradient">AI写真日历</h1>
+            <p class="text-xl text-gray-600 mb-8">影棚级AI生成技术，为您打造专属的西高地小狗日历</p>
+        </div>
+    </section>
+
+    <!-- 主要内容区域 -->
+    <section class="py-16 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-12">
+                <!-- 控制面板 -->
+                <div class="lg:col-span-1">
+                    <div class="control-panel sticky top-24">
+                        <h2 class="text-2xl font-bold mb-6 text-gradient">定制选项</h2>
+                        
+                        <!-- 月份选择 -->
+                        <div class="mb-8">
+                            <label class="block text-sm font-medium mb-3">选择月份</label>
+                            <select id="month-select" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent">
+                                <option value="0">一月</option>
+                                <option value="1">二月</option>
+                                <option value="2">三月</option>
+                                <option value="3">四月</option>
+                                <option value="4">五月</option>
+                                <option value="5">六月</option>
+                                <option value="6">七月</option>
+                                <option value="7">八月</option>
+                                <option value="8">九月</option>
+                                <option value="9">十月</option>
+                                <option value="10">十一月</option>
+                                <option value="11">十二月</option>
+                            </select>
+                        </div>
+
+                        <!-- 风格选择 -->
+                        <div class="mb-8">
+                            <label class="block text-sm font-medium mb-3">选择风格</label>
+                            <div class="space-y-3">
+                                <div class="style-option selected" data-style="modern">
+                                    <div class="font-medium">现代简约</div>
+                                    <div class="text-sm text-gray-600">简洁现代的设计风格</div>
+                                </div>
+                                <div class="style-option" data-style="vintage">
+                                    <div class="font-medium">复古经典</div>
+                                    <div class="text-sm text-gray-600">优雅复古的经典风格</div>
+                                </div>
+                                <div class="style-option" data-style="artistic">
+                                    <div class="font-medium">艺术风格</div>
+                                    <div class="text-sm text-gray-600">创意艺术的独特风格</div>
+                                </div>
+                                <div class="style-option" data-style="festive">
+                                    <div class="font-medium">节日主题</div>
+                                    <div class="text-sm text-gray-600">温馨节日的特别风格</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 操作按钮 -->
+                        <div class="space-y-4">
+                            <button id="generate-btn" class="w-full bg-black text-white py-3 rounded-lg hover:bg-gray-800 transition-colors font-medium">
+                                生成日历
+                            </button>
+                            <button id="download-btn" class="w-full border-2 border-black text-black py-3 rounded-lg hover:bg-black hover:text-white transition-colors font-medium">
+                                下载日历
+                            </button>
+                        </div>
+
+                        <!-- 使用说明 -->
+                        <div class="mt-8 p-4 bg-gray-100 rounded-lg">
+                            <h3 class="font-medium mb-2">使用说明</h3>
+                            <ul class="text-sm text-gray-600 space-y-1">
+                                <li>• 选择您喜欢的月份和风格</li>
+                                <li>• 点击"生成日历"预览效果</li>
+                                <li>• 满意后点击"下载日历"</li>
+                                <li>• 支持高清PNG格式下载</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 预览区域 -->
+                <div class="lg:col-span-2">
+                    <div class="mb-8">
+                        <h2 class="text-2xl font-bold mb-4 text-gradient">实时预览</h2>
+                        <p class="text-gray-600">您的专属西高地小狗日历预览效果</p>
+                    </div>
+                    
+                    <div id="calendar-preview" class="calendar-container">
+                        <div class="calendar-header modern">
+                            <h3>一月 2024</h3>
+                        </div>
+                        <div class="calendar-image">
+                            <img src="resources/calendar-jan.png" alt="一月">
+                        </div>
+                        <div class="calendar-grid">
+                            <div class="calendar-weekdays">
+                                <div class="weekday">日</div>
+                                <div class="weekday">一</div>
+                                <div class="weekday">二</div>
+                                <div class="weekday">三</div>
+                                <div class="weekday">四</div>
+                                <div class="weekday">五</div>
+                                <div class="weekday">六</div>
+                            </div>
+                            <div class="calendar-days">
+                                <div class="day empty"></div>
+                                <div class="day">1</div>
+                                <div class="day">2</div>
+                                <div class="day">3</div>
+                                <div class="day">4</div>
+                                <div class="day">5</div>
+                                <div class="day">6</div>
+                                <div class="day">7</div>
+                                <div class="day">8</div>
+                                <div class="day">9</div>
+                                <div class="day">10</div>
+                                <div class="day">11</div>
+                                <div class="day">12</div>
+                                <div class="day">13</div>
+                                <div class="day">14</div>
+                                <div class="day">15</div>
+                                <div class="day">16</div>
+                                <div class="day">17</div>
+                                <div class="day">18</div>
+                                <div class="day">19</div>
+                                <div class="day">20</div>
+                                <div class="day">21</div>
+                                <div class="day">22</div>
+                                <div class="day">23</div>
+                                <div class="day">24</div>
+                                <div class="day">25</div>
+                                <div class="day">26</div>
+                                <div class="day">27</div>
+                                <div class="day">28</div>
+                                <div class="day">29</div>
+                                <div class="day">30</div>
+                                <div class="day">31</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 更多示例 -->
+                    <div class="mt-16">
+                        <h3 class="text-2xl font-bold mb-8 text-gradient">更多示例</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                            <div class="calendar-container">
+                                <div class="calendar-header vintage">
+                                    <h3>二月 2024</h3>
+                                </div>
+                                <div class="calendar-image">
+                                    <img src="resources/calendar-feb.png" alt="二月">
+                                </div>
+                                <div class="calendar-grid">
+                                    <div class="calendar-weekdays">
+                                        <div class="weekday">日</div>
+                                        <div class="weekday">一</div>
+                                        <div class="weekday">二</div>
+                                        <div class="weekday">三</div>
+                                        <div class="weekday">四</div>
+                                        <div class="weekday">五</div>
+                                        <div class="weekday">六</div>
+                                    </div>
+                                    <div class="calendar-days">
+                                        <div class="day empty"></div>
+                                        <div class="day empty"></div>
+                                        <div class="day">1</div>
+                                        <div class="day">2</div>
+                                        <div class="day">3</div>
+                                        <div class="day">4</div>
+                                        <div class="day">5</div>
+                                        <div class="day">6</div>
+                                        <div class="day">7</div>
+                                        <div class="day">8</div>
+                                        <div class="day">9</div>
+                                        <div class="day">10</div>
+                                        <div class="day">11</div>
+                                        <div class="day">12</div>
+                                        <div class="day">13</div>
+                                        <div class="day">14</div>
+                                        <div class="day">15</div>
+                                        <div class="day">16</div>
+                                        <div class="day">17</div>
+                                        <div class="day">18</div>
+                                        <div class="day">19</div>
+                                        <div class="day">20</div>
+                                        <div class="day">21</div>
+                                        <div class="day">22</div>
+                                        <div class="day">23</div>
+                                        <div class="day">24</div>
+                                        <div class="day">25</div>
+                                        <div class="day">26</div>
+                                        <div class="day">27</div>
+                                        <div class="day">28</div>
+                                        <div class="day">29</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="calendar-container">
+                                <div class="calendar-header artistic">
+                                    <h3>三月 2024</h3>
+                                </div>
+                                <div class="calendar-image">
+                                    <img src="resources/calendar-mar.png" alt="三月">
+                                </div>
+                                <div class="calendar-grid">
+                                    <div class="calendar-weekdays">
+                                        <div class="weekday">日</div>
+                                        <div class="weekday">一</div>
+                                        <div class="weekday">二</div>
+                                        <div class="weekday">三</div>
+                                        <div class="weekday">四</div>
+                                        <div class="weekday">五</div>
+                                        <div class="weekday">六</div>
+                                    </div>
+                                    <div class="calendar-days">
+                                        <div class="day empty"></div>
+                                        <div class="day empty"></div>
+                                        <div class="day empty"></div>
+                                        <div class="day">1</div>
+                                        <div class="day">2</div>
+                                        <div class="day">3</div>
+                                        <div class="day">4</div>
+                                        <div class="day">5</div>
+                                        <div class="day">6</div>
+                                        <div class="day">7</div>
+                                        <div class="day">8</div>
+                                        <div class="day">9</div>
+                                        <div class="day">10</div>
+                                        <div class="day">11</div>
+                                        <div class="day">12</div>
+                                        <div class="day">13</div>
+                                        <div class="day">14</div>
+                                        <div class="day">15</div>
+                                        <div class="day">16</div>
+                                        <div class="day">17</div>
+                                        <div class="day">18</div>
+                                        <div class="day">19</div>
+                                        <div class="day">20</div>
+                                        <div class="day">21</div>
+                                        <div class="day">22</div>
+                                        <div class="day">23</div>
+                                        <div class="day">24</div>
+                                        <div class="day">25</div>
+                                        <div class="day">26</div>
+                                        <div class="day">27</div>
+                                        <div class="day">28</div>
+                                        <div class="day">29</div>
+                                        <div class="day">30</div>
+                                        <div class="day">31</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 特色功能 -->
+    <section class="py-20 bg-gray-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl font-bold mb-4 text-gradient">AI技术特色</h2>
+                <p class="text-gray-600 text-lg">先进的AI技术为您创造独特的视觉体验</p>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="text-center">
+                    <div class="w-16 h-16 bg-black rounded-full flex items-center justify-center mx-auto mb-4">
+                        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">影棚级画质</h3>
+                    <p class="text-gray-600">AI生成专业摄影级别的西高地小狗图片，每一张都是艺术品</p>
+                </div>
+                <div class="text-center">
+                    <div class="w-16 h-16 bg-black rounded-full flex items-center justify-center mx-auto mb-4">
+                        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zM21 5a2 2 0 00-2-2h-4a2 2 0 00-2 2v12a4 4 0 004 4h4a2 2 0 002-2V5z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">智能排版</h3>
+                    <p class="text-gray-600">智能算法自动优化日历布局，确保最佳的视觉效果和实用性</p>
+                </div>
+                <div class="text-center">
+                    <div class="w-16 h-16 bg-black rounded-full flex items-center justify-center mx-auto mb-4">
+                        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">一键下载</h3>
+                    <p class="text-gray-600">高清PNG格式输出，支持打印和数字使用，品质保证</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 页脚 -->
+    <footer class="bg-black text-white py-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center">
+                <h3 class="text-2xl font-bold mb-4 text-gradient-white">西高地小狗</h3>
+                <p class="text-gray-400 mb-6">专业 · 爱心 · 品质</p>
+                <div class="border-t border-gray-800 pt-6">
+                    <p class="text-gray-500 text-sm">&copy; 2024 西高地小狗. 保留所有权利.</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // P5.js 背景动画
+        let particles = [];
+        
+        function setup() {
+            let canvas = createCanvas(windowWidth, windowHeight);
+            canvas.id('p5-canvas');
+            canvas.parent(document.body);
+            
+            // 初始化粒子
+            for (let i = 0; i < 50; i++) {
+                particles.push({
+                    x: random(width),
+                    y: random(height),
+                    vx: random(-0.5, 0.5),
+                    vy: random(-0.5, 0.5),
+                    size: random(2, 6)
+                });
+            }
+        }
+        
+        function draw() {
+            clear();
+            
+            // 绘制粒子
+            fill(0, 20);
+            noStroke();
+            
+            for (let particle of particles) {
+                ellipse(particle.x, particle.y, particle.size);
+                
+                // 更新位置
+                particle.x += particle.vx;
+                particle.y += particle.vy;
+                
+                // 边界检测
+                if (particle.x < 0 || particle.x > width) particle.vx *= -1;
+                if (particle.y < 0 || particle.y > height) particle.vy *= -1;
+            }
+        }
+        
+        function windowResized() {
+            resizeCanvas(windowWidth, windowHeight);
+        }
+
+        // 风格选择交互
+        document.addEventListener('DOMContentLoaded', function() {
+            const styleOptions = document.querySelectorAll('.style-option');
+            
+            styleOptions.forEach(option => {
+                option.addEventListener('click', function() {
+                    // 移除所有选中状态
+                    styleOptions.forEach(opt => opt.classList.remove('selected'));
+                    // 添加当前选中状态
+                    this.classList.add('selected');
+                    
+                    // 更新样式
+                    const style = this.dataset.style;
+                    document.getElementById('style-select').value = style;
+                });
+            });
+        });
+    </script>
+    <script src="main.js"></script>
+</body>
+</html>

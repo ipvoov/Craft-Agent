@@ -12,7 +12,7 @@ logger = logging.getLogger(__name__)
 def _get_project_dir(project_num: str) -> Path:
     """根据项目编号获取项目目录。"""
     repo_root = Path(__file__).resolve().parents[2]
-    return repo_root / "source" / f"vue_project_{project_num}"
+    return repo_root / "source" / f"project_{project_num}"
 
 
 def _resolve_inside_project(project_num: str, relative_path: str) -> Path:
@@ -45,13 +45,13 @@ IGNORE_DIR_NAMES = {
 def read_directory_tool(
         project_num: Annotated[str, "项目的编号，如 '01', '02'"],
 ) -> str:
-    """目录读取工具：提供项目的编号，列出该 Vue 项目中完整的目录结构。"""
+    """目录读取工具：提供项目的编号，列出该静态 Web 项目中完整的目录结构。"""
     try:
         repo_root = Path(__file__).resolve().parents[2]
-        project_dir = repo_root / "source" / f"vue_project_{project_num}"
+        project_dir = repo_root / "source" / f"project_{project_num}"
         
         if not project_dir.exists():
-            return f"错误: 项目 vue_project_{project_num} 不存在于 source 目录中"
+            return f"错误: 项目 project_{project_num} 不存在于 source 目录中"
         
         def build_tree(path: Path, prefix: str = "", is_last: bool = True) -> list[str]:
             """递归构建目录树。"""
@@ -84,11 +84,11 @@ def read_directory_tool(
         tree_lines = build_tree(project_dir)
         tree_output = "\n".join(tree_lines)
         
-        return json.dumps({"project": f"vue_project_{project_num}", "tree": tree_output}, ensure_ascii=False)
+        return json.dumps({"project": f"project_{project_num}", "tree": tree_output}, ensure_ascii=False)
         
     except Exception as e:
         logger.exception("读取目录结构失败: %s", project_num)
-        return f"错误: 无法读取项目 vue_project_{project_num} 的目录结构\n原因: {str(e)}"
+        return f"错误: 无法读取项目 project_{project_num} 的目录结构\n原因: {str(e)}"
 
 
 @tool("read_file_tool")

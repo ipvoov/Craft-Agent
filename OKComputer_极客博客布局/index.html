@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GeekBlog - 极客技术博客</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.7.0/p5.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@splidejs/splide@4.1.4/dist/js/splide.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/matter-js/0.19.0/matter.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pixi.js/7.3.2/pixi.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@splidejs/splide@4.1.4/dist/css/splide.min.css">
+    <style>
+        :root {
+            --bg-primary: #1e1e1e;
+            --bg-secondary: #2d2d30;
+            --bg-tertiary: #3e3e42;
+            --text-primary: #cccccc;
+            --text-secondary: #808080;
+            --text-muted: #6a9955;
+            --accent-blue: #007acc;
+            --accent-green: #4ec9b0;
+            --accent-orange: #ff8c00;
+            --accent-purple: #c586c0;
+            --border-color: #454545;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            overflow-x: hidden;
+        }
+
+        .font-mono {
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+        }
+
+        .bg-primary { background-color: var(--bg-primary); }
+        .bg-secondary { background-color: var(--bg-secondary); }
+        .bg-tertiary { background-color: var(--bg-tertiary); }
+        .text-primary { color: var(--text-primary); }
+        .text-secondary { color: var(--text-secondary); }
+        .text-muted { color: var(--text-muted); }
+        .border-color { border-color: var(--border-color); }
+
+        .accent-blue { color: var(--accent-blue); }
+        .accent-green { color: var(--accent-green); }
+        .accent-orange { color: var(--accent-orange); }
+        .accent-purple { color: var(--accent-purple); }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg-secondary);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--border-color);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--accent-blue);
+        }
+
+        /* Animation Classes */
+        .fade-in {
+            opacity: 0;
+            animation: fadeIn 0.5s ease-in-out forwards;
+        }
+
+        @keyframes fadeIn {
+            to { opacity: 1; }
+        }
+
+        .slide-in-left {
+            transform: translateX(-100%);
+            animation: slideInLeft 0.3s ease-out forwards;
+        }
+
+        @keyframes slideInLeft {
+            to { transform: translateX(0); }
+        }
+
+        .slide-in-right {
+            transform: translateX(100%);
+            animation: slideInRight 0.3s ease-out forwards;
+        }
+
+        @keyframes slideInRight {
+            to { transform: translateX(0); }
+        }
+
+        /* Hover Effects */
+        .hover-glow:hover {
+            box-shadow: 0 0 20px rgba(0, 122, 204, 0.3);
+            transition: box-shadow 0.3s ease;
+        }
+
+        .hover-lift:hover {
+            transform: translateY(-2px);
+            transition: transform 0.2s ease;
+        }
+
+        /* Code Highlighting */
+        .code-block {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 1rem;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.875rem;
+            line-height: 1.5;
+            overflow-x: auto;
+        }
+
+        /* Directory Tree Styles */
+        .tree-node {
+            cursor: pointer;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            transition: all 0.2s ease;
+        }
+
+        .tree-node:hover {
+            background-color: var(--bg-tertiary);
+        }
+
+        .tree-node.active {
+            background-color: var(--accent-blue);
+            color: white;
+        }
+
+        /* Tab Styles */
+        .tab {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-bottom: none;
+            border-radius: 8px 8px 0 0;
+            padding: 0.75rem 1rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            position: relative;
+        }
+
+        .tab:hover {
+            background: var(--bg-tertiary);
+        }
+
+        .tab.active {
+            background: var(--bg-primary);
+            color: var(--accent-green);
+        }
+
+        .tab-close {
+            margin-left: 0.5rem;
+            opacity: 0.7;
+            transition: opacity 0.2s ease;
+        }
+
+        .tab-close:hover {
+            opacity: 1;
+            color: var(--accent-orange);
+        }
+
+        /* Mini Map Styles */
+        .minimap {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 0.5rem;
+            line-height: 1.2;
+            opacity: 0.8;
+        }
+
+        .minimap-viewport {
+            position: absolute;
+            background: var(--accent-blue);
+            opacity: 0.3;
+            border-radius: 2px;
+            pointer-events: none;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .sidebar, .minimap-container {
+                display: none;
+            }
+            
+            .main-content {
+                margin-left: 0;
+                margin-right: 0;
+            }
+        }
+
+        /* Loading Animation */
+        .loading-dots::after {
+            content: '';
+            animation: dots 1.5s steps(4, end) infinite;
+        }
+
+        @keyframes dots {
+            0%, 20% { content: ''; }
+            40% { content: '.'; }
+            60% { content: '..'; }
+            80%, 100% { content: '...'; }
+        }
+
+        /* Particle Canvas */
+        #particle-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            opacity: 0.3;
+        }
+    </style>
+</head>
+<body class="bg-primary text-primary">
+    <!-- Particle Background Canvas -->
+    <canvas id="particle-canvas"></canvas>
+
+    <!-- Navigation Header -->
+    <header class="bg-secondary border-b border-color fixed top-0 left-0 right-0 z-50">
+        <div class="flex items-center justify-between px-4 py-3">
+            <!-- Logo -->
+            <div class="flex items-center space-x-3">
+                <div class="w-8 h-8 bg-accent-blue rounded-lg flex items-center justify-center">
+                    <span class="text-white font-bold text-sm">GB</span>
+                </div>
+                <h1 class="text-xl font-bold font-mono accent-green">GeekBlog</h1>
+            </div>
+
+            <!-- Search Bar -->
+            <div class="flex-1 max-w-md mx-8">
+                <div class="relative">
+                    <input 
+                        type="text" 
+                        id="search-input"
+                        placeholder="搜索文章..." 
+                        class="w-full bg-primary border border-color rounded-lg px-4 py-2 text-sm focus:outline-none focus:border-accent-blue transition-colors"
+                    >
+                    <div class="absolute right-3 top-2.5 text-secondary">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Navigation Links -->
+            <nav class="flex items-center space-x-6">
+                <a href="index.html" class="text-sm hover:text-accent-blue transition-colors font-medium">首页</a>
+                <a href="articles.html" class="text-sm hover:text-accent-blue transition-colors font-medium">文章</a>
+                <a href="about.html" class="text-sm hover:text-accent-blue transition-colors font-medium">关于</a>
+                <button id="theme-toggle" class="p-2 rounded-lg hover:bg-tertiary transition-colors">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path>
+                    </svg>
+                </button>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <div class="flex min-h-screen pt-16">
+        <!-- Left Sidebar - Directory Tree -->
+        <aside class="sidebar w-80 bg-secondary border-r border-color fixed left-0 top-16 bottom-0 overflow-y-auto">
+            <div class="p-4">
+                <div class="flex items-center justify-between mb-4">
+                    <h2 class="text-lg font-semibold font-mono accent-blue">文件浏览器</h2>
+                    <button id="collapse-all" class="text-sm text-secondary hover:text-primary transition-colors">
+                        全部折叠
+                    </button>
+                </div>
+
+                <!-- Directory Tree -->
+                <div id="directory-tree" class="space-y-1">
+                    <!-- Root Folder -->
+                    <div class="tree-item" data-type="folder" data-path="/">
+                        <div class="tree-node flex items-center space-x-2" data-expanded="true">
+                            <svg class="w-4 h-4 text-accent-orange" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M2 6a2 2 0 012-2h5l2 2h5a2 2 0 012 2v6a2 2 0 01-2 2H4a2 2 0 01-2-2V6z"></path>
+                            </svg>
+                            <span class="font-mono text-sm">blog-content</span>
+                        </div>
+                        <div class="tree-children ml-6 mt-1 space-y-1">
+                            <!-- JavaScript Articles -->
+                            <div class="tree-item" data-type="folder" data-path="/javascript">
+                                <div class="tree-node flex items-center space-x-2" data-expanded="false">
+                                    <svg class="w-4 h-4 text-accent-orange" fill="currentColor" viewBox="0 0 20 20">
+                                        <path d="M2 6a2 2 0 012-2h5l2 2h5a2 2 0 012 2v6a2 2 0 01-2 2H4a2 2 0 01-2-2V6z"></path>
+                                    </svg>
+                                    <span class="font-mono text-sm">javascript</span>
+                                </div>
+                                <div class="tree-children ml-6 mt-1 space-y-1 hidden">
+                                    <div class="tree-item" data-type="file" data-path="/javascript/es6-features.md">
+                                        <div class="tree-node flex items-center space-x-2">
+                                            <svg class="w-4 h-4 text-accent-green" fill="currentColor" viewBox="0 0 20 20">
+                                                <path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z" clip-rule="evenodd"></path>
+                                            </svg>
+                                            <span class="font-mono text-sm">ES6新特性详解.md</span>
+                                        </div>
+                                    </div>
+                                    <div class="tree-item" data-type="file" data-path="/javascript/async-programming.md">
+                                        <div class="tree-node flex items-center space-x-2">
+                                            <svg class="w-4 h-4 text-accent-green" fill="currentColor" viewBox="0 0 20 20">
+                                                <path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z" clip-rule="evenodd"></path>
+                                            </svg>
+                                            <span class="font-mono text-sm">异步编程指南.md</span>
+                                        </div>
+                                    </div>
+                                    <div class="tree-item" data-type="file" data-path="/javascript/performance-optimization.md">
+                                        <div class="tree-node flex items-center space-x-2">
+                                            <svg class="w-4 h-4 text-accent-green" fill="currentColor" viewBox="0 0 20 20">
+                                                <path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z" clip-rule="evenodd"></path>
+                                            </svg>
+                                            <span class="font-mono text-sm">性能优化技巧.md</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- React Articles -->
+                            <div class="tree-item" data-type="folder" data-path="/react">
+                                <div class="tree-node flex items-center space-x-2" data-expanded="false">
+                                    <svg class="w-4 h-4 text-accent-orange" fill="currentColor" viewBox="0 0 20 20">
+                                        <path d="M2 6a2 2 0 012-2h5l2 2h5a2 2 0 012 2v6a2 2 0 01-2 2H4a2 2 0 01-2-2V6z"></path>
+                                    </svg>
+                                    <span class="font-mono text-sm">react</span>
+                                </div>
+                                <div class="tree-children ml-6 mt-1 space-y-1 hidden">
+                                    <div class="tree-item" data-type="file" data-path="/react/hooks-deep-dive.md">
+                                        <div class="tree-node flex items-center space-x-2">
+                                            <svg class="w-4 h-4 text-accent-blue" fill="currentColor" viewBox="0 0 20 20">
+                                                <path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z" clip-rule="evenodd"></path>
+                                            </svg>
+                                            <span class="font-mono text-sm">Hooks深度解析.md</span>
+                                        </div>
+                                    </div>
+                                    <div class="tree-item" data-type="file" data-path="/react/state-management.md">
+                                        <div class="tree-node flex items-center space-x-2">
+                                            <svg class="w-4 h-4 text-accent-blue" fill="currentColor" viewBox="0 0 20 20">
+                                                <path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z" clip-rule="evenodd"></path>
+                                            </svg>
+                                            <span class="font-mono text-sm">状态管理方案.md</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Node.js Articles -->
+                            <div class="tree-item" data-type="folder" data-path="/nodejs">
+                                <div class="tree-node flex items-center space-x-2" data-expanded="false">
+                                    <svg class="w-4 h-4 text-accent-orange" fill="currentColor" viewBox="0 0 20 20">
+                                        <path d="M2 6a2 2 0 012-2h5l2 2h5a2 2 0 012 2v6a2 2 0 01-2 2H4a2 2 0 01-2-2V6z"></path>
+                                    </svg>
+                                    <span class="font-mono text-sm">nodejs</span>
+                                </div>
+                                <div class="tree-children ml-6 mt-1 space-y-1 hidden">
+                                    <div class="tree-item" data-type="file" data-path="/nodejs/express-tutorial.md">
+                                        <div class="tree-node flex items-center space-x-2">
+                                            <svg class="w-4 h-4 text-accent-green" fill="currentColor" viewBox="0 0 20 20">
+                                                <path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z" clip-rule="evenodd"></path>
+                                            </svg>
+                                            <span class="font-mono text-sm">Express框架教程.md</span>
+                                        </div>
+                                    </div>
+                                    <div class="tree-item" data-type="file" data-path="/nodejs/microservices.md">
+                                        <div class="tree-node flex items-center space-x-2">
+                                            <svg class="w-4 h-4 text-accent-green" fill="currentColor" viewBox="0 0 20 20">
+                                                <path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z" clip-rule="evenodd"></path>
+                                            </svg>
+                                            <span class="font-mono text-sm">微服务架构.md</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- DevOps Articles -->
+                            <div class="tree-item" data-type="folder" data-path="/devops">
+                                <div class="tree-node flex items-center space-x-2" data-expanded="false">
+                                    <svg class="w-4 h-4 text-accent-orange" fill="currentColor" viewBox="0 0 20 20">
+                                        <path d="M2 6a2 2 0 012-2h5l2 2h5a2 2 0 012 2v6a2 2 0 01-2 2H4a2 2 0 01-2-2V6z"></path>
+                                    </svg>
+                                    <span class="font-mono text-sm">devops</span>
+                                </div>
+                                <div class="tree-children ml-6 mt-1 space-y-1 hidden">
+                                    <div class="tree-item" data-type="file" data-path="/devops/docker-guide.md">
+                                        <div class="tree-node flex items-center space-x-2">
+                                            <svg class="w-4 h-4 text-accent-purple" fill="currentColor" viewBox="0 0 20 20">
+                                                <path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z" clip-rule="evenodd"></path>
+                                            </svg>
+                                            <span class="font-mono text-sm">Docker容器化.md</span>
+                                        </div>
+                                    </div>
+                                    <div class="tree-item" data-type="file" data-path="/devops/ci-cd-pipeline.md">
+                                        <div class="tree-node flex items-center space-x-2">
+                                            <svg class="w-4 h-4 text-accent-purple" fill="currentColor" viewBox="0 0 20 20">
+                                                <path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z" clip-rule="evenodd"></path>
+                                            </svg>
+                                            <span class="font-mono text-sm">CI/CD流水线.md</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- About Page -->
+                            <div class="tree-item" data-type="file" data-path="/about.md">
+                                <div class="tree-node flex items-center space-x-2">
+                                    <svg class="w-4 h-4 text-accent-orange" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-6-3a2 2 0 11-4 0 2 2 0 014 0zm-2 4a5 5 0 00-4.546 2.916A5.986 5.986 0 0010 16a5.986 5.986 0 004.546-2.084A5 5 0 0010 11z" clip-rule="evenodd"></path>
+                                    </svg>
+                                    <span class="font-mono text-sm">关于博主.md</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="main-content flex-1 ml-80 mr-64">
+            <!-- Tab Bar -->
+            <div class="bg-secondary border-b border-color">
+                <div id="tab-container" class="flex items-center px-4 py-2 space-x-2">
+                    <div class="tab active" data-tab="welcome">
+                        <span class="font-mono text-sm">欢迎.md</span>
+                        <span class="tab-close" data-close="welcome">×</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Content Area -->
+            <div id="content-area" class="p-6 h-screen overflow-y-auto">
+                <!-- Welcome Page -->
+                <div id="content-welcome" class="content-tab">
+                    <div class="max-w-4xl mx-auto">
+                        <!-- Hero Section -->
+                        <div class="text-center mb-12">
+                            <h1 class="text-4xl font-bold font-mono mb-4 accent-green fade-in">
+                                欢迎来到 GeekBlog
+                            </h1>
+                            <p class="text-xl text-secondary mb-8 fade-in" style="animation-delay: 0.2s;">
+                                一个专注于前端技术和软件开发的极客博客
+                            </p>
+                            <div class="bg-tertiary rounded-lg p-6 mb-8 fade-in" style="animation-delay: 0.4s;">
+                                <img src="resources/hero-code-editor.png" alt="Code Editor" class="w-full h-64 object-cover rounded-lg">
+                            </div>
+                        </div>
+
+                        <!-- Quick Stats -->
+                        <div class="grid grid-cols-3 gap-6 mb-12">
+                            <div class="bg-secondary rounded-lg p-6 text-center hover-glow fade-in" style="animation-delay: 0.6s;">
+                                <div class="text-2xl font-bold accent-blue mb-2">50+</div>
+                                <div class="text-sm text-secondary">技术文章</div>
+                            </div>
+                            <div class="bg-secondary rounded-lg p-6 text-center hover-glow fade-in" style="animation-delay: 0.8s;">
+                                <div class="text-2xl font-bold accent-green mb-2">15+</div>
+                                <div class="text-sm text-secondary">技术分类</div>
+                            </div>
+                            <div class="bg-secondary rounded-lg p-6 text-center hover-glow fade-in" style="animation-delay: 1.0s;">
+                                <div class="text-2xl font-bold accent-orange mb-2">1000+</div>
+                                <div class="text-sm text-secondary">月访问量</div>
+                            </div>
+                        </div>
+
+                        <!-- Featured Articles -->
+                        <div class="mb-12">
+                            <h2 class="text-2xl font-bold font-mono mb-6 accent-purple">精选文章</h2>
+                            <div class="grid grid-cols-2 gap-6">
+                                <div class="bg-secondary rounded-lg p-6 hover-lift cursor-pointer" onclick="openArticle('javascript-es6-features')">
+                                    <h3 class="text-lg font-semibold mb-3 accent-blue">ES6新特性详解</h3>
+                                    <p class="text-sm text-secondary mb-4">深入探索ECMAScript 6带来的革命性特性，包括箭头函数、解构赋值、Promise等现代JavaScript核心概念。</p>
+                                    <div class="flex items-center justify-between text-xs text-muted">
+                                        <span>JavaScript</span>
+                                        <span>2024-01-15</span>
+                                    </div>
+                                </div>
+                                <div class="bg-secondary rounded-lg p-6 hover-lift cursor-pointer" onclick="openArticle('react-hooks-deep-dive')">
+                                    <h3 class="text-lg font-semibold mb-3 accent-blue">React Hooks深度解析</h3>
+                                    <p class="text-sm text-secondary mb-4">全面理解React Hooks的工作原理和最佳实践，从useState到自定义Hooks的完整指南。</p>
+                                    <div class="flex items-center justify-between text-xs text-muted">
+                                        <span>React</span>
+                                        <span>2024-01-10</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Recent Updates -->
+                        <div class="bg-tertiary rounded-lg p-6">
+                            <h2 class="text-xl font-bold font-mono mb-4 accent-orange">最近更新</h2>
+                            <div class="space-y-3">
+                                <div class="flex items-center space-x-3">
+                                    <div class="w-2 h-2 bg-accent-green rounded-full"></div>
+                                    <span class="text-sm">新增 Docker 容器化实践文章</span>
+                                </div>
+                                <div class="flex items-center space-x-3">
+                                    <div class="w-2 h-2 bg-accent-blue rounded-full"></div>
+                                    <span class="text-sm">更新 React 性能优化指南</span>
+                                </div>
+                                <div class="flex items-center space-x-3">
+                                    <div class="w-2 h-2 bg-accent-purple rounded-full"></div>
+                                    <span class="text-sm">发布 Node.js 微服务架构系列</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Right Sidebar - Mini Map -->
+        <aside class="minimap-container w-64 bg-secondary border-l border-color fixed right-0 top-16 bottom-0">
+            <div class="p-4">
+                <h2 class="text-lg font-semibold font-mono accent-blue mb-4">文章导航</h2>
+                
+                <!-- Mini Map -->
+                <div id="minimap" class="minimap p-4 h-96 relative overflow-hidden mb-6">
+                    <div class="font-mono text-xs leading-tight">
+                        <div class="text-accent-green mb-2"># 欢迎来到 GeekBlog</div>
+                        <div class="mb-2">一个专注于前端技术和软件开发的极客博客</div>
+                        <div class="text-accent-blue mb-2">## 博客特色</div>
+                        <div class="mb-1">- 深度技术文章</div>
+                        <div class="mb-1">- 实战项目经验</div>
+                        <div class="mb-1">- 最新技术趋势</div>
+                        <div class="text-accent-purple mb-2">## 主要内容</div>
+                        <div class="mb-1">JavaScript 深度解析</div>
+                        <div class="mb-1">React 生态系统</div>
+                        <div class="mb-1">Node.js 后端开发</div>
+                        <div class="mb-1">DevOps 实践</div>
+                        <div class="text-accent-orange mb-2">## 技术栈</div>
+                        <div class="mb-1">前端: React, Vue, TypeScript</div>
+                        <div class="mb-1">后端: Node.js, Express</div>
+                        <div class="mb-1">工具: Docker, Kubernetes</div>
+                    </div>
+                    <div class="minimap-viewport" style="top: 0; left: 0; width: 100%; height: 20px;"></div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="space-y-3">
+                    <button class="w-full bg-tertiary hover:bg-primary border border-color rounded-lg px-4 py-2 text-sm font-mono transition-colors">
+                        返回顶部
+                    </button>
+                    <button class="w-full bg-tertiary hover:bg-primary border border-color rounded-lg px-4 py-2 text-sm font-mono transition-colors">
+                        导出PDF
+                    </button>
+                    <button class="w-full bg-tertiary hover:bg-primary border border-color rounded-lg px-4 py-2 text-sm font-mono transition-colors">
+                        分享文章
+                    </button>
+                </div>
+
+                <!-- Reading Progress -->
+                <div class="mt-6">
+                    <div class="flex items-center justify-between text-sm mb-2">
+                        <span class="text-secondary">阅读进度</span>
+                        <span class="accent-green">0%</span>
+                    </div>
+                    <div class="w-full bg-primary rounded-full h-2">
+                        <div class="bg-accent-green h-2 rounded-full" style="width: 0%"></div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-secondary border-t border-color py-6 text-center">
+        <div class="max-w-4xl mx-auto px-4">
+            <p class="text-sm text-secondary font-mono">
+                © 2024 GeekBlog. Built with passion for developers.
+            </p>
+            <div class="flex items-center justify-center space-x-4 mt-4">
+                <a href="#" class="text-secondary hover:text-accent-blue transition-colors">
+                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M10 0C4.477 0 0 4.484 0 10.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0110 4.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.203 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.942.359.31.678.921.678 1.856 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0020 10.017C20 4.484 15.522 0 10 0z" clip-rule="evenodd"></path>
+                    </svg>
+                </a>
+                <a href="#" class="text-secondary hover:text-accent-blue transition-colors">
+                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M6.29 18.251c7.547 0 11.675-6.253 11.675-11.675 0-.178 0-.355-.012-.53A8.348 8.348 0 0020 3.92a8.19 8.19 0 01-2.357.646 4.118 4.118 0 001.804-2.27 8.224 8.224 0 01-2.605.996 4.107 4.107 0 00-6.993 3.743 11.65 11.65 0 01-8.457-4.287 4.106 4.106 0 001.27 5.477A4.073 4.073 0 01.8 7.713v.052a4.105 4.105 0 003.292 4.022 4.095 4.095 0 01-1.853.07 4.108 4.108 0 003.834 2.85A8.233 8.233 0 010 16.407a11.616 11.616 0 006.29 1.84"></path>
+                    </svg>
+                </a>
+            </div>
+        </div>
+    </footer>
+
+    <script src="main.js"></script>
+</body>
+</html>

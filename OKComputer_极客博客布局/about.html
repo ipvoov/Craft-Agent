@@ -1,0 +1,772 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>关于博主 - GeekBlog</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #1e1e1e;
+            --bg-secondary: #2d2d30;
+            --bg-tertiary: #3e3e42;
+            --text-primary: #cccccc;
+            --text-secondary: #808080;
+            --text-muted: #6a9955;
+            --accent-blue: #007acc;
+            --accent-green: #4ec9b0;
+            --accent-orange: #ff8c00;
+            --accent-purple: #c586c0;
+            --border-color: #454545;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            overflow-x: hidden;
+        }
+
+        .font-mono {
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+        }
+
+        .bg-primary { background-color: var(--bg-primary); }
+        .bg-secondary { background-color: var(--bg-secondary); }
+        .bg-tertiary { background-color: var(--bg-tertiary); }
+        .text-primary { color: var(--text-primary); }
+        .text-secondary { color: var(--text-secondary); }
+        .text-muted { color: var(--text-muted); }
+        .border-color { border-color: var(--border-color); }
+
+        .accent-blue { color: var(--accent-blue); }
+        .accent-green { color: var(--accent-green); }
+        .accent-orange { color: var(--accent-orange); }
+        .accent-purple { color: var(--accent-purple); }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg-secondary);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--border-color);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--accent-blue);
+        }
+
+        /* Animation Classes */
+        .fade-in {
+            opacity: 0;
+            animation: fadeIn 0.5s ease-in-out forwards;
+        }
+
+        @keyframes fadeIn {
+            to { opacity: 1; }
+        }
+
+        /* Hover Effects */
+        .hover-glow:hover {
+            box-shadow: 0 0 20px rgba(0, 122, 204, 0.3);
+            transition: box-shadow 0.3s ease;
+        }
+
+        .hover-lift:hover {
+            transform: translateY(-4px);
+            transition: transform 0.3s ease;
+        }
+
+        /* Skill Bar */
+        .skill-bar {
+            background: var(--bg-secondary);
+            border-radius: 8px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .skill-progress {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent-blue), var(--accent-green));
+            border-radius: 8px;
+            transition: width 1s ease-out;
+            position: relative;
+        }
+
+        .skill-progress::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            animation: shimmer 2s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        /* Timeline */
+        .timeline-item {
+            position: relative;
+            padding-left: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0.5rem;
+            width: 12px;
+            height: 12px;
+            background: var(--accent-blue);
+            border-radius: 50%;
+            border: 3px solid var(--bg-primary);
+        }
+
+        .timeline-item::after {
+            content: '';
+            position: absolute;
+            left: 5px;
+            top: 1.5rem;
+            width: 2px;
+            height: calc(100% + 1rem);
+            background: var(--border-color);
+        }
+
+        .timeline-item:last-child::after {
+            display: none;
+        }
+
+        /* Particle Canvas */
+        #particle-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            opacity: 0.3;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .skills-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .timeline-item {
+                padding-left: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body class="bg-primary text-primary">
+    <!-- Particle Background Canvas -->
+    <canvas id="particle-canvas"></canvas>
+
+    <!-- Navigation Header -->
+    <header class="bg-secondary border-b border-color fixed top-0 left-0 right-0 z-50">
+        <div class="flex items-center justify-between px-4 py-3">
+            <!-- Logo -->
+            <div class="flex items-center space-x-3">
+                <div class="w-8 h-8 bg-accent-blue rounded-lg flex items-center justify-center">
+                    <span class="text-white font-bold text-sm">GB</span>
+                </div>
+                <h1 class="text-xl font-bold font-mono accent-green">GeekBlog</h1>
+            </div>
+
+            <!-- Search Bar -->
+            <div class="flex-1 max-w-md mx-8">
+                <div class="relative">
+                    <input 
+                        type="text" 
+                        id="search-input"
+                        placeholder="搜索..." 
+                        class="w-full bg-primary border border-color rounded-lg px-4 py-2 text-sm focus:outline-none focus:border-accent-blue transition-colors"
+                    >
+                    <div class="absolute right-3 top-2.5 text-secondary">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Navigation Links -->
+            <nav class="flex items-center space-x-6">
+                <a href="index.html" class="text-sm hover:text-accent-blue transition-colors font-medium">首页</a>
+                <a href="articles.html" class="text-sm hover:text-accent-blue transition-colors font-medium">文章</a>
+                <a href="about.html" class="text-sm text-accent-blue font-medium">关于</a>
+                <button id="theme-toggle" class="p-2 rounded-lg hover:bg-tertiary transition-colors">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path>
+                    </svg>
+                </button>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="pt-20 min-h-screen">
+        <div class="max-w-6xl mx-auto px-4 py-8">
+            <!-- Hero Section -->
+            <section class="text-center mb-16">
+                <div class="mb-8">
+                    <img src="resources/avatar-tech-blogger.png" alt="博主头像" class="w-32 h-32 rounded-full mx-auto mb-6 border-4 border-accent-blue hover-glow">
+                    <h1 class="text-4xl font-bold font-mono mb-4 accent-green fade-in">
+                        Alex Chen
+                    </h1>
+                    <p class="text-xl text-secondary mb-6 fade-in" style="animation-delay: 0.2s;">
+                        全栈开发工程师 | 技术博主 | 开源爱好者
+                    </p>
+                    <p class="text-lg text-secondary max-w-3xl mx-auto leading-relaxed fade-in" style="animation-delay: 0.4s;">
+                        热爱技术，专注于前端开发和软件工程领域。拥有8年开发经验，致力于分享实用的技术知识和项目经验。
+                        相信技术的力量可以改变世界，希望通过博客帮助更多开发者成长。
+                    </p>
+                </div>
+
+                <!-- Social Links -->
+                <div class="flex items-center justify-center space-x-6 fade-in" style="animation-delay: 0.6s;">
+                    <a href="#" class="text-secondary hover:text-accent-blue transition-colors">
+                        <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M10 0C4.477 0 0 4.484 0 10.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0110 4.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.203 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.942.359.31.678.921.678 1.856 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0020 10.017C20 4.484 15.522 0 10 0z" clip-rule="evenodd"></path>
+                        </svg>
+                    </a>
+                    <a href="#" class="text-secondary hover:text-accent-blue transition-colors">
+                        <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M6.29 18.251c7.547 0 11.675-6.253 11.675-11.675 0-.178 0-.355-.012-.53A8.348 8.348 0 0020 3.92a8.19 8.19 0 01-2.357.646 4.118 4.118 0 001.804-2.27 8.224 8.224 0 01-2.605.996 4.107 4.107 0 00-6.993 3.743 11.65 11.65 0 01-8.457-4.287 4.106 4.106 0 001.27 5.477A4.073 4.073 0 01.8 7.713v.052a4.105 4.105 0 003.292 4.022 4.095 4.095 0 01-1.853.07 4.108 4.108 0 003.834 2.85A8.233 8.233 0 010 16.407a11.616 11.616 0 006.29 1.84"></path>
+                        </svg>
+                    </a>
+                    <a href="#" class="text-secondary hover:text-accent-blue transition-colors">
+                        <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z" clip-rule="evenodd"></path>
+                        </svg>
+                    </a>
+                    <a href="#" class="text-secondary hover:text-accent-blue transition-colors">
+                        <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M2 5a2 2 0 012-2h8a2 2 0 012 2v10a2 2 0 002 2H4a2 2 0 01-2-2V5zm3 1h6v4H5V6zm6 6H5v2h6v-2z" clip-rule="evenodd"></path>
+                            <path d="M15 7h1a2 2 0 012 2v5.5a1.5 1.5 0 01-3 0V7z"></path>
+                        </svg>
+                    </a>
+                </div>
+            </section>
+
+            <!-- Skills Section -->
+            <section class="mb-16">
+                <h2 class="text-3xl font-bold font-mono mb-8 text-center accent-blue fade-in" style="animation-delay: 0.8s;">
+                    技术栈
+                </h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 skills-grid">
+                    <!-- Frontend Skills -->
+                    <div class="bg-secondary rounded-lg p-6 hover-glow fade-in" style="animation-delay: 1.0s;">
+                        <h3 class="text-xl font-bold mb-6 accent-green">前端技术</h3>
+                        <div class="space-y-4">
+                            <div>
+                                <div class="flex justify-between mb-2">
+                                    <span class="font-mono text-sm">JavaScript / TypeScript</span>
+                                    <span class="text-sm text-secondary">95%</span>
+                                </div>
+                                <div class="skill-bar h-2">
+                                    <div class="skill-progress" data-width="95"></div>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="flex justify-between mb-2">
+                                    <span class="font-mono text-sm">React / Vue.js</span>
+                                    <span class="text-sm text-secondary">90%</span>
+                                </div>
+                                <div class="skill-bar h-2">
+                                    <div class="skill-progress" data-width="90"></div>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="flex justify-between mb-2">
+                                    <span class="font-mono text-sm">HTML5 / CSS3</span>
+                                    <span class="text-sm text-secondary">88%</span>
+                                </div>
+                                <div class="skill-bar h-2">
+                                    <div class="skill-progress" data-width="88"></div>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="flex justify-between mb-2">
+                                    <span class="font-mono text-sm">Webpack / Vite</span>
+                                    <span class="text-sm text-secondary">85%</span>
+                                </div>
+                                <div class="skill-bar h-2">
+                                    <div class="skill-progress" data-width="85"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Backend Skills -->
+                    <div class="bg-secondary rounded-lg p-6 hover-glow fade-in" style="animation-delay: 1.2s;">
+                        <h3 class="text-xl font-bold mb-6 accent-purple">后端技术</h3>
+                        <div class="space-y-4">
+                            <div>
+                                <div class="flex justify-between mb-2">
+                                    <span class="font-mono text-sm">Node.js / Express</span>
+                                    <span class="text-sm text-secondary">92%</span>
+                                </div>
+                                <div class="skill-bar h-2">
+                                    <div class="skill-progress" data-width="92"></div>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="flex justify-between mb-2">
+                                    <span class="font-mono text-sm">Python / Django</span>
+                                    <span class="text-sm text-secondary">80%</span>
+                                </div>
+                                <div class="skill-bar h-2">
+                                    <div class="skill-progress" data-width="80"></div>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="flex justify-between mb-2">
+                                    <span class="font-mono text-sm">MongoDB / PostgreSQL</span>
+                                    <span class="text-sm text-secondary">85%</span>
+                                </div>
+                                <div class="skill-bar h-2">
+                                    <div class="skill-progress" data-width="85"></div>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="flex justify-between mb-2">
+                                    <span class="font-mono text-sm">Redis / Elasticsearch</span>
+                                    <span class="text-sm text-secondary">78%</span>
+                                </div>
+                                <div class="skill-bar h-2">
+                                    <div class="skill-progress" data-width="78"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- DevOps Skills -->
+                    <div class="bg-secondary rounded-lg p-6 hover-glow fade-in" style="animation-delay: 1.4s;">
+                        <h3 class="text-xl font-bold mb-6 accent-orange">运维技术</h3>
+                        <div class="space-y-4">
+                            <div>
+                                <div class="flex justify-between mb-2">
+                                    <span class="font-mono text-sm">Docker / Kubernetes</span>
+                                    <span class="text-sm text-secondary">87%</span>
+                                </div>
+                                <div class="skill-bar h-2">
+                                    <div class="skill-progress" data-width="87"></div>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="flex justify-between mb-2">
+                                    <span class="font-mono text-sm">AWS / GCP</span>
+                                    <span class="text-sm text-secondary">82%</span>
+                                </div>
+                                <div class="skill-bar h-2">
+                                    <div class="skill-progress" data-width="82"></div>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="flex justify-between mb-2">
+                                    <span class="font-mono text-sm">Jenkins / GitLab CI</span>
+                                    <span class="text-sm text-secondary">80%</span>
+                                </div>
+                                <div class="skill-bar h-2">
+                                    <div class="skill-progress" data-width="80"></div>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="flex justify-between mb-2">
+                                    <span class="font-mono text-sm">Nginx / Linux</span>
+                                    <span class="text-sm text-secondary">90%</span>
+                                </div>
+                                <div class="skill-bar h-2">
+                                    <div class="skill-progress" data-width="90"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Other Skills -->
+                    <div class="bg-secondary rounded-lg p-6 hover-glow fade-in" style="animation-delay: 1.6s;">
+                        <h3 class="text-xl font-bold mb-6 accent-blue">其他技能</h3>
+                        <div class="space-y-4">
+                            <div>
+                                <div class="flex justify-between mb-2">
+                                    <span class="font-mono text-sm">Git / GitHub</span>
+                                    <span class="text-sm text-secondary">95%</span>
+                                </div>
+                                <div class="skill-bar h-2">
+                                    <div class="skill-progress" data-width="95"></div>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="flex justify-between mb-2">
+                                    <span class="font-mono text-sm">Testing (Jest/Vitest)</span>
+                                    <span class="text-sm text-secondary">83%</span>
+                                </div>
+                                <div class="skill-bar h-2">
+                                    <div class="skill-progress" data-width="83"></div>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="flex justify-between mb-2">
+                                    <span class="font-mono text-sm">GraphQL / REST API</span>
+                                    <span class="text-sm text-secondary">88%</span>
+                                </div>
+                                <div class="skill-bar h-2">
+                                    <div class="skill-progress" data-width="88"></div>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="flex justify-between mb-2">
+                                    <span class="font-mono text-sm">Microservices</span>
+                                    <span class="text-sm text-secondary">85%</span>
+                                </div>
+                                <div class="skill-bar h-2">
+                                    <div class="skill-progress" data-width="85"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Experience Timeline -->
+            <section class="mb-16">
+                <h2 class="text-3xl font-bold font-mono mb-8 text-center accent-purple fade-in" style="animation-delay: 1.8s;">
+                    工作经历
+                </h2>
+                
+                <div class="max-w-4xl mx-auto">
+                    <div class="timeline-item fade-in" style="animation-delay: 2.0s;">
+                        <div class="bg-secondary rounded-lg p-6 hover-lift">
+                            <div class="flex items-center justify-between mb-3">
+                                <h3 class="text-xl font-bold accent-green">高级全栈工程师</h3>
+                                <span class="text-sm text-secondary font-mono">2022 - 现在</span>
+                            </div>
+                            <h4 class="text-lg accent-blue mb-3">某知名互联网公司</h4>
+                            <p class="text-secondary mb-4">
+                                负责公司核心产品的前端架构设计和后端服务开发。带领团队完成了微服务架构的迁移，
+                                将系统性能提升了40%。同时负责前端组件库的开发和维护，提高了团队的开发效率。
+                            </p>
+                            <div class="flex flex-wrap gap-2">
+                                <span class="px-3 py-1 bg-tertiary rounded-full text-sm">React</span>
+                                <span class="px-3 py-1 bg-tertiary rounded-full text-sm">Node.js</span>
+                                <span class="px-3 py-1 bg-tertiary rounded-full text-sm">Docker</span>
+                                <span class="px-3 py-1 bg-tertiary rounded-full text-sm">AWS</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="timeline-item fade-in" style="animation-delay: 2.2s;">
+                        <div class="bg-secondary rounded-lg p-6 hover-lift">
+                            <div class="flex items-center justify-between mb-3">
+                                <h3 class="text-xl font-bold accent-green">前端架构师</h3>
+                                <span class="text-sm text-secondary font-mono">2020 - 2022</span>
+                            </div>
+                            <h4 class="text-lg accent-blue mb-3">某电商平台</h4>
+                            <p class="text-secondary mb-4">
+                                主导了公司前端技术栈的升级，从传统的jQuery迁移到React生态。
+                                设计了完整的前端工程化体系，包括自动化测试、CI/CD流程等。
+                                团队规模从5人扩展到15人，产品质量显著提升。
+                            </p>
+                            <div class="flex flex-wrap gap-2">
+                                <span class="px-3 py-1 bg-tertiary rounded-full text-sm">React</span>
+                                <span class="px-3 py-1 bg-tertiary rounded-full text-sm">Redux</span>
+                                <span class="px-3 py-1 bg-tertiary rounded-full text-sm">Webpack</span>
+                                <span class="px-3 py-1 bg-tertiary rounded-full text-sm">Jenkins</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="timeline-item fade-in" style="animation-delay: 2.4s;">
+                        <div class="bg-secondary rounded-lg p-6 hover-lift">
+                            <div class="flex items-center justify-between mb-3">
+                                <h3 class="text-xl font-bold accent-green">高级前端工程师</h3>
+                                <span class="text-sm text-secondary font-mono">2018 - 2020</span>
+                            </div>
+                            <h4 class="text-lg accent-blue mb-3">某金融科技公司</h4>
+                            <p class="text-secondary mb-4">
+                                负责公司核心交易系统的前端开发，处理了大量实时数据展示和复杂交互。
+                                优化了系统性能，将页面加载时间减少了60%。参与了多个重要项目的架构设计。
+                            </p>
+                            <div class="flex flex-wrap gap-2">
+                                <span class="px-3 py-1 bg-tertiary rounded-full text-sm">Vue.js</span>
+                                <span class="px-3 py-1 bg-tertiary rounded-full text-sm">ECharts</span>
+                                <span class="px-3 py-1 bg-tertiary rounded-full text-sm">WebSocket</span>
+                                <span class="px-3 py-1 bg-tertiary rounded-full text-sm">D3.js</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="timeline-item fade-in" style="animation-delay: 2.6s;">
+                        <div class="bg-secondary rounded-lg p-6 hover-lift">
+                            <div class="flex items-center justify-between mb-3">
+                                <h3 class="text-xl font-bold accent-green">前端工程师</h3>
+                                <span class="text-sm text-secondary font-mono">2016 - 2018</span>
+                            </div>
+                            <h4 class="text-lg accent-blue mb-3">某创业公司</h4>
+                            <p class="text-secondary mb-4">
+                                作为公司早期员工，参与了产品从0到1的全过程。负责移动端WebApp的开发，
+                                实现了响应式设计、离线存储等核心功能。积累了丰富的全栈开发经验。
+                            </p>
+                            <div class="flex flex-wrap gap-2">
+                                <span class="px-3 py-1 bg-tertiary rounded-full text-sm">JavaScript</span>
+                                <span class="px-3 py-1 bg-tertiary rounded-full text-sm">jQuery</span>
+                                <span class="px-3 py-1 bg-tertiary rounded-full text-sm">Bootstrap</span>
+                                <span class="px-3 py-1 bg-tertiary rounded-full text-sm">PHP</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Contact Section -->
+            <section class="text-center">
+                <h2 class="text-3xl font-bold font-mono mb-8 accent-orange fade-in" style="animation-delay: 2.8s;">
+                    联系我
+                </h2>
+                
+                <div class="max-w-2xl mx-auto bg-secondary rounded-lg p-8 hover-glow fade-in" style="animation-delay: 3.0s;">
+                    <p class="text-lg text-secondary mb-6">
+                        如果你对技术有任何疑问，或者想要交流技术经验，欢迎通过以下方式联系我。
+                        我也很乐意参与技术分享和开源项目合作。
+                    </p>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-left">
+                        <div class="space-y-4">
+                            <div class="flex items-center space-x-3">
+                                <svg class="w-5 h-5 accent-blue" fill="currentColor" viewBox="0 0 20 20">
+                                    <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"></path>
+                                    <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"></path>
+                                </svg>
+                                <span class="font-mono">alex.chen@example.com</span>
+                            </div>
+                            <div class="flex items-center space-x-3">
+                                <svg class="w-5 h-5 accent-green" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M18 10c0 3.866-3.582 7-8 7a8.841 8.841 0 01-4.083-.98L2 17l1.338-3.123C2.493 12.767 2 11.434 2 10c0-3.866 3.582-7 8-7s8 3.134 8 7zM7 9H5v2h2V9zm8 0h-2v2h2V9zM9 9h2v2H9V9z" clip-rule="evenodd"></path>
+                                </svg>
+                                <span class="font-mono">微信: AlexTech2024</span>
+                            </div>
+                        </div>
+                        <div class="space-y-4">
+                            <div class="flex items-center space-x-3">
+                                <svg class="w-5 h-5 accent-purple" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                                </svg>
+                                <span class="font-mono">GitHub: @alexchen-tech</span>
+                            </div>
+                            <div class="flex items-center space-x-3">
+                                <svg class="w-5 h-5 accent-orange" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M12.586 4.586a2 2 0 112.828 2.828l-3 3a2 2 0 01-2.828 0 1 1 0 00-1.414 1.414 4 4 0 005.656 0l3-3a4 4 0 00-5.656-5.656l-1.5 1.5a1 1 0 101.414 1.414l1.5-1.5zm-5 5a2 2 0 012.828 0 1 1 0 101.414-1.414 4 4 0 00-5.656 0l-3 3a4 4 0 105.656 5.656l1.5-1.5a1 1 0 10-1.414-1.414l-1.5 1.5a2 2 0 11-2.828-2.828l3-3z" clip-rule="evenodd"></path>
+                                </svg>
+                                <span class="font-mono">博客: geekblog.example.com</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-secondary border-t border-color py-6 text-center">
+        <div class="max-w-4xl mx-auto px-4">
+            <p class="text-sm text-secondary font-mono">
+                © 2024 GeekBlog. Built with passion for developers.
+            </p>
+            <div class="flex items-center justify-center space-x-4 mt-4">
+                <a href="#" class="text-secondary hover:text-accent-blue transition-colors">
+                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M10 0C4.477 0 0 4.484 0 10.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0110 4.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.203 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.942.359.31.678.921.678 1.856 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0020 10.017C20 4.484 15.522 0 10 0z" clip-rule="evenodd"></path>
+                    </svg>
+                </a>
+                <a href="#" class="text-secondary hover:text-accent-blue transition-colors">
+                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M6.29 18.251c7.547 0 11.675-6.253 11.675-11.675 0-.178 0-.355-.012-.53A8.348 8.348 0 0020 3.92a8.19 8.19 0 01-2.357.646 4.118 4.118 0 001.804-2.27 8.224 8.224 0 01-2.605.996 4.107 4.107 0 00-6.993 3.743 11.65 11.65 0 01-8.457-4.287 4.106 4.106 0 001.27 5.477A4.073 4.073 0 01.8 7.713v.052a4.105 4.105 0 003.292 4.022 4.095 4.095 0 01-1.853.07 4.108 4.108 0 003.834 2.85A8.233 8.233 0 010 16.407a11.616 11.616 0 006.29 1.84"></path>
+                    </svg>
+                </a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Initialize particle background
+        function initParticleBackground() {
+            const canvas = document.getElementById('particle-canvas');
+            const ctx = canvas.getContext('2d');
+            
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+
+            const particles = [];
+            const particleCount = 100;
+
+            class Particle {
+                constructor() {
+                    this.x = Math.random() * canvas.width;
+                    this.y = Math.random() * canvas.height;
+                    this.vx = (Math.random() - 0.5) * 0.5;
+                    this.vy = (Math.random() - 0.5) * 0.5;
+                    this.size = Math.random() * 2 + 1;
+                    this.opacity = Math.random() * 0.5 + 0.2;
+                }
+
+                update() {
+                    this.x += this.vx;
+                    this.y += this.vy;
+
+                    if (this.x < 0 || this.x > canvas.width) this.vx *= -1;
+                    if (this.y < 0 || this.y > canvas.height) this.vy *= -1;
+                }
+
+                draw() {
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                    ctx.fillStyle = `rgba(0, 122, 204, ${this.opacity})`;
+                    ctx.fill();
+                }
+            }
+
+            // Initialize particles
+            for (let i = 0; i < particleCount; i++) {
+                particles.push(new Particle());
+            }
+
+            // Animation loop
+            const animate = () => {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                
+                particles.forEach(particle => {
+                    particle.update();
+                    particle.draw();
+                });
+
+                // Draw connections
+                particles.forEach((particle, i) => {
+                    particles.slice(i + 1).forEach(otherParticle => {
+                        const dx = particle.x - otherParticle.x;
+                        const dy = particle.y - otherParticle.y;
+                        const distance = Math.sqrt(dx * dx + dy * dy);
+
+                        if (distance < 100) {
+                            ctx.beginPath();
+                            ctx.moveTo(particle.x, particle.y);
+                            ctx.lineTo(otherParticle.x, otherParticle.y);
+                            ctx.strokeStyle = `rgba(0, 122, 204, ${0.1 * (1 - distance / 100)})`;
+                            ctx.stroke();
+                        }
+                    });
+                });
+
+                requestAnimationFrame(animate);
+            };
+
+            animate();
+
+            // Resize handler
+            window.addEventListener('resize', () => {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            });
+        }
+
+        // Animate skill bars
+        function animateSkillBars() {
+            const skillBars = document.querySelectorAll('.skill-progress');
+            
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const bar = entry.target;
+                        const width = bar.dataset.width;
+                        
+                        setTimeout(() => {
+                            bar.style.width = width + '%';
+                        }, 500);
+                    }
+                });
+            });
+
+            skillBars.forEach(bar => {
+                bar.style.width = '0%';
+                observer.observe(bar);
+            });
+        }
+
+        // Theme toggle
+        function initThemeToggle() {
+            const themeToggle = document.getElementById('theme-toggle');
+            
+            themeToggle.addEventListener('click', () => {
+                const root = document.documentElement;
+                const isDark = root.style.getPropertyValue('--bg-primary') === '#1e1e1e';
+                
+                if (isDark) {
+                    // Switch to light theme
+                    root.style.setProperty('--bg-primary', '#ffffff');
+                    root.style.setProperty('--bg-secondary', '#f8f9fa');
+                    root.style.setProperty('--bg-tertiary', '#e9ecef');
+                    root.style.setProperty('--text-primary', '#212529');
+                    root.style.setProperty('--text-secondary', '#6c757d');
+                } else {
+                    // Switch to dark theme
+                    root.style.setProperty('--bg-primary', '#1e1e1e');
+                    root.style.setProperty('--bg-secondary', '#2d2d30');
+                    root.style.setProperty('--bg-tertiary', '#3e3e42');
+                    root.style.setProperty('--text-primary', '#cccccc');
+                    root.style.setProperty('--text-secondary', '#808080');
+                }
+            });
+        }
+
+        // Initialize everything when DOM is loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            initParticleBackground();
+            animateSkillBars();
+            initThemeToggle();
+
+            // Animate timeline items on scroll
+            const timelineObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        anime({
+                            targets: entry.target,
+                            translateX: [-50, 0],
+                            opacity: [0, 1],
+                            duration: 600,
+                            easing: 'easeOutQuad'
+                        });
+                    }
+                });
+            });
+
+            document.querySelectorAll('.timeline-item').forEach(item => {
+                timelineObserver.observe(item);
+            });
+        });
+    </script>
+</body>
+</html>

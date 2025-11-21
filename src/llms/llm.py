@@ -12,7 +12,15 @@ _llm_cache: dict[LLMType, BaseChatModel] = {}
 
 
 def _get_llm_conf(llm_type: LLMType) -> Dict[str, Any]:
-    key = "BASIC_MODEL" if llm_type == "basic" else "REASONING_MODEL"
+    if llm_type == "basic":
+        key = "BASIC_MODEL"
+    elif llm_type == "reasoning":
+        key = "REASONING_MODEL"
+    elif llm_type == "coder":
+        key = "CODER_MODEL"
+    else:
+        raise ValueError(f"未知的 LLM 类型: {llm_type}")
+
     conf = Config.get(key, {})
     if not isinstance(conf, dict):
         raise ValueError(f"无效的 LLM 配置: {key}")

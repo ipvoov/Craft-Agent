@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>卷毛实验室 - 西高地小狗</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pixi.js/7.3.2/pixi.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700&family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            background: #FFFFFF;
+            color: #000000;
+        }
+        .hero-title {
+            font-family: 'Noto Serif SC', serif;
+            font-weight: 700;
+        }
+        .text-gradient {
+            background: linear-gradient(45deg, #000000, #808080, #000000);
+            background-size: 200% 200%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: gradientShift 3s ease-in-out infinite;
+        }
+        @keyframes gradientShift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+        .search-container {
+            position: relative;
+        }
+        .search-results {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border: 1px solid #ddd;
+            border-top: none;
+            border-radius: 0 0 8px 8px;
+            max-height: 300px;
+            overflow-y: auto;
+            z-index: 10;
+        }
+        .category-filter {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 24px;
+        }
+        .category-btn {
+            padding: 8px 16px;
+            border: 2px solid #ddd;
+            border-radius: 20px;
+            background: white;
+            color: #666;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .category-btn:hover {
+            border-color: #999;
+        }
+        .category-btn.active {
+            border-color: #000;
+            background: #000;
+            color: white;
+        }
+        .care-item {
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        .care-item:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+        .care-detail {
+            display: none;
+            margin-top: 16px;
+            padding: 20px;
+            background: #f9f9f9;
+            border-radius: 8px;
+            border-left: 4px solid #000;
+        }
+        .care-detail.show {
+            display: block;
+            animation: slideDown 0.3s ease;
+        }
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .particle-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            opacity: 0.2;
+        }
+        .knowledge-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 24px;
+        }
+        .knowledge-card {
+            background: white;
+            border: 1px solid #e5e5e5;
+            border-radius: 12px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+        .knowledge-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+        .knowledge-icon {
+            width: 60px;
+            height: 60px;
+            background: #000;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 16px;
+        }
+    </style>
+</head>
+<body>
+    <!-- 粒子背景 -->
+    <div id="particle-container" class="particle-bg"></div>
+
+    <!-- 导航栏 -->
+    <nav class="fixed top-0 w-full bg-white/95 backdrop-blur-sm z-50 border-b border-gray-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center">
+                    <h1 class="text-xl font-bold text-gradient">西高地小狗</h1>
+                </div>
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-8">
+                        <a href="index.html" class="text-gray-600 hover:text-black px-3 py-2 text-sm font-medium hover:border-b-2 hover:border-gray-300">首页</a>
+                        <a href="calendar.html" class="text-gray-600 hover:text-black px-3 py-2 text-sm font-medium hover:border-b-2 hover:border-gray-300">AI写真日历</a>
+                        <a href="care.html" class="text-black hover:text-gray-600 px-3 py-2 text-sm font-medium border-b-2 border-black">卷毛实验室</a>
+                        <a href="shop.html" class="text-gray-600 hover:text-black px-3 py-2 text-sm font-medium hover:border-b-2 hover:border-gray-300">周边商城</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 页面标题 -->
+    <section class="pt-24 pb-12 bg-gradient-to-br from-gray-50 to-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <h1 class="hero-title text-4xl md:text-6xl mb-6 text-gradient">卷毛实验室</h1>
+            <p class="text-xl text-gray-600 mb-8">专业的西高地小狗养护知识库，让爱犬健康快乐地成长</p>
+        </div>
+    </section>
+
+    <!-- 搜索和筛选区域 -->
+    <section class="py-12 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <!-- 搜索框 -->
+            <div class="max-w-2xl mx-auto mb-8">
+                <div class="search-container">
+                    <div class="relative">
+                        <input type="text" 
+                               id="care-search" 
+                               placeholder="搜索养护知识..." 
+                               class="w-full p-4 pr-12 text-lg border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent">
+                        <svg class="absolute right-4 top-1/2 transform -translate-y-1/2 w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                        </svg>
+                    </div>
+                    <div id="search-results" class="search-results hidden"></div>
+                </div>
+            </div>
+
+            <!-- 分类筛选 -->
+            <div class="category-filter justify-center">
+                <button class="category-btn active" data-category="all">全部</button>
+                <button class="category-btn" data-category="health">健康护理</button>
+                <button class="category-btn" data-category="beauty">美容护理</button>
+                <button class="category-btn" data-category="training">训练指导</button>
+                <button class="category-btn" data-category="diet">饮食营养</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- 知识内容区域 -->
+    <section class="py-16 bg-gray-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div id="care-results" class="knowledge-grid">
+                <!-- 知识卡片将通过JavaScript动态生成 -->
+            </div>
+        </div>
+    </section>
+
+    <!-- 专业特色 -->
+    <section class="py-20 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl font-bold mb-4 text-gradient">专业特色</h2>
+                <p class="text-gray-600 text-lg">权威专业的养护知识体系</p>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div class="text-center">
+                    <div class="knowledge-icon">
+                        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">权威认证</h3>
+                    <p class="text-gray-600">内容由专业兽医和资深犬舍主理人提供</p>
+                </div>
+                <div class="text-center">
+                    <div class="knowledge-icon">
+                        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">知识全面</h3>
+                    <p class="text-gray-600">涵盖健康、美容、训练、饮食等全方位知识</p>
+                </div>
+                <div class="text-center">
+                    <div class="knowledge-icon">
+                        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">实时更新</h3>
+                    <p class="text-gray-600">持续更新最新的养护知识和前沿技术</p>
+                </div>
+                <div class="text-center">
+                    <div class="knowledge-icon">
+                        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">爱心公益</h3>
+                    <p class="text-gray-600">部分收益捐赠流浪小狗救助，传递爱心</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 快速导航 -->
+    <section class="py-16 bg-gray-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold mb-4 text-gradient">快速导航</h2>
+                <p class="text-gray-600">快速找到您需要的养护信息</p>
+            </div>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+                <a href="#" class="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow text-center block" onclick="CareSearch.filterByCategory('health')">
+                    <div class="text-4xl mb-3">🏥</div>
+                    <h3 class="font-bold">健康护理</h3>
+                </a>
+                <a href="#" class="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow text-center block" onclick="CareSearch.filterByCategory('beauty')">
+                    <div class="text-4xl mb-3">✂️</div>
+                    <h3 class="font-bold">美容护理</h3>
+                </a>
+                <a href="#" class="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow text-center block" onclick="CareSearch.filterByCategory('training')">
+                    <div class="text-4xl mb-3">🎓</div>
+                    <h3 class="font-bold">训练指导</h3>
+                </a>
+                <a href="#" class="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow text-center block" onclick="CareSearch.filterByCategory('diet')">
+                    <div class="text-4xl mb-3">🍽️</div>
+                    <h3 class="font-bold">饮食营养</h3>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- 页脚 -->
+    <footer class="bg-black text-white py-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center">
+                <h3 class="text-2xl font-bold mb-4 text-gradient-white">西高地小狗</h3>
+                <p class="text-gray-400 mb-6">专业 · 爱心 · 品质</p>
+                <div class="border-t border-gray-800 pt-6">
+                    <p class="text-gray-500 text-sm">&copy; 2024 西高地小狗. 保留所有权利.</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // 扩展的养护知识数据库
+        const extendedCareData = [
+            {
+                title: '西高地白梗日常梳理指南',
+                category: '美容',
+                summary: '每日梳理是保持西高地白梗毛发健康的关键，学习正确的梳理技巧',
+                content: '西高地白梗的双层毛发需要每日梳理，外层粗硬、内层柔软浓密。使用针梳和排梳配合，从后躯向前躯反方向梳理，特别注意耳部、腋下和腿部的毛发容易打结。梳理时动作要轻柔，避免拉扯皮肤。每日梳理不仅能保持毛发整洁，还能促进血液循环，增进与狗狗的感情。',
+                tips: ['使用专业针梳', '动作轻柔避免拉扯', '重点梳理易打结部位', '每日坚持效果更佳']
+            },
+            {
+                title: '西高地白梗洗澡频率与方法',
+                category: '美容',
+                summary: '掌握正确的洗澡频率和方法，避免皮肤问题，保持毛发光泽',
+                content: '西高地白梗不宜过于频繁洗澡，建议每2-3个月一次。洗澡前要先梳理毛发，去除死毛和污垢。水温控制在35-38度，使用专业的犬用沐浴露，避免人类洗浴用品。洗澡时要彻底冲洗干净，特别是颈部、腋下等容易残留沐浴露的部位。洗完后要立即用吹风机吹干，避免感冒和皮肤问题。',
+                tips: ['控制洗澡频率', '使用专业犬用沐浴露', '水温35-38度', '彻底吹干避免感冒']
+            },
+            {
+                title: '西高地白梗饮食营养搭配',
+                category: '饮食',
+                summary: '科学的饮食搭配是西高地白梗健康成长的基础',
+                content: '西高地白梗需要高质量的蛋白质、适量脂肪和碳水化合物。选择优质狗粮，避免含有牛肉、玉米、小麦等常见过敏原的食物。可以适量添加新鲜肉类、蔬菜和水果作为补充。成年犬每日喂食2次，幼犬3-4次。保持充足饮水，避免喂食人类食物，特别是巧克力、洋葱等对狗狗有害的食物。',
+                tips: ['选择优质狗粮', '避免常见过敏原', '定时定量喂食', '保持充足饮水']
+            },
+            {
+                title: '西高地白梗常见疾病预防',
+                category: '健康',
+                summary: '了解西高地白梗的常见疾病，做好预防工作',
+                content: '西高地白梗常见的遗传疾病包括白内障、髋关节发育不良、皮肤过敏等。定期进行体检，按时接种疫苗，做好驱虫工作。注意观察狗狗的行为变化，如食欲、精神状态、排便情况等。保持居住环境清洁，避免接触有毒植物和化学物质。发现异常及时就医，不要自行用药。',
+                tips: ['定期体检', '按时接种疫苗', '观察行为变化', '及时就医']
+            },
+            {
+                title: '西高地白梗基础训练技巧',
+                category: '训练',
+                summary: '从小开始训练，培养良好的行为习惯',
+                content: '西高地白梗聪明但独立，训练需要耐心和一致性。从小开始社交训练，让它接触不同的人和环境。使用正面强化方法，奖励好的行为，避免体罚。训练时间不宜过长，每次5-10分钟，保持训练的趣味性。重点训练基本指令如坐下、等待、过来等，同时纠正不良行为如乱叫、咬东西等。',
+                tips: ['从小开始训练', '使用正面强化', '保持训练趣味性', '训练时间适中']
+            },
+            {
+                title: '西高地白梗耳部护理方法',
+                category: '美容',
+                summary: '定期耳部护理，预防耳部感染和疾病',
+                content: '西高地白梗的耳朵需要定期检查和清洁。每周检查一次耳朵，观察是否有异味、红肿或分泌物。使用专业的犬用耳部清洁液，轻轻擦拭外耳道，不要将棉签深入耳道。定期拔除耳毛，保持耳道通风。如果发现狗狗频繁摇头、抓耳朵等异常行为，可能是耳部感染，需要及时就医。',
+                tips: ['定期检查耳朵', '使用专业清洁液', '定期拔除耳毛', '发现异常及时就医']
+            },
+            {
+                title: '西高地白梗牙齿护理指南',
+                category: '健康',
+                summary: '口腔健康影响整体健康，重视牙齿护理',
+                content: '西高地白梗容易出现牙结石和牙龈问题，需要定期牙齿护理。每周刷牙2-3次，使用犬用牙膏和软毛牙刷。可以提供洁齿玩具和洁齿零食，帮助清洁牙齿。定期检查口腔，观察是否有牙结石、牙龈红肿等问题。每年进行一次专业洗牙，保持口腔健康。避免喂食过硬的食物，保护牙齿。',
+                tips: ['定期刷牙', '使用犬用牙膏', '提供洁齿玩具', '定期检查口腔']
+            },
+            {
+                title: '西高地白梗运动需求与安排',
+                category: '健康',
+                summary: '合理安排运动，保持身体健康和心理愉悦',
+                content: '西高地白梗虽然是小型犬，但需要充足的运动。每日至少需要30-60分钟的运动时间，包括散步、玩耍等。运动强度要适中，避免剧烈运动对关节造成损伤。可以选择清晨或傍晚运动，避免高温时段。运动时要牵好牵引绳，防止追逐小动物。室内也可以进行适当的游戏和训练，满足运动需求。',
+                tips: ['每日30-60分钟运动', '避免剧烈运动', '选择合适时间', '使用牵引绳']
+            },
+            {
+                title: '西高地白梗皮肤问题护理',
+                category: '健康',
+                summary: '西高地白梗容易出现皮肤问题，需要特别护理',
+                content: '西高地白梗的皮肤比较敏感，容易出现过敏、皮炎等问题。保持皮肤清洁干燥，避免频繁洗澡。选择温和的洗浴用品，避免刺激性强的产品。注意饮食，避免可能引起过敏的食物。定期检查皮肤，观察是否有红肿、瘙痒、脱毛等异常。保持居住环境清洁，定期更换床上用品。出现皮肤问题及时就医。',
+                tips: ['保持皮肤清洁', '选择温和用品', '注意饮食过敏', '定期检查皮肤']
+            },
+            {
+                title: '西高地白梗社交训练要点',
+                category: '训练',
+                summary: '培养良好的社交能力，让狗狗更好地融入家庭和社会',
+                content: '西高地白梗需要从小进行社交训练，接触不同的人和动物。逐步引导狗狗接触新环境，避免过于激烈刺激。教会狗狗基本的社交礼仪，如不扑人、不乱叫等。鼓励与其他友好的狗狗互动，培养社交技能。在公共场所要控制好狗狗，尊重他人。社交训练要循序渐进，给予狗狗足够的时间和耐心。',
+                tips: ['从小开始社交', '循序渐进引导', '教会社交礼仪', '控制公共场所行为']
+            }
+        ];
+
+        // 初始化养护搜索系统
+        document.addEventListener('DOMContentLoaded', function() {
+            initParticleBackground();
+            initCareSystem();
+            initCategoryFilter();
+        });
+
+        function initParticleBackground() {
+            const container = document.getElementById('particle-container');
+            if (!container) return;
+
+            const app = new PIXI.Application({
+                width: window.innerWidth,
+                height: window.innerHeight,
+                backgroundColor: 0xFFFFFF,
+                transparent: true
+            });
+            
+            container.appendChild(app.view);
+
+            const particles = [];
+            const particleCount = 30;
+
+            for (let i = 0; i < particleCount; i++) {
+                const particle = new PIXI.Graphics();
+                particle.beginFill(0x000000, 0.05);
+                particle.drawCircle(0, 0, Math.random() * 4 + 2);
+                particle.endFill();
+                
+                particle.x = Math.random() * app.screen.width;
+                particle.y = Math.random() * app.screen.height;
+                particle.vx = (Math.random() - 0.5) * 0.3;
+                particle.vy = (Math.random() - 0.5) * 0.3;
+                
+                app.stage.addChild(particle);
+                particles.push(particle);
+            }
+
+            app.ticker.add(() => {
+                particles.forEach(particle => {
+                    particle.x += particle.vx;
+                    particle.y += particle.vy;
+                    
+                    if (particle.x < 0) particle.x = app.screen.width;
+                    if (particle.x > app.screen.width) particle.x = 0;
+                    if (particle.y < 0) particle.y = app.screen.height;
+                    if (particle.y > app.screen.height) particle.y = 0;
+                });
+            });
+
+            window.addEventListener('resize', () => {
+                app.renderer.resize(window.innerWidth, window.innerHeight);
+            });
+        }
+
+        function initCareSystem() {
+            displayCareResults(extendedCareData);
+            setupSearch();
+        }
+
+        function setupSearch() {
+            const searchInput = document.getElementById('care-search');
+            if (searchInput) {
+                searchInput.addEventListener('input', function(e) {
+                    const query = e.target.value.toLowerCase();
+                    const filtered = extendedCareData.filter(item => 
+                        item.title.toLowerCase().includes(query) || 
+                        item.summary.toLowerCase().includes(query) ||
+                        item.content.toLowerCase().includes(query)
+                    );
+                    displayCareResults(filtered);
+                });
+            }
+        }
+
+        function initCategoryFilter() {
+            const categoryBtns = document.querySelectorAll('.category-btn');
+            
+            categoryBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    // 移除所有active状态
+                    categoryBtns.forEach(b => b.classList.remove('active'));
+                    // 添加当前active状态
+                    this.classList.add('active');
+                    
+                    const category = this.dataset.category;
+                    filterByCategory(category);
+                });
+            });
+        }
+
+        function filterByCategory(category) {
+            if (category === 'all') {
+                displayCareResults(extendedCareData);
+            } else {
+                const categoryMap = {
+                    'health': '健康',
+                    'beauty': '美容',
+                    'training': '训练',
+                    'diet': '饮食'
+                };
+                const filtered = extendedCareData.filter(item => 
+                    item.category === categoryMap[category]
+                );
+                displayCareResults(filtered);
+            }
+        }
+
+        function displayCareResults(results) {
+            const container = document.getElementById('care-results');
+            if (!container) return;
+
+            container.innerHTML = results.map((item, index) => `
+                <div class="knowledge-card care-item" onclick="toggleCareDetail(${index})">
+                    <div class="p-6">
+                        <div class="flex justify-between items-start mb-4">
+                            <span class="bg-gray-100 text-gray-600 px-3 py-1 rounded-full text-sm">${item.category}</span>
+                            <svg class="w-5 h-5 text-gray-400 transform transition-transform" id="arrow-${index}">
+                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                            </svg>
+                        </div>
+                        <h3 class="text-xl font-bold mb-3 text-gray-900">${item.title}</h3>
+                        <p class="text-gray-600 mb-4">${item.summary}</p>
+                        <div class="flex items-center text-black font-medium">
+                            阅读全文 
+                            <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="care-detail" id="detail-${index}">
+                        <div class="mb-4">
+                            <h4 class="font-bold mb-2">详细内容：</h4>
+                            <p class="text-gray-700 leading-relaxed">${item.content}</p>
+                        </div>
+                        <div>
+                            <h4 class="font-bold mb-2">养护要点：</h4>
+                            <ul class="list-disc list-inside text-gray-700 space-y-1">
+                                ${item.tips.map(tip => `<li>${tip}</li>`).join('')}
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+
+            // 添加动画效果
+            anime({
+                targets: '.knowledge-card',
+                translateY: [50, 0],
+                opacity: [0, 1],
+                duration: 600,
+                delay: anime.stagger(100),
+                easing: 'easeOutQuad'
+            });
+        }
+
+        function toggleCareDetail(index) {
+            const detail = document.getElementById(`detail-${index}`);
+            const arrow = document.getElementById(`arrow-${index}`);
+            
+            if (detail.classList.contains('show')) {
+                detail.classList.remove('show');
+                arrow.style.transform = 'rotate(0deg)';
+            } else {
+                // 关闭其他展开的内容
+                document.querySelectorAll('.care-detail').forEach(d => d.classList.remove('show'));
+                document.querySelectorAll('[id^="arrow-"]').forEach(a => a.style.transform = 'rotate(0deg)');
+                
+                detail.classList.add('show');
+                arrow.style.transform = 'rotate(180deg)';
+            }
+        }
+    </script>
+    <script src="main.js"></script>
+</body>
+</html>

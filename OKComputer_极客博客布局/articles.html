@@ -1,0 +1,789 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>文章列表 - GeekBlog</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #1e1e1e;
+            --bg-secondary: #2d2d30;
+            --bg-tertiary: #3e3e42;
+            --text-primary: #cccccc;
+            --text-secondary: #808080;
+            --text-muted: #6a9955;
+            --accent-blue: #007acc;
+            --accent-green: #4ec9b0;
+            --accent-orange: #ff8c00;
+            --accent-purple: #c586c0;
+            --border-color: #454545;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            overflow-x: hidden;
+        }
+
+        .font-mono {
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+        }
+
+        .bg-primary { background-color: var(--bg-primary); }
+        .bg-secondary { background-color: var(--bg-secondary); }
+        .bg-tertiary { background-color: var(--bg-tertiary); }
+        .text-primary { color: var(--text-primary); }
+        .text-secondary { color: var(--text-secondary); }
+        .text-muted { color: var(--text-muted); }
+        .border-color { border-color: var(--border-color); }
+
+        .accent-blue { color: var(--accent-blue); }
+        .accent-green { color: var(--accent-green); }
+        .accent-orange { color: var(--accent-orange); }
+        .accent-purple { color: var(--accent-purple); }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg-secondary);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--border-color);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--accent-blue);
+        }
+
+        /* Animation Classes */
+        .fade-in {
+            opacity: 0;
+            animation: fadeIn 0.5s ease-in-out forwards;
+        }
+
+        @keyframes fadeIn {
+            to { opacity: 1; }
+        }
+
+        /* Hover Effects */
+        .hover-glow:hover {
+            box-shadow: 0 0 20px rgba(0, 122, 204, 0.3);
+            transition: box-shadow 0.3s ease;
+        }
+
+        .hover-lift:hover {
+            transform: translateY(-4px);
+            transition: transform 0.3s ease;
+        }
+
+        /* Article Card Styles */
+        .article-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .article-card:hover {
+            border-color: var(--accent-blue);
+            box-shadow: 0 8px 32px rgba(0, 122, 204, 0.1);
+        }
+
+        .article-tag {
+            background: var(--bg-tertiary);
+            color: var(--accent-blue);
+            padding: 0.25rem 0.75rem;
+            border-radius: 1rem;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .filter-tag {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            padding: 0.5rem 1rem;
+            border-radius: 1.5rem;
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .filter-tag:hover {
+            background: var(--bg-tertiary);
+            border-color: var(--accent-blue);
+        }
+
+        .filter-tag.active {
+            background: var(--accent-blue);
+            color: white;
+            border-color: var(--accent-blue);
+        }
+
+        /* Loading Animation */
+        .loading-dots::after {
+            content: '';
+            animation: dots 1.5s steps(4, end) infinite;
+        }
+
+        @keyframes dots {
+            0%, 20% { content: ''; }
+            40% { content: '.'; }
+            60% { content: '..'; }
+            80%, 100% { content: '...'; }
+        }
+
+        /* Particle Canvas */
+        #particle-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            opacity: 0.3;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .articles-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .filters-container {
+                flex-direction: column;
+                align-items: stretch;
+            }
+        }
+    </style>
+</head>
+<body class="bg-primary text-primary">
+    <!-- Particle Background Canvas -->
+    <canvas id="particle-canvas"></canvas>
+
+    <!-- Navigation Header -->
+    <header class="bg-secondary border-b border-color fixed top-0 left-0 right-0 z-50">
+        <div class="flex items-center justify-between px-4 py-3">
+            <!-- Logo -->
+            <div class="flex items-center space-x-3">
+                <div class="w-8 h-8 bg-accent-blue rounded-lg flex items-center justify-center">
+                    <span class="text-white font-bold text-sm">GB</span>
+                </div>
+                <h1 class="text-xl font-bold font-mono accent-green">GeekBlog</h1>
+            </div>
+
+            <!-- Search Bar -->
+            <div class="flex-1 max-w-md mx-8">
+                <div class="relative">
+                    <input 
+                        type="text" 
+                        id="search-input"
+                        placeholder="搜索文章..." 
+                        class="w-full bg-primary border border-color rounded-lg px-4 py-2 text-sm focus:outline-none focus:border-accent-blue transition-colors"
+                    >
+                    <div class="absolute right-3 top-2.5 text-secondary">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Navigation Links -->
+            <nav class="flex items-center space-x-6">
+                <a href="index.html" class="text-sm hover:text-accent-blue transition-colors font-medium">首页</a>
+                <a href="articles.html" class="text-sm text-accent-blue font-medium">文章</a>
+                <a href="about.html" class="text-sm hover:text-accent-blue transition-colors font-medium">关于</a>
+                <button id="theme-toggle" class="p-2 rounded-lg hover:bg-tertiary transition-colors">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path>
+                    </svg>
+                </button>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="pt-20 min-h-screen">
+        <div class="max-w-7xl mx-auto px-4 py-8">
+            <!-- Page Header -->
+            <div class="text-center mb-12">
+                <h1 class="text-4xl font-bold font-mono mb-4 accent-green fade-in">
+                    技术文章
+                </h1>
+                <p class="text-xl text-secondary mb-8 fade-in" style="animation-delay: 0.2s;">
+                    探索前端开发、后端技术和软件工程的深度内容
+                </p>
+            </div>
+
+            <!-- Statistics Section -->
+            <div class="grid grid-cols-4 gap-6 mb-12">
+                <div class="bg-secondary rounded-lg p-6 text-center hover-glow fade-in" style="animation-delay: 0.4s;">
+                    <div class="text-2xl font-bold accent-blue mb-2">50+</div>
+                    <div class="text-sm text-secondary">总文章数</div>
+                </div>
+                <div class="bg-secondary rounded-lg p-6 text-center hover-glow fade-in" style="animation-delay: 0.6s;">
+                    <div class="text-2xl font-bold accent-green mb-2">15+</div>
+                    <div class="text-sm text-secondary">技术分类</div>
+                </div>
+                <div class="bg-secondary rounded-lg p-6 text-center hover-glow fade-in" style="animation-delay: 0.8s;">
+                    <div class="text-2xl font-bold accent-orange mb-2">120k+</div>
+                    <div class="text-sm text-secondary">总阅读量</div>
+                </div>
+                <div class="bg-secondary rounded-lg p-6 text-center hover-glow fade-in" style="animation-delay: 1.0s;">
+                    <div class="text-2xl font-bold accent-purple mb-2">4.8</div>
+                    <div class="text-sm text-secondary">平均评分</div>
+                </div>
+            </div>
+
+            <!-- Filter Tags -->
+            <div class="mb-8">
+                <div class="flex flex-wrap gap-3 justify-center filters-container">
+                    <button class="filter-tag active" data-filter="all">全部</button>
+                    <button class="filter-tag" data-filter="javascript">JavaScript</button>
+                    <button class="filter-tag" data-filter="react">React</button>
+                    <button class="filter-tag" data-filter="nodejs">Node.js</button>
+                    <button class="filter-tag" data-filter="devops">DevOps</button>
+                    <button class="filter-tag" data-filter="typescript">TypeScript</button>
+                    <button class="filter-tag" data-filter="vue">Vue.js</button>
+                    <button class="filter-tag" data-filter="python">Python</button>
+                    <button class="filter-tag" data-filter="docker">Docker</button>
+                </div>
+            </div>
+
+            <!-- Articles Grid -->
+            <div id="articles-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 articles-grid">
+                <!-- Article Card 1 -->
+                <article class="article-card hover-lift cursor-pointer fade-in" data-category="javascript" style="animation-delay: 0.2s;">
+                    <div class="p-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <span class="article-tag">JavaScript</span>
+                            <span class="text-xs text-secondary">2024-01-15</span>
+                        </div>
+                        <h2 class="text-xl font-bold mb-3 accent-blue hover:text-accent-green transition-colors">
+                            ES6新特性详解
+                        </h2>
+                        <p class="text-secondary text-sm mb-4 leading-relaxed">
+                            深入探索ECMAScript 6带来的革命性特性，包括箭头函数、解构赋值、Promise等现代JavaScript核心概念。适合有一定基础的开发者进阶学习。
+                        </p>
+                        <div class="flex items-center justify-between text-xs text-muted">
+                            <span>阅读时间: 15分钟</span>
+                            <span>👁 1,234 阅读</span>
+                        </div>
+                        <div class="flex flex-wrap gap-2 mt-4">
+                            <span class="px-2 py-1 bg-tertiary rounded text-xs">ES6</span>
+                            <span class="px-2 py-1 bg-tertiary rounded text-xs">JavaScript</span>
+                            <span class="px-2 py-1 bg-tertiary rounded text-xs">前端</span>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- Article Card 2 -->
+                <article class="article-card hover-lift cursor-pointer fade-in" data-category="react" style="animation-delay: 0.4s;">
+                    <div class="p-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <span class="article-tag">React</span>
+                            <span class="text-xs text-secondary">2024-01-10</span>
+                        </div>
+                        <h2 class="text-xl font-bold mb-3 accent-blue hover:text-accent-green transition-colors">
+                            React Hooks深度解析
+                        </h2>
+                        <p class="text-secondary text-sm mb-4 leading-relaxed">
+                            全面理解React Hooks的工作原理和最佳实践，从useState到自定义Hooks的完整指南。包含性能优化和常见陷阱分析。
+                        </p>
+                        <div class="flex items-center justify-between text-xs text-muted">
+                            <span>阅读时间: 20分钟</span>
+                            <span>👁 2,156 阅读</span>
+                        </div>
+                        <div class="flex flex-wrap gap-2 mt-4">
+                            <span class="px-2 py-1 bg-tertiary rounded text-xs">React</span>
+                            <span class="px-2 py-1 bg-tertiary rounded text-xs">Hooks</span>
+                            <span class="px-2 py-1 bg-tertiary rounded text-xs">前端</span>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- Article Card 3 -->
+                <article class="article-card hover-lift cursor-pointer fade-in" data-category="nodejs" style="animation-delay: 0.6s;">
+                    <div class="p-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <span class="article-tag">Node.js</span>
+                            <span class="text-xs text-secondary">2024-01-08</span>
+                        </div>
+                        <h2 class="text-xl font-bold mb-3 accent-blue hover:text-accent-green transition-colors">
+                            Express框架最佳实践
+                        </h2>
+                        <p class="text-secondary text-sm mb-4 leading-relaxed">
+                            从零开始学习Express框架，掌握中间件、路由设计、错误处理等核心概念。包含完整的项目实战案例。
+                        </p>
+                        <div class="flex items-center justify-between text-xs text-muted">
+                            <span>阅读时间: 25分钟</span>
+                            <span>👁 987 阅读</span>
+                        </div>
+                        <div class="flex flex-wrap gap-2 mt-4">
+                            <span class="px-2 py-1 bg-tertiary rounded text-xs">Node.js</span>
+                            <span class="px-2 py-1 bg-tertiary rounded text-xs">Express</span>
+                            <span class="px-2 py-1 bg-tertiary rounded text-xs">后端</span>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- Article Card 4 -->
+                <article class="article-card hover-lift cursor-pointer fade-in" data-category="devops" style="animation-delay: 0.8s;">
+                    <div class="p-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <span class="article-tag">DevOps</span>
+                            <span class="text-xs text-secondary">2024-01-05</span>
+                        </div>
+                        <h2 class="text-xl font-bold mb-3 accent-blue hover:text-accent-green transition-colors">
+                            Docker容器化实践
+                        </h2>
+                        <p class="text-secondary text-sm mb-4 leading-relaxed">
+                            学习Docker的核心概念和最佳实践，从镜像构建到容器编排的完整流程。包含实际项目部署案例。
+                        </p>
+                        <div class="flex items-center justify-between text-xs text-muted">
+                            <span>阅读时间: 30分钟</span>
+                            <span>👁 1,876 阅读</span>
+                        </div>
+                        <div class="flex flex-wrap gap-2 mt-4">
+                            <span class="px-2 py-1 bg-tertiary rounded text-xs">Docker</span>
+                            <span class="px-2 py-1 bg-tertiary rounded text-xs">DevOps</span>
+                            <span class="px-2 py-1 bg-tertiary rounded text-xs">部署</span>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- Article Card 5 -->
+                <article class="article-card hover-lift cursor-pointer fade-in" data-category="javascript" style="animation-delay: 1.0s;">
+                    <div class="p-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <span class="article-tag">JavaScript</span>
+                            <span class="text-xs text-secondary">2024-01-03</span>
+                        </div>
+                        <h2 class="text-xl font-bold mb-3 accent-blue hover:text-accent-green transition-colors">
+                            异步编程完全指南
+                        </h2>
+                        <p class="text-secondary text-sm mb-4 leading-relaxed">
+                            深入理解JavaScript的异步编程模型，从回调函数到async/await的演进历程。包含大量实例代码和最佳实践。
+                        </p>
+                        <div class="flex items-center justify-between text-xs text-muted">
+                            <span>阅读时间: 18分钟</span>
+                            <span>👁 2,543 阅读</span>
+                        </div>
+                        <div class="flex flex-wrap gap-2 mt-4">
+                            <span class="px-2 py-1 bg-tertiary rounded text-xs">异步</span>
+                            <span class="px-2 py-1 bg-tertiary rounded text-xs">Promise</span>
+                            <span class="px-2 py-1 bg-tertiary rounded text-xs">async</span>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- Article Card 6 -->
+                <article class="article-card hover-lift cursor-pointer fade-in" data-category="react" style="animation-delay: 1.2s;">
+                    <div class="p-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <span class="article-tag">React</span>
+                            <span class="text-xs text-secondary">2024-01-01</span>
+                        </div>
+                        <h2 class="text-xl font-bold mb-3 accent-blue hover:text-accent-green transition-colors">
+                            状态管理方案对比
+                        </h2>
+                        <p class="text-secondary text-sm mb-4 leading-relaxed">
+                            对比Redux、Zustand、Jotai等主流React状态管理库，分析各自的优缺点和适用场景。帮助你选择最适合的方案。
+                        </p>
+                        <div class="flex items-center justify-between text-xs text-muted">
+                            <span>阅读时间: 22分钟</span>
+                            <span>👁 1,654 阅读</span>
+                        </div>
+                        <div class="flex flex-wrap gap-2 mt-4">
+                            <span class="px-2 py-1 bg-tertiary rounded text-xs">Redux</span>
+                            <span class="px-2 py-1 bg-tertiary rounded text-xs">状态管理</span>
+                            <span class="px-2 py-1 bg-tertiary rounded text-xs">React</span>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- Article Card 7 -->
+                <article class="article-card hover-lift cursor-pointer fade-in" data-category="nodejs" style="animation-delay: 1.4s;">
+                    <div class="p-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <span class="article-tag">Node.js</span>
+                            <span class="text-xs text-secondary">2023-12-28</span>
+                        </div>
+                        <h2 class="text-xl font-bold mb-3 accent-blue hover:text-accent-green transition-colors">
+                            微服务架构设计
+                        </h2>
+                        <p class="text-secondary text-sm mb-4 leading-relaxed">
+                            基于Node.js构建微服务架构的完整指南，包括服务拆分、通信协议、监控运维等关键环节的设计思路。
+                        </p>
+                        <div class="flex items-center justify-between text-xs text-muted">
+                            <span>阅读时间: 35分钟</span>
+                            <span>👁 3,210 阅读</span>
+                        </div>
+                        <div class="flex flex-wrap gap-2 mt-4">
+                            <span class="px-2 py-1 bg-tertiary rounded text-xs">微服务</span>
+                            <span class="px-2 py-1 bg-tertiary rounded text-xs">架构</span>
+                            <span class="px-2 py-1 bg-tertiary rounded text-xs">Node.js</span>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- Article Card 8 -->
+                <article class="article-card hover-lift cursor-pointer fade-in" data-category="devops" style="animation-delay: 1.6s;">
+                    <div class="p-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <span class="article-tag">DevOps</span>
+                            <span class="text-xs text-secondary">2023-12-25</span>
+                        </div>
+                        <h2 class="text-xl font-bold mb-3 accent-blue hover:text-accent-green transition-colors">
+                            CI/CD流水线搭建
+                        </h2>
+                        <p class="text-secondary text-sm mb-4 leading-relaxed">
+                            使用GitLab CI、Jenkins等工具搭建完整的CI/CD流水线，实现自动化测试、构建和部署。提升团队开发效率。
+                        </p>
+                        <div class="flex items-center justify-between text-xs text-muted">
+                            <span>阅读时间: 28分钟</span>
+                            <span>👁 2,876 阅读</span>
+                        </div>
+                        <div class="flex flex-wrap gap-2 mt-4">
+                            <span class="px-2 py-1 bg-tertiary rounded text-xs">CI/CD</span>
+                            <span class="px-2 py-1 bg-tertiary rounded text-xs">自动化</span>
+                            <span class="px-2 py-1 bg-tertiary rounded text-xs">DevOps</span>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- Article Card 9 -->
+                <article class="article-card hover-lift cursor-pointer fade-in" data-category="javascript" style="animation-delay: 1.8s;">
+                    <div class="p-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <span class="article-tag">JavaScript</span>
+                            <span class="text-xs text-secondary">2023-12-22</span>
+                        </div>
+                        <h2 class="text-xl font-bold mb-3 accent-blue hover:text-accent-green transition-colors">
+                            性能优化实战技巧
+                        </h2>
+                        <p class="text-secondary text-sm mb-4 leading-relaxed">
+                            JavaScript性能优化的实用技巧和最佳实践，包括内存管理、DOM操作优化、事件委托等性能提升方法。
+                        </p>
+                        <div class="flex items-center justify-between text-xs text-muted">
+                            <span>阅读时间: 16分钟</span>
+                            <span>👁 4,123 阅读</span>
+                        </div>
+                        <div class="flex flex-wrap gap-2 mt-4">
+                            <span class="px-2 py-1 bg-tertiary rounded text-xs">性能优化</span>
+                            <span class="px-2 py-1 bg-tertiary rounded text-xs">JavaScript</span>
+                            <span class="px-2 py-1 bg-tertiary rounded text-xs">最佳实践</span>
+                        </div>
+                    </div>
+                </article>
+            </div>
+
+            <!-- Load More Button -->
+            <div class="text-center mt-12">
+                <button id="load-more" class="bg-accent-blue hover:bg-blue-600 text-white px-8 py-3 rounded-lg font-mono transition-colors">
+                    加载更多文章
+                </button>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-secondary border-t border-color py-6 text-center">
+        <div class="max-w-4xl mx-auto px-4">
+            <p class="text-sm text-secondary font-mono">
+                © 2024 GeekBlog. Built with passion for developers.
+            </p>
+            <div class="flex items-center justify-center space-x-4 mt-4">
+                <a href="#" class="text-secondary hover:text-accent-blue transition-colors">
+                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M10 0C4.477 0 0 4.484 0 10.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0110 4.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.203 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.942.359.31.678.921.678 1.856 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0020 10.017C20 4.484 15.522 0 10 0z" clip-rule="evenodd"></path>
+                    </svg>
+                </a>
+                <a href="#" class="text-secondary hover:text-accent-blue transition-colors">
+                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M6.29 18.251c7.547 0 11.675-6.253 11.675-11.675 0-.178 0-.355-.012-.53A8.348 8.348 0 0020 3.92a8.19 8.19 0 01-2.357.646 4.118 4.118 0 001.804-2.27 8.224 8.224 0 01-2.605.996 4.107 4.107 0 00-6.993 3.743 11.65 11.65 0 01-8.457-4.287 4.106 4.106 0 001.27 5.477A4.073 4.073 0 01.8 7.713v.052a4.105 4.105 0 003.292 4.022 4.095 4.095 0 01-1.853.07 4.108 4.108 0 003.834 2.85A8.233 8.233 0 010 16.407a11.616 11.616 0 006.29 1.84"></path>
+                    </svg>
+                </a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Initialize particle background
+        function initParticleBackground() {
+            const canvas = document.getElementById('particle-canvas');
+            const ctx = canvas.getContext('2d');
+            
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+
+            const particles = [];
+            const particleCount = 100;
+
+            class Particle {
+                constructor() {
+                    this.x = Math.random() * canvas.width;
+                    this.y = Math.random() * canvas.height;
+                    this.vx = (Math.random() - 0.5) * 0.5;
+                    this.vy = (Math.random() - 0.5) * 0.5;
+                    this.size = Math.random() * 2 + 1;
+                    this.opacity = Math.random() * 0.5 + 0.2;
+                }
+
+                update() {
+                    this.x += this.vx;
+                    this.y += this.vy;
+
+                    if (this.x < 0 || this.x > canvas.width) this.vx *= -1;
+                    if (this.y < 0 || this.y > canvas.height) this.vy *= -1;
+                }
+
+                draw() {
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                    ctx.fillStyle = `rgba(0, 122, 204, ${this.opacity})`;
+                    ctx.fill();
+                }
+            }
+
+            // Initialize particles
+            for (let i = 0; i < particleCount; i++) {
+                particles.push(new Particle());
+            }
+
+            // Animation loop
+            const animate = () => {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                
+                particles.forEach(particle => {
+                    particle.update();
+                    particle.draw();
+                });
+
+                // Draw connections
+                particles.forEach((particle, i) => {
+                    particles.slice(i + 1).forEach(otherParticle => {
+                        const dx = particle.x - otherParticle.x;
+                        const dy = particle.y - otherParticle.y;
+                        const distance = Math.sqrt(dx * dx + dy * dy);
+
+                        if (distance < 100) {
+                            ctx.beginPath();
+                            ctx.moveTo(particle.x, particle.y);
+                            ctx.lineTo(otherParticle.x, otherParticle.y);
+                            ctx.strokeStyle = `rgba(0, 122, 204, ${0.1 * (1 - distance / 100)})`;
+                            ctx.stroke();
+                        }
+                    });
+                });
+
+                requestAnimationFrame(animate);
+            };
+
+            animate();
+
+            // Resize handler
+            window.addEventListener('resize', () => {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            });
+        }
+
+        // Filter functionality
+        function initFilters() {
+            const filterButtons = document.querySelectorAll('.filter-tag');
+            const articles = document.querySelectorAll('.article-card');
+
+            filterButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    // Update active button
+                    filterButtons.forEach(btn => btn.classList.remove('active'));
+                    button.classList.add('active');
+
+                    const filter = button.dataset.filter;
+                    
+                    // Filter articles
+                    articles.forEach((article, index) => {
+                        const category = article.dataset.category;
+                        const shouldShow = filter === 'all' || category === filter;
+
+                        if (shouldShow) {
+                            article.style.display = 'block';
+                            anime({
+                                targets: article,
+                                opacity: [0, 1],
+                                translateY: [20, 0],
+                                duration: 400,
+                                delay: index * 100,
+                                easing: 'easeOutQuad'
+                            });
+                        } else {
+                            anime({
+                                targets: article,
+                                opacity: [1, 0],
+                                translateY: [0, -20],
+                                duration: 200,
+                                easing: 'easeOutQuad',
+                                complete: () => {
+                                    article.style.display = 'none';
+                                }
+                            });
+                        }
+                    });
+                });
+            });
+        }
+
+        // Search functionality
+        function initSearch() {
+            const searchInput = document.getElementById('search-input');
+            const articles = document.querySelectorAll('.article-card');
+            let searchTimeout;
+
+            searchInput.addEventListener('input', (e) => {
+                clearTimeout(searchTimeout);
+                searchTimeout = setTimeout(() => {
+                    const query = e.target.value.toLowerCase();
+                    
+                    articles.forEach((article, index) => {
+                        const title = article.querySelector('h2').textContent.toLowerCase();
+                        const content = article.querySelector('p').textContent.toLowerCase();
+                        const tags = Array.from(article.querySelectorAll('.px-2')).map(tag => tag.textContent.toLowerCase());
+                        
+                        const matches = title.includes(query) || content.includes(query) || tags.some(tag => tag.includes(query));
+                        
+                        if (matches || !query) {
+                            article.style.display = 'block';
+                            anime({
+                                targets: article,
+                                opacity: [0, 1],
+                                scale: [0.9, 1],
+                                duration: 300,
+                                delay: index * 50,
+                                easing: 'easeOutQuad'
+                            });
+                        } else {
+                            anime({
+                                targets: article,
+                                opacity: [1, 0],
+                                scale: [1, 0.9],
+                                duration: 200,
+                                easing: 'easeOutQuad',
+                                complete: () => {
+                                    article.style.display = 'none';
+                                }
+                            });
+                        }
+                    });
+                }, 300);
+            });
+        }
+
+        // Load more functionality
+        function initLoadMore() {
+            const loadMoreBtn = document.getElementById('load-more');
+            
+            loadMoreBtn.addEventListener('click', () => {
+                loadMoreBtn.textContent = '加载中';
+                loadMoreBtn.classList.add('loading-dots');
+                loadMoreBtn.disabled = true;
+
+                // Simulate loading more articles
+                setTimeout(() => {
+                    loadMoreBtn.textContent = '已加载全部文章';
+                    loadMoreBtn.classList.remove('loading-dots');
+                    loadMoreBtn.classList.add('opacity-50', 'cursor-not-allowed');
+                }, 2000);
+            });
+        }
+
+        // Theme toggle
+        function initThemeToggle() {
+            const themeToggle = document.getElementById('theme-toggle');
+            
+            themeToggle.addEventListener('click', () => {
+                const root = document.documentElement;
+                const isDark = root.style.getPropertyValue('--bg-primary') === '#1e1e1e';
+                
+                if (isDark) {
+                    // Switch to light theme
+                    root.style.setProperty('--bg-primary', '#ffffff');
+                    root.style.setProperty('--bg-secondary', '#f8f9fa');
+                    root.style.setProperty('--bg-tertiary', '#e9ecef');
+                    root.style.setProperty('--text-primary', '#212529');
+                    root.style.setProperty('--text-secondary', '#6c757d');
+                } else {
+                    // Switch to dark theme
+                    root.style.setProperty('--bg-primary', '#1e1e1e');
+                    root.style.setProperty('--bg-secondary', '#2d2d30');
+                    root.style.setProperty('--bg-tertiary', '#3e3e42');
+                    root.style.setProperty('--text-primary', '#cccccc');
+                    root.style.setProperty('--text-secondary', '#808080');
+                }
+            });
+        }
+
+        // Initialize everything when DOM is loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            initParticleBackground();
+            initFilters();
+            initSearch();
+            initLoadMore();
+            initThemeToggle();
+
+            // Animate statistics on scroll
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const stats = entry.target.querySelectorAll('.hover-glow');
+                        stats.forEach((stat, index) => {
+                            anime({
+                                targets: stat,
+                                scale: [0.8, 1],
+                                opacity: [0, 1],
+                                duration: 600,
+                                delay: index * 200,
+                                easing: 'easeOutElastic(1, .8)'
+                            });
+                        });
+                    }
+                });
+            });
+
+            const statsSection = document.querySelector('.grid.grid-cols-4');
+            if (statsSection) {
+                observer.observe(statsSection);
+            }
+        });
+
+        // Article click handlers
+        document.addEventListener('click', (e) => {
+            const articleCard = e.target.closest('.article-card');
+            if (articleCard) {
+                // Simulate opening article
+                const title = articleCard.querySelector('h2').textContent;
+                alert(`正在打开文章: ${title}`);
+            }
+        });
+    </script>
+</body>
+</html>

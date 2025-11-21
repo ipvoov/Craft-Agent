@@ -14,4 +14,4 @@ logs/
 *.log
 .backend.pid
 .frontend.pid
-test/
+# test/

@@ -2,7 +2,9 @@
 # SPDX-License-Identifier: MIT
 from dataclasses import field
 from langgraph.graph import MessagesState
-from src.prompts.planner_model import Plan
+from src.prompts.planner_model import Plan, WebPlan
+
+
 # from src.rag import Resource
 
 class State(MessagesState):
@@ -36,4 +38,5 @@ class WebGenState(MessagesState):
     name:str = None # 项目名称
     number:str = "" # 项目编号
     tree:str = None # 项目目录结构
+    current_plan:WebPlan | str = None
     goto:str = None # 下一个节点名称
