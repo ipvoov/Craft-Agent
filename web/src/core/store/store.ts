@@ -33,6 +33,7 @@ export const useStore = create<{
   openResearch: (researchId: string | null) => void;
   closeResearch: () => void;
   setOngoingResearch: (researchId: string | null) => void;
+  resetStore: () => void;
 }>((set) => ({
   responding: false,
   threadId: THREAD_ID,
@@ -44,6 +45,21 @@ export const useStore = create<{
   researchActivityIds: new Map<string, string[]>(),
   ongoingResearchId: null,
   openResearchId: null,
+
+  resetStore() {
+    set({
+      responding: false,
+      threadId: nanoid(),
+      messageIds: [],
+      messages: new Map<string, Message>(),
+      researchIds: [],
+      researchPlanIds: new Map<string, string>(),
+      researchReportIds: new Map<string, string>(),
+      researchActivityIds: new Map<string, string[]>(),
+      ongoingResearchId: null,
+      openResearchId: null,
+    });
+  },
 
   appendMessage(message: Message) {
     set((state) => {

@@ -1,7 +1,10 @@
 import json
+import random
+import os
 from uuid import uuid4
 from dotenv import load_dotenv
 from fastapi import FastAPI
+from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
 from typing import Optional, List
@@ -50,10 +53,18 @@ app = FastAPI(
     version="0.1.0",
 )
 
+# 挂载静态文件目录，用于预览生成的项目
+# 路径: ../../source (相对于当前文件)
+source_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), "source")
+if not os.path.exists(source_dir):
+    os.makedirs(source_dir)
+
+app.mount("/api/preview", StaticFiles(directory=source_dir), name="preview")
+
 # 配置CORS中间件,允许前端跨域访问
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3001", "http://127.0.0.1:3001"],  # 前端地址
+    allow_origins=["*"],  # 允许所有来源，解决开发环境端口动态变化的问题
     allow_credentials=True,
     allow_methods=["*"],  # 允许所有HTTP方法
     allow_headers=["*"],  # 允许所有请求头
@@ -106,6 +117,11 @@ async def web_chat_stream(request: WebChatRequest):
     thread_id = request.thread_id
     if thread_id == "__default__":
         thread_id = str(uuid4())
+    if not request.name:
+        request.name = "__default__"
+    if not request.number:
+        # 生成 6 位随机数作为默认编号
+        request.number = str(random.randint(100000, 999999))
     return StreamingResponse(
         _astream_webgen_generator(
             request.model_dump()["messages"],
@@ -838,6 +854,8 @@ def _make_event(event_type: str, data: dict[str, any]):
 
 def _get_agent_name(agent, message_metadata):
     """Extract agent name from agent tuple."""
+    if isinstance(agent, str):
+        return agent
     agent_name = "unknown"
     if agent and len(agent) > 0:
         agent_name = agent[0].split(":")[0] if ":" in agent[0] else agent[0]

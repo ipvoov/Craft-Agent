@@ -75,6 +75,7 @@
     "react-dom": "^19.0.0",
     "react-hook-form": "^7.56.1",
     "react-markdown": "^10.1.0",
+    "react-resizable-panels": "^2.1.7",
     "react-syntax-highlighter": "^15.6.1",
     "rehype-katex": "^7.0.1",
     "remark-gfm": "^4.0.1",

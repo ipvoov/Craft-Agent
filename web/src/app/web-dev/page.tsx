@@ -1,5 +1,68 @@
 // Copyright (c) 2025 Bytedance Ltd. and/or its affiliates
 // SPDX-License-Identifier: MIT
 
-// 网页开发入口页面：当前与 Chat 页面共用 UI，后续可独立修改
-export { default } from "../chat/page";
+"use client";
+
+import { GithubOutlined } from "@ant-design/icons";
+import dynamic from "next/dynamic";
+import Link from "next/link";
+import { useTranslations } from "next-intl";
+import { Suspense, useEffect } from "react";
+
+import { Button } from "~/components/ui/button";
+import { useStore } from "~/core/store";
+import { cn } from "~/lib/utils";
+
+import { Logo } from "../../components/deer-flow/logo";
+import { ThemeToggle } from "../../components/deer-flow/theme-toggle";
+import { Tooltip } from "../../components/deer-flow/tooltip";
+// Adjusted path: from web-dev to settings is ../settings
+import { SettingsDialog } from "../settings/dialogs/settings-dialog";
+
+// Import the local Main component
+const Main = dynamic(() => import("./main"), {
+  ssr: false,
+  loading: () => (
+    <div className="flex h-full w-full items-center justify-center">
+      Loading DeerFlow...
+    </div>
+  ),
+});
+
+export default function HomePage() {
+  const t = useTranslations("chat.page");
+  const resetStore = useStore((state) => state.resetStore);
+
+  useEffect(() => {
+    resetStore();
+  }, [resetStore]);
+
+  return (
+    <div
+      className={cn(
+        "flex h-screen w-screen justify-center overscroll-none",
+      )}
+    >
+      <header className="fixed top-0 left-0 flex h-12 w-full items-center justify-between px-4">
+        <Logo />
+        <div className="flex items-center">
+          <Tooltip title={t("starOnGitHub")}>
+            <Button variant="ghost" size="icon" asChild>
+              <Link
+                href="https://github.com/bytedance/deer-flow"
+                target="_blank"
+              >
+                <GithubOutlined />
+              </Link>
+            </Button>
+          </Tooltip>
+          <ThemeToggle />
+          <Suspense>
+            <SettingsDialog />
+          </Suspense>
+        </div>
+      </header>
+      <Main />
+    </div>
+  );
+}

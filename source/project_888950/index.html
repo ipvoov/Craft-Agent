@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>个人博客 - 首页</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        :root {
+            --primary-color: #4f46e5;
+            --secondary-color: #f9fafb;
+            --text-primary: #1f2937;
+            --text-secondary: #6b7280;
+            --bg-primary: #ffffff;
+            --bg-secondary: #f3f4f6;
+            --border-color: #e5e7eb;
+        }
+        
+        .dark-mode {
+            --primary-color: #6366f1;
+            --secondary-color: #1f2937;
+            --text-primary: #f9fafb;
+            --text-secondary: #d1d5db;
+            --bg-primary: #111827;
+            --bg-secondary: #1f2937;
+            --border-color: #374151;
+        }
+        
+        body {
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            transition: background-color 0.3s, color 0.3s;
+        }
+        
+        .hero-bg {
+            background-image: url('resources/hero-blog.png');
+            background-size: cover;
+            background-position: center;
+        }
+        
+        .article-card {
+            transition: transform 0.3s, box-shadow 0.3s;
+            border: 1px solid var(--border-color);
+            border-radius: 0.5rem;
+        }
+        
+        .article-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+        
+        .nav-link {
+            position: relative;
+            padding-bottom: 0.25rem;
+        }
+        
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background-color: var(--primary-color);
+            transition: width 0.3s;
+        }
+        
+        .nav-link:hover::after {
+            width: 100%;
+        }
+        
+        .floating-button {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            width: 3rem;
+            height: 3rem;
+            border-radius: 50%;
+            background-color: var(--primary-color);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        .floating-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col">
+    <!-- 导航栏 -->
+    <nav class="bg-white dark:bg-gray-800 shadow-md py-4 px-6 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <div class="flex items-center space-x-2">
+                <img src="resources/avatar-user.png" alt="头像" class="w-10 h-10 rounded-full">
+                <span class="text-xl font-bold">个人博客</span>
+            </div>
+            <div class="hidden md:flex space-x-8">
+                <a href="index.html" class="nav-link text-gray-700 dark:text-gray-200 font-medium">首页</a>
+                <a href="articles.html" class="nav-link text-gray-700 dark:text-gray-200 font-medium">文章</a>
+                <a href="about.html" class="nav-link text-gray-700 dark:text-gray-200 font-medium">关于</a>
+            </div>
+            <div class="flex items-center space-x-4">
+                <button id="theme-toggle" class="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path id="theme-icon" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+                    </svg>
+                </button>
+                <button class="md:hidden p-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero区域 -->
+    <section class="hero-bg py-20 px-4">
+        <div class="max-w-4xl mx-auto text-center">
+            <h1 class="text-4xl md:text-5xl font-bold text-white mb-4">欢迎来到我的个人博客</h1>
+            <p class="text-xl text-gray-200 mb-8">分享技术心得，记录生活点滴</p>
+            <a href="#articles" class="inline-block bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-3 px-6 rounded-lg transition duration-300">
+                阅读文章
+            </a>
+        </div>
+    </section>
+
+    <!-- 最新文章 -->
+    <section id="articles" class="py-12 px-4">
+        <div class="max-w-7xl mx-auto">
+            <h2 class="text-3xl font-bold mb-8 text-center">最新文章</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- 文章卡片 1 -->
+                <div class="article-card bg-white dark:bg-gray-800 p-6">
+                    <img src="https://tse2.mm.bing.net/th/id/OIP.6wCH2SNhmVpjtZzylAjJ1QHaFj?w=250&h=250&c=7&rs=1&o=5&pid=1.1" alt="文章封面" class="w-full h-48 object-cover rounded-md mb-4">
+                    <h3 class="text-xl font-bold mb-2">前端开发趋势 2024</h3>
+                    <p class="text-gray-600 dark:text-gray-300 mb-4">探讨现代前端开发技术栈的发展趋势，包括框架选择、性能优化等方面。</p>
+                    <div class="flex justify-between items-center">
+                        <span class="text-sm text-gray-500 dark:text-gray-400">2024-01-15</span>
+                        <span class="bg-indigo-100 dark:bg-indigo-900 text-indigo-800 dark:text-indigo-200 text-xs px-2 py-1 rounded">前端</span>
+                    </div>
+                </div>
+                
+                <!-- 文章卡片 2 -->
+                <div class="article-card bg-white dark:bg-gray-800 p-6">
+                    <img src="https://tse2.mm.bing.net/th/id/OIP.Zdf1_rquZvsnXmSffzpGOQHaFj?w=250&h=250&c=7&rs=1&o=5&pid=1.1" alt="文章封面" class="w-full h-48 object-cover rounded-md mb-4">
+                    <h3 class="text-xl font-bold mb-2">JavaScript 异步编程</h3>
+                    <p class="text-gray-600 dark:text-gray-300 mb-4">深入理解 JavaScript 中的异步编程概念，包括 Promise、async/await 等。</p>
+                    <div class="flex justify-between items-center">
+                        <span class="text-sm text-gray-500 dark:text-gray-400">2024-01-10</span>
+                        <span class="bg-indigo-100 dark:bg-indigo-900 text-indigo-800 dark:text-indigo-200 text-xs px-2 py-1 rounded">JavaScript</span>
+                    </div>
+                </div>
+                
+                <!-- 文章卡片 3 -->
+                <div class="article-card bg-white dark:bg-gray-800 p-6">
+                    <img src="https://tse3.mm.bing.net/th/id/OIP.hpPS1N8FKsI58dOEfTZRqwAAAA?w=250&h=250&c=7&rs=1&o=5&pid=1.1" alt="文章封面" class="w-full h-48 object-cover rounded-md mb-4">
+                    <h3 class="text-xl font-bold mb-2">CSS Grid 布局完全指南</h3>
+                    <p class="text-gray-600 dark:text-gray-300 mb-4">全面介绍 CSS Grid 布局的使用方法，帮助你构建现代化的响应式页面。</p>
+                    <div class="flex justify-between items-center">
+                        <span class="text-sm text-gray-500 dark:text-gray-400">2024-01-05</span>
+                        <span class="bg-indigo-100 dark:bg-indigo-900 text-indigo-800 dark:text-indigo-200 text-xs px-2 py-1 rounded">CSS</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 页脚 -->
+    <footer class="bg-gray-100 dark:bg-gray-800 py-8 px-4 mt-auto">
+        <div class="max-w-7xl mx-auto text-center">
+            <p class="text-gray-600 dark:text-gray-300">&copy; 2024 个人博客. 保留所有权利.</p>
+        </div>
+    </footer>
+
+    <!-- 回到顶部按钮 -->
+    <div id="back-to-top" class="floating-button hidden">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7" />
+        </svg>
+    </div>
+
+    <script>
+        // 主题切换
+        const themeToggle = document.getElementById('theme-toggle');
+        const body = document.body;
+        const themeIcon = document.getElementById('theme-icon');
+        
+        // 检查用户偏好
+        const currentTheme = localStorage.getItem('theme');
+        if (currentTheme === 'dark') {
+            body.classList.add('dark-mode');
+            themeIcon.setAttribute('d', 'M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z');
+        }
+        
+        themeToggle.addEventListener('click', () => {
+            body.classList.toggle('dark-mode');
+            if (body.classList.contains('dark-mode')) {
+                themeIcon.setAttribute('d', 'M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                themeIcon.setAttribute('d', 'M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z');
+                localStorage.setItem('theme', 'light');
+            }
+        });
+        
+        // 回到顶部功能
+        const backToTopButton = document.getElementById('back-to-top');
+        
+        window.addEventListener('scroll', () => {
+            if (window.pageYOffset > 300) {
+                backToTopButton.classList.remove('hidden');
+            } else {
+                backToTopButton.classList.add('hidden');
+            }
+        });
+        
+        backToTopButton.addEventListener('click', () => {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        });
+    </script>
+</body>
+</html>

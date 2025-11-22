@@ -112,22 +112,37 @@ def read_file_tool(
 @tool("write_file_tool")
 def write_file_tool(
     project_num: Annotated[str, "项目的编号，如 '01', '02'"],
-    relative_file_path: Annotated[str, "文件相对路径"],
+    file_name: Annotated[str, "要写入的文件名"],
     content: Annotated[str, "文件内容"],
 ) -> str:
     """文件写入工具：创建新文件或完全重写已有文件。"""
     try:
-        path = _resolve_inside_project(project_num, relative_file_path)
+        path = _resolve_inside_project(project_num, file_name)
         parent = path.parent
         if parent:
             parent.mkdir(parents=True, exist_ok=True)
 
-        path.write_text(content, encoding="utf-8")
+        # 自动去除可能存在的 Markdown 代码块包裹
+        clean_content = content.strip()
+        # 检查是否被 ``` 包裹
+        if clean_content.startswith("```") and clean_content.endswith("```"):
+            lines = clean_content.splitlines()
+            # 至少要有两行（开始和结束标记）
+            if len(lines) >= 2:
+                # 去掉第一行 (```language)
+                if lines[0].startswith("```"):
+                    lines = lines[1:]
+                # 去掉最后一行 (```)
+                if lines and lines[-1].strip() == "```":
+                    lines = lines[:-1]
+                clean_content = "\n".join(lines)
+        
+        path.write_text(clean_content, encoding="utf-8")
         logger.info("成功写入文件: %s", str(path.resolve()))
-        return json.dumps({"status": "success", "file_path": relative_file_path}, ensure_ascii=False)
+        return json.dumps({"status": "success", "file_path": file_name}, ensure_ascii=False)
     except Exception as e:
-        logger.exception("文件写入失败: %s", relative_file_path)
-        return f"错误: 无法写入文件 {relative_file_path}\n原因: {str(e)}"
+        logger.exception("文件写入失败: %s", file_name)
+        return f"错误: 无法写入文件 {file_name}\n原因: {str(e)}"
 
 
 @tool("modify_file_tool")

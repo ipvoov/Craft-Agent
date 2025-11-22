@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: MIT
 from dataclasses import field
 from langgraph.graph import MessagesState
-from src.prompts.planner_model import Plan, WebPlan
+from src.prompts.planner_model import Plan
 
 
 # from src.rag import Resource
@@ -34,9 +34,11 @@ class State(MessagesState):
 
 
 class WebGenState(MessagesState):
-    """WebGenAgent 系统的状态类，继承 MessagesState 并扩展了额外字段"""
-    name:str = None # 项目名称
-    number:str = "" # 项目编号
-    tree:str = None # 项目目录结构
-    current_plan:WebPlan | str = None
-    goto:str = None # 下一个节点名称
+    """WebGenAgent 系统的状态类，继承 MessagesState 并扩展了额外字段
+    
+    简化流程（outline -> web_source -> codegen）不需要计划和步骤管理
+    """
+    locale: str = "zh-CN"  # 语言环境
+    name: str = None  # 项目名称
+    number: str = None  # 项目编号
+    tree: str = None  # 项目大纲内容（outline.md 的文本）

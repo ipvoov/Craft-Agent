@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>文章列表 - 极客博客</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #0f172a;
+            color: #e2e8f0;
+        }
+        .nav-link {
+            transition: all 0.3s ease;
+        }
+        .nav-link:hover {
+            color: #60a5fa;
+        }
+        .article-card {
+            transition: all 0.3s ease;
+        }
+        .article-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3), 0 10px 10px -5px rgba(0, 0, 0, 0.2);
+        }
+        .filter-btn {
+            transition: all 0.3s ease;
+        }
+        .filter-btn.active {
+            background-color: #3b82f6;
+            color: white;
+        }
+        .filter-btn:hover:not(.active) {
+            background-color: #334155;
+        }
+    </style>
+</head>
+<body class="bg-slate-900 text-slate-100">
+    <!-- 导航栏 -->
+    <nav class="fixed top-0 w-full bg-slate-800/90 backdrop-blur-md z-50 py-4 px-6 shadow-lg">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <div class="text-xl font-bold text-blue-400">GeekBlog</div>
+            <div class="flex space-x-6">
+                <a href="index.html" class="nav-link">首页</a>
+                <a href="articles.html" class="nav-link text-blue-400">文章</a>
+                <a href="about.html" class="nav-link">关于</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 页面内容 -->
+    <div class="pt-20 pb-16 px-6">
+        <div class="max-w-7xl mx-auto">
+            <h1 class="text-3xl md:text-4xl font-bold mb-8">文章列表</h1>
+            
+            <!-- 分类筛选 -->
+            <div class="mb-8 flex flex-wrap gap-2">
+                <button class="filter-btn bg-slate-700 hover:bg-slate-600 text-white py-2 px-4 rounded-full active" data-filter="all">全部</button>
+                <button class="filter-btn bg-slate-700 hover:bg-slate-600 text-white py-2 px-4 rounded-full" data-filter="tech">技术</button>
+                <button class="filter-btn bg-slate-700 hover:bg-slate-600 text-white py-2 px-4 rounded-full" data-filter="life">生活</button>
+                <button class="filter-btn bg-slate-700 hover:bg-slate-600 text-white py-2 px-4 rounded-full" data-filter="review">评测</button>
+            </div>
+            
+            <!-- 文章列表 -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div class="article-card bg-slate-800 rounded-xl overflow-hidden shadow-lg" data-category="tech">
+                    <img src="https://tse4.mm.bing.net/th/id/OIP.WredsDNZFqcjrFZPZKDjVAHaKf?w=250&h=250&c=7&rs=1&o=5&pid=1.1" alt="AI技术" class="w-full h-48 object-cover">
+                    <div class="p-6">
+                        <div class="flex justify-between items-center mb-2">
+                            <span class="text-sm text-blue-400">技术</span>
+                            <span class="text-sm text-slate-400">2024-05-15</span>
+                        </div>
+                        <h3 class="text-xl font-bold mb-2">人工智能的未来发展趋势</h3>
+                        <p class="text-slate-400 mb-4">探讨AI技术的最新进展与未来发展方向</p>
+                        <a href="post-detail.html" class="text-blue-400 hover:text-blue-300">阅读更多</a>
+                    </div>
+                </div>
+                
+                <div class="article-card bg-slate-800 rounded-xl overflow-hidden shadow-lg" data-category="tech">
+                    <img src="https://tse2.mm.bing.net/th/id/OIP.DI-g9zMsjP646MFVWoPT0wHaFf?w=250&h=250&c=7&rs=1&o=5&pid=1.1" alt="Web开发" class="w-full h-48 object-cover">
+                    <div class="p-6">
+                        <div class="flex justify-between items-center mb-2">
+                            <span class="text-sm text-blue-400">技术</span>
+                            <span class="text-sm text-slate-400">2024-05-10</span>
+                        </div>
+                        <h3 class="text-xl font-bold mb-2">前端开发最佳实践</h3>
+                        <p class="text-slate-400 mb-4">分享现代前端开发中的最佳实践和技巧</p>
+                        <a href="post-detail.html" class="text-blue-400 hover:text-blue-300">阅读更多</a>
+                    </div>
+                </div>
+                
+                <div class="article-card bg-slate-800 rounded-xl overflow-hidden shadow-lg" data-category="life">
+                    <img src="https://tse4.mm.bing.net/th/id/OIP.JPkB5ig_Ovt730gilT8SpgHaEK?w=250&h=250&c=7&rs=1&o=5&pid=1.1" alt="编程语言" class="w-full h-48 object-cover">
+                    <div class="p-6">
+                        <div class="flex justify-between items-center mb-2">
+                            <span class="text-sm text-green-400">生活</span>
+                            <span class="text-sm text-slate-400">2024-05-05</span>
+                        </div>
+                        <h3 class="text-xl font-bold mb-2">编程语言选择指南</h3>
+                        <p class="text-slate-400 mb-4">为不同场景选择最合适的编程语言</p>
+                        <a href="post-detail.html" class="text-blue-400 hover:text-blue-300">阅读更多</a>
+                    </div>
+                </div>
+                
+                <div class="article-card bg-slate-800 rounded-xl overflow-hidden shadow-lg" data-category="tech">
+                    <img src="https://tse1.mm.bing.net/th/id/OIP.e4eDQu-YcxuwBY7ANPorPgHaFk?w=250&h=250&c=7&rs=1&o=5&pid=1.1" alt="框架" class="w-full h-48 object-cover">
+                    <div class="p-6">
+                        <div class="flex justify-between items-center mb-2">
+                            <span class="text-sm text-blue-400">技术</span>
+                            <span class="text-sm text-slate-400">2024-04-28</span>
+                        </div>
+                        <h3 class="text-xl font-bold mb-2">现代前端框架对比</h3>
+                        <p class="text-slate-400 mb-4">React, Vue, Angular 三大框架深度对比</p>
+                        <a href="post-detail.html" class="text-blue-400 hover:text-blue-300">阅读更多</a>
+                    </div>
+                </div>
+                
+                <div class="article-card bg-slate-800 rounded-xl overflow-hidden shadow-lg" data-category="review">
+                    <img src="https://tse4.mm.bing.net/th/id/OIP.yvS1CnbtEvrDmfjoN-23nwHaDt?w=250&h=250&c=7&rs=1&o=5&pid=1.1" alt="工具评测" class="w-full h-48 object-cover">
+                    <div class="p-6">
+                        <div class="flex justify-between items-center mb-2">
+                            <span class="text-sm text-purple-400">评测</span>
+                            <span class="text-sm text-slate-400">2024-04-20</span>
+                        </div>
+                        <h3 class="text-xl font-bold mb-2">代码编辑器横向评测</h3>
+                        <p class="text-slate-400 mb-4">VS Code、Sublime Text、Atom 全面对比</p>
+                        <a href="post-detail.html" class="text-blue-400 hover:text-blue-300">阅读更多</a>
+                    </div>
+                </div>
+                
+                <div class="article-card bg-slate-800 rounded-xl overflow-hidden shadow-lg" data-category="life">
+                    <img src="https://tse3.mm.bing.net/th/id/OIP.YbE2tnfEB5Od94znK6klXQHaFn?w=250&h=250&c=7&rs=1&o=5&pid=1.1" alt="程序员生活" class="w-full h-48 object-cover">
+                    <div class="p-6">
+                        <div class="flex justify-between items-center mb-2">
+                            <span class="text-sm text-green-400">生活</span>
+                            <span class="text-sm text-slate-400">2024-04-15</span>
+                        </div>
+                        <h3 class="text-xl font-bold mb-2">程序员的健康生活指南</h3>
+                        <p class="text-slate-400 mb-4">如何在编程工作中保持身心健康</p>
+                        <a href="post-detail.html" class="text-blue-400 hover:text-blue-300">阅读更多</a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 分页控制器 -->
+            <div class="mt-12 flex justify-center">
+                <div class="flex space-x-2">
+                    <button class="bg-slate-700 hover:bg-slate-600 text-white py-2 px-4 rounded-lg">上一页</button>
+                    <button class="bg-blue-600 text-white py-2 px-4 rounded-lg">1</button>
+                    <button class="bg-slate-700 hover:bg-slate-600 text-white py-2 px-4 rounded-lg">2</button>
+                    <button class="bg-slate-700 hover:bg-slate-600 text-white py-2 px-4 rounded-lg">3</button>
+                    <button class="bg-slate-700 hover:bg-slate-600 text-white py-2 px-4 rounded-lg">下一页</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 页脚 -->
+    <footer class="bg-slate-900 py-8 px-6 border-t border-slate-700">
+        <div class="max-w-7xl mx-auto text-center">
+            <p>&copy; 2024 极客博客. 保留所有权利.</p>
+        </div>
+    </footer>
+
+    <script>
+        // 添加分类筛选功能
+        document.querySelectorAll('.filter-btn').forEach(button => {
+            button.addEventListener('click', () => {
+                // 更新按钮状态
+                document.querySelectorAll('.filter-btn').forEach(btn => {
+                    btn.classList.remove('active');
+                });
+                button.classList.add('active');
+                
+                // 过滤文章
+                const filter = button.getAttribute('data-filter');
+                const articles = document.querySelectorAll('.article-card');
+                
+                articles.forEach(article => {
+                    if (filter === 'all' || article.getAttribute('data-category') === filter) {
+                        article.style.display = 'block';
+                    } else {
+                        article.style.display = 'none';
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>学术博客 - 首页</title>
+    <style>
+        :root {
+            --primary-color: #2563eb;
+            --secondary-color: #64748b;
+            --background-color: #ffffff;
+            --text-color: #1e293b;
+            --border-color: #e2e8f0;
+            --card-bg: #f8fafc;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+
+        [data-theme="dark"] {
+            --primary-color: #3b82f6;
+            --secondary-color: #94a3b8;
+            --background-color: #0f172a;
+            --text-color: #f1f5f9;
+            --border-color: #334155;
+            --card-bg: #1e293b;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        header {
+            background-color: var(--background-color);
+            border-bottom: 1px solid var(--border-color);
+            padding: 1rem 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: var(--shadow);
+        }
+
+        nav {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .nav-links a {
+            color: var(--text-color);
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 0.375rem;
+            transition: all 0.2s ease;
+        }
+
+        .nav-links a:hover {
+            background-color: var(--card-bg);
+            color: var(--primary-color);
+        }
+
+        .theme-toggle {
+            background: none;
+            border: 1px solid var(--border-color);
+            padding: 0.5rem;
+            border-radius: 0.375rem;
+            cursor: pointer;
+            color: var(--text-color);
+        }
+
+        .hero {
+            padding: 4rem 2rem;
+            text-align: center;
+            background-image: url('https://tse2.mm.bing.net/th/id/OIP.aXRRvYVdBcmG9TtJdY5ZoAHaDt?w=250&h=250&c=7&rs=1&o=5&pid=1.1');
+            background-size: cover;
+            background-position: center;
+            color: white;
+            position: relative;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+        }
+
+        .hero-content {
+            position: relative;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .hero p {
+            font-size: 1.25rem;
+            opacity: 0.9;
+        }
+
+        .main-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+            display: grid;
+            grid-template-columns: 1fr 300px;
+            gap: 2rem;
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .articles-grid {
+            display: grid;
+            gap: 2rem;
+        }
+
+        .article-card {
+            background-color: var(--card-bg);
+            border-radius: 0.5rem;
+            padding: 2rem;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border-color);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .article-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+
+        .article-card h2 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: var(--primary-color);
+        }
+
+        .article-meta {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            font-size: 0.875rem;
+            color: var(--secondary-color);
+        }
+
+        .tag {
+            display: inline-block;
+            background-color: var(--primary-color);
+            color: white;
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.375rem;
+            font-size: 0.75rem;
+            text-decoration: none;
+        }
+
+        .tags-list {
+            display: flex;
+            gap: 0.5rem;
+            margin: 1rem 0;
+        }
+
+        .sidebar {
+            background-color: var(--card-bg);
+            border-radius: 0.5rem;
+            padding: 2rem;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border-color);
+        }
+
+        .sidebar h3 {
+            margin-bottom: 1.5rem;
+            color: var(--primary-color);
+        }
+
+        .search-box {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid var(--border-color);
+            border-radius: 0.375rem;
+            margin-bottom: 1.5rem;
+            background-color: var(--background-color);
+            color: var(--text-color);
+        }
+
+        .filter-tags {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .filter-tags button {
+            padding: 0.5rem;
+            border: 1px solid var(--border-color);
+            background-color: var(--background-color);
+            color: var(--text-color);
+            border-radius: 0.375rem;
+            cursor: pointer;
+            text-align: left;
+            transition: background-color 0.2s ease;
+        }
+
+        .filter-tags button:hover, .filter-tags button.active {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        footer {
+            background-color: var(--card-bg);
+            border-top: 1px solid var(--border-color);
+            padding: 2rem;
+            text-align: center;
+            margin-top: 4rem;
+        }
+
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--text-color);
+        }
+
+        @media (max-width: 768px) {
+            .mobile-menu-btn {
+                display: block;
+            }
+
+            .nav-links {
+                display: none;
+            }
+
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            .hero p {
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav>
+            <a href="index.html" class="logo">学术博客</a>
+            <div class="nav-links">
+                <a href="index.html">首页</a>
+                <a href="articles.html">文章</a>
+                <a href="about.html">关于</a>
+            </div>
+            <button class="theme-toggle" onclick="toggleTheme()">切换主题</button>
+            <button class="mobile-menu-btn">☰</button>
+        </nav>
+    </header>
+
+    <section class="hero">
+        <div class="hero-content">
+            <h1>欢迎来到我的学术博客</h1>
+            <p>分享技术见解与学术思考</p>
+        </div>
+    </section>
+
+    <main class="main-content">
+        <section class="articles-grid">
+            <article class="article-card">
+                <h2>现代Web开发最佳实践</h2>
+                <div class="article-meta">
+                    <span>2025-01-15</span>
+                    <span>阅读时间: 15分钟</span>
+                </div>
+                <p>探讨现代Web开发中的核心概念与最佳实践，包括性能优化、可访问性、安全性等关键主题。...</p>
+                <div class="tags-list">
+                    <a href="#" class="tag">前端</a>
+                    <a href="#" class="tag">Web开发</a>
+                </div>
+                <a href="articles.html#web-dev-practices">阅读全文 →</a>
+            </article>
+
+            <article class="article-card">
+                <h2>结构化数据在学术研究中的应用</h2>
+                <div class="article-meta">
+                    <span>2025-01-10</span>
+                    <span>阅读时间: 12分钟</span>
+                </div>
+                <p>分析结构化数据如何提升学术研究的效率和准确性，包括数据建模、存储和分析方法。...</p>
+                <div class="tags-list">
+                    <a href="#" class="tag">数据科学</a>
+                    <a href="#" class="tag">学术研究</a>
+                </div>
+                <a href="articles.html#structured-data-academic">阅读全文 →</a>
+            </article>
+
+            <article class="article-card">
+                <h2>响应式设计的理论与实践</h2>
+                <div class="article-meta">
+                    <span>2025-01-05</span>
+                    <span>阅读时间: 18分钟</span>
+                </div>
+                <p>深入探讨响应式设计的原理，从断点设计到交互优化，构建跨设备的用户体验。...</p>
+                <div class="tags-list">
+                    <a href="#" class="tag">UI/UX</a>
+                    <a href="#" class="tag">设计理论</a>
+                </div>
+                <a href="articles.html#responsive-design">阅读全文 →</a>
+            </article>
+        </section>
+
+        <aside class="sidebar">
+            <h3>搜索文章</h3>
+            <input type="text" class="search-box" placeholder="搜索文章...">
+            
+            <h3>分类过滤</h3>
+            <div class="filter-tags">
+                <button class="active">全部</button>
+                <button>前端开发</button>
+                <button>学术研究</button>
+                <button>数据科学</button>
+                <button>设计理论</button>
+            </div>
+        </aside>
+    </main>
+
+    <footer>
+        <p>&copy; 2025 学术博客. 保留所有权利.</p>
+    </footer>
+
+    <script>
+        // 主题切换功能
+        function toggleTheme() {
+            const currentTheme = document.body.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            document.body.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+        }
+
+        // 从本地存储恢复主题设置
+        const savedTheme = localStorage.getItem('theme') || 'light';
+        document.body.setAttribute('data-theme', savedTheme);
+
+        // 文章卡片交互
+        document.addEventListener('DOMContentLoaded', function() {
+            const filterButtons = document.querySelectorAll('.filter-tags button');
+            filterButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    filterButtons.forEach(btn => btn.classList.remove('active'));
+                    this.classList.add('active');
+                });
+            });
+
+            // 搜索功能
+            const searchInput = document.querySelector('.search-box');
+            searchInput.addEventListener('input', function() {
+                const searchTerm = this.value.toLowerCase();
+                const articleCards = document.querySelectorAll('.article-card');
+                articleCards.forEach(card => {
+                    const title = card.querySelector('h2').textContent.toLowerCase();
+                    const content = card.querySelector('p').textContent.toLowerCase();
+                    const showCard = title.includes(searchTerm) || content.includes(searchTerm);
+                    card.style.display = showCard ? 'block' : 'none';
+                });
+            });
+        });
+    </script>
+</body>
+</html>

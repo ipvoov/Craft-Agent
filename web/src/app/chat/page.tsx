@@ -7,9 +7,10 @@ import { GithubOutlined } from "@ant-design/icons";
 import dynamic from "next/dynamic";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
-import { Suspense } from "react";
+import { Suspense, useEffect } from "react";
 
 import { Button } from "~/components/ui/button";
+import { useStore } from "~/core/store";
 import { cn } from "~/lib/utils";
 
 import { Logo } from "../../components/deer-flow/logo";
@@ -28,6 +29,11 @@ const Main = dynamic(() => import("./main"), {
 
 export default function HomePage() {
   const t = useTranslations("chat.page");
+  const resetStore = useStore((state) => state.resetStore);
+
+  useEffect(() => {
+    resetStore();
+  }, [resetStore]);
 
   return (
     <div

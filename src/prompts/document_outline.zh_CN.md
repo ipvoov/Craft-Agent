@@ -50,7 +50,11 @@ CURRENT_TIME: {{ CURRENT_TIME }}
 
 ## 文档内容结构建议
 
-请使用 Markdown 编写项目大纲文档，并尽量遵循下述结构与风格（可以根据具体项目略作调整，但整体形式需与现有 `outline.md` 示例保持相似）：
+**重要：不要使用代码块**
+**重要：不要使用代码块**
+**重要：不要使用代码块**
+
+尽量遵循下述结构与风格（可以根据具体项目略作调整，但整体形式需与现有 `outline.md` 示例保持相似）：
 
 1. **文档标题（一级标题）**
    - 例如：
@@ -61,13 +65,31 @@ CURRENT_TIME: {{ CURRENT_TIME }}
    - 使用 `## 项目结构` 或 `## 文件结构` 作为一级/二级标题；
    - 建议包含：
      - 简短说明当前项目是一个静态 HTML/JS 网站；
+     - 明确约束项目结构必须保持**足够简洁**，例如：
+       - HTML 页面总数控制在 **1–4 个以内**（如 `index.html`、`about.html`、`articles.html` 等，具体名称以输入为准，不要额外扩展过多页面）；
+       - 只保留 **一个脚本文件 `main.js`**，不要拆分出多个 JS 文件或创建 `utils.js`、`data.js` 等额外脚本；
+       - **不要生成任何独立的 CSS 文件**（例如 `style.css`、`main.css` 等），所有样式都应写在对应 HTML 文件内部的 `<style>` 标签中；
      - 使用代码块或层级列表，展示项目的主要文件与目录结构，例如：
        - 入口页面（如 `index.html`）；
-       - 功能页面（如 `calendar.html`、`care.html`、`shop.html` 等，具体名称以输入为准）；
-       - 核心脚本文件（如 `main.js` 及其他拆分脚本）；
+       - 功能页面（如 `about.html`、`articles.html` 等，具体名称以输入为准，且总数不应超过 3 个）；
+       - 核心脚本文件（固定为单一的 `main.js`）；
        - `resources/` 资源目录：**只需列出 3~5 张与项目主题强相关的图片文件**（例如 hero 区背景图 `hero-*.png`、头像 `avatar-*.png`、场景示意图等），直接以文件名列表形式呈现即可；
        - **不要虚构 `images/`、`icons/`、`js/`、`data/` 等多层级子目录结构**，除非这些目录在输入中已经被明确给出；
-       - 项目文档文件（`interaction.md`、`design.md`、`outline.md`）。
+       - 项目文档文件（`outline.md`）。
+       示例：
+        ```
+        ├── index.html              # 主页面 - 博客首页
+        ├── articles.html           # 文章列表页面
+        ├── about.html              # 关于页面
+        ├── main.js                 # 主要JavaScript逻辑
+        ├── resources/              # 资源文件夹
+        │   ├── hero-code-editor.png      # Hero区域背景图
+        │   ├── bg-digital-network.png    # 数字网络背景
+        │   ├── avatar-tech-blogger.png   # 博主头像
+        ├── interaction.md          # 交互设计文档
+        ├── design.md              # 设计风格文档
+        └── outline.md             # 项目概述文档
+        ```
 
 3. **页面规划 / 页面模块结构**
    - 使用 `## 页面功能规划`、`## 页面规划` 或 `## 页面模块结构` 等标题；
@@ -125,4 +147,5 @@ CURRENT_TIME: {{ CURRENT_TIME }}
 - 不要在文档中引用本文件的文件名或系统内部实现，只聚焦于当前网站的项目概述和规划本身。
 
 只要你严格按照上述要求输出，生成的 `outline.md` 就能直接用于指导后续的页面实现、协作分工和迭代规划。
+
 

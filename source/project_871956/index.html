@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>极客博客 - 首页</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #0f172a;
+            color: #e2e8f0;
+        }
+        .nav-link {
+            transition: all 0.3s ease;
+        }
+        .nav-link:hover {
+            color: #60a5fa;
+        }
+        .hero-section {
+            background: linear-gradient(rgba(15, 23, 42, 0.8), rgba(15, 23, 42, 0.9)), url('resources/hero-bg-coding.png');
+            background-size: cover;
+            background-position: center;
+        }
+        .article-card {
+            transition: all 0.3s ease;
+            transform-style: preserve-3d;
+        }
+        .article-card:hover {
+            transform: translateY(-10px) rotateY(5deg);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3), 0 10px 10px -5px rgba(0, 0, 0, 0.2);
+        }
+        .skill-icon {
+            transition: all 0.3s ease;
+        }
+        .skill-icon:hover {
+            transform: scale(1.2) rotate(10deg);
+        }
+        .typewriter {
+            overflow: hidden;
+            border-right: .15em solid #60a5fa;
+            white-space: nowrap;
+            margin: 0 auto;
+            letter-spacing: .15em;
+            animation: typing 3.5s steps(40, end), blink-caret .75s step-end infinite;
+        }
+        @keyframes typing {
+            from { width: 0 }
+            to { width: 100% }
+        }
+        @keyframes blink-caret {
+            from, to { border-color: transparent }
+            50% { border-color: #60a5fa; }
+        }
+    </style>
+</head>
+<body class="bg-slate-900 text-slate-100">
+    <!-- 导航栏 -->
+    <nav class="fixed top-0 w-full bg-slate-800/90 backdrop-blur-md z-50 py-4 px-6 shadow-lg">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <div class="text-xl font-bold text-blue-400">GeekBlog</div>
+            <div class="flex space-x-6">
+                <a href="index.html" class="nav-link text-blue-400">首页</a>
+                <a href="articles.html" class="nav-link">文章</a>
+                <a href="about.html" class="nav-link">关于</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero区 -->
+    <section class="hero-section min-h-screen flex items-center justify-center pt-16">
+        <div class="max-w-4xl mx-auto text-center px-6">
+            <h1 class="text-4xl md:text-6xl font-bold mb-6">
+                <span class="typewriter">欢迎来到我的极客世界</span>
+            </h1>
+            <p class="text-xl md:text-2xl text-slate-300 mb-8">
+                分享编程技巧、技术见解与生活感悟
+            </p>
+            <a href="articles.html" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg transition duration-300 inline-block">
+                开始阅读
+            </a>
+        </div>
+    </section>
+
+    <!-- 精选文章区 -->
+    <section class="py-16 px-6">
+        <div class="max-w-7xl mx-auto">
+            <h2 class="text-3xl font-bold text-center mb-12">精选文章</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div class="article-card bg-slate-800 rounded-xl overflow-hidden shadow-lg">
+                    <img src="https://tse4.mm.bing.net/th/id/OIP.WredsDNZFqcjrFZPZKDjVAHaKf?w=250&h=250&c=7&rs=1&o=5&pid=1.1" alt="AI技术" class="w-full h-48 object-cover">
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold mb-2">人工智能的未来发展趋势</h3>
+                        <p class="text-slate-400 mb-4">探讨AI技术的最新进展与未来发展方向</p>
+                        <a href="post-detail.html" class="text-blue-400 hover:text-blue-300">阅读更多</a>
+                    </div>
+                </div>
+                <div class="article-card bg-slate-800 rounded-xl overflow-hidden shadow-lg">
+                    <img src="https://tse2.mm.bing.net/th/id/OIP.DI-g9zMsjP646MFVWoPT0wHaFf?w=250&h=250&c=7&rs=1&o=5&pid=1.1" alt="Web开发" class="w-full h-48 object-cover">
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold mb-2">前端开发最佳实践</h3>
+                        <p class="text-slate-400 mb-4">分享现代前端开发中的最佳实践和技巧</p>
+                        <a href="post-detail.html" class="text-blue-400 hover:text-blue-300">阅读更多</a>
+                    </div>
+                </div>
+                <div class="article-card bg-slate-800 rounded-xl overflow-hidden shadow-lg">
+                    <img src="https://tse4.mm.bing.net/th/id/OIP.JPkB5ig_Ovt730gilT8SpgHaEK?w=250&h=250&c=7&rs=1&o=5&pid=1.1" alt="编程语言" class="w-full h-48 object-cover">
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold mb-2">编程语言选择指南</h3>
+                        <p class="text-slate-400 mb-4">为不同场景选择最合适的编程语言</p>
+                        <a href="post-detail.html" class="text-blue-400 hover:text-blue-300">阅读更多</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 技术栈展示区 -->
+    <section class="py-16 bg-slate-800 px-6">
+        <div class="max-w-7xl mx-auto">
+            <h2 class="text-3xl font-bold text-center mb-12">技术栈</h2>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
+                <div class="flex flex-col items-center">
+                    <img src="resources/icon-skill-web.png" alt="Web开发" class="w-16 h-16 skill-icon mb-4">
+                    <span class="text-lg">Web开发</span>
+                </div>
+                <div class="flex flex-col items-center">
+                    <img src="https://tse1.mm.bing.net/th/id/OIP.e4eDQu-YcxuwBY7ANPorPgHaFk?w=250&h=250&c=7&rs=1&o=5&pid=1.1" alt="JavaScript" class="w-16 h-16 skill-icon mb-4">
+                    <span class="text-lg">JavaScript</span>
+                </div>
+                <div class="flex flex-col items-center">
+                    <img src="https://tse4.mm.bing.net/th/id/OIP.yvS1CnbtEvrDmfjoN-23nwHaDt?w=250&h=250&c=7&rs=1&o=5&pid=1.1" alt="Python" class="w-16 h-16 skill-icon mb-4">
+                    <span class="text-lg">Python</span>
+                </div>
+                <div class="flex flex-col items-center">
+                    <img src="https://tse3.mm.bing.net/th/id/OIP.YbE2tnfEB5Od94znK6klXQHaFn?w=250&h=250&c=7&rs=1&o=5&pid=1.1" alt="AI/ML" class="w-16 h-16 skill-icon mb-4">
+                    <span class="text-lg">AI/ML</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 页脚 -->
+    <footer class="bg-slate-900 py-8 px-6 border-t border-slate-700">
+        <div class="max-w-7xl mx-auto text-center">
+            <p>&copy; 2024 极客博客. 保留所有权利.</p>
+        </div>
+    </footer>
+</body>
+</html>

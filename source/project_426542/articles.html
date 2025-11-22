@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>文章列表 - 个人博客</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f8f9fa;
+        }
+
+        nav {
+            background-color: #fff;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            padding: 1rem 0;
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 2rem;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #2c3e50;
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: #555;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        .nav-links a:hover {
+            color: #3498db;
+        }
+
+        .main-content {
+            max-width: 1200px;
+            margin: 80px auto 40px;
+            padding: 0 2rem;
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 2rem;
+        }
+
+        .articles-section {
+            background: white;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .section-title {
+            font-size: 2rem;
+            margin-bottom: 2rem;
+            color: #2c3e50;
+        }
+
+        .article-list {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        .article-item {
+            border-bottom: 1px solid #eee;
+            padding-bottom: 1.5rem;
+        }
+
+        .article-header {
+            display: flex;
+            gap: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .article-thumb {
+            width: 150px;
+            height: 100px;
+            object-fit: cover;
+            border-radius: 4px;
+        }
+
+        .article-info {
+            flex: 1;
+        }
+
+        .article-title {
+            font-size: 1.3rem;
+            margin-bottom: 0.5rem;
+            color: #2c3e50;
+        }
+
+        .article-title a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .article-excerpt {
+            color: #7f8c8d;
+            margin-bottom: 1rem;
+        }
+
+        .article-meta {
+            display: flex;
+            gap: 1rem;
+            color: #95a5a6;
+            font-size: 0.9rem;
+        }
+
+        .tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .tag {
+            background-color: #3498db;
+            color: white;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            cursor: pointer;
+        }
+
+        .tag.active {
+            background-color: #2980b9;
+        }
+
+        .sidebar {
+            background: white;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            align-self: start;
+        }
+
+        .sidebar-title {
+            font-size: 1.2rem;
+            margin-bottom: 1.5rem;
+            color: #2c3e50;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 0.5rem;
+        }
+
+        .categories {
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+        }
+
+        .category {
+            padding: 0.8rem;
+            background-color: #f1f2f6;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .category:hover {
+            background-color: #dfe4ea;
+        }
+
+        .category.active {
+            background-color: #3498db;
+            color: white;
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .page-btn {
+            padding: 0.5rem 1rem;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .page-btn:hover {
+            background-color: #2980b9;
+        }
+
+        .page-btn.disabled {
+            background-color: #bdc3c7;
+            cursor: not-allowed;
+        }
+
+        footer {
+            background-color: #2c3e50;
+            color: white;
+            text-align: center;
+            padding: 2rem;
+            margin-top: 3rem;
+        }
+
+        .social-links {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            margin-top: 1rem;
+        }
+
+        .social-links a {
+            color: white;
+            text-decoration: none;
+        }
+
+        @media (max-width: 900px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="nav-container">
+            <a href="index.html" class="logo">我的博客</a>
+            <div class="nav-links">
+                <a href="index.html">首页</a>
+                <a href="articles.html">文章</a>
+                <a href="about.html">关于</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <section class="articles-section">
+            <h2 class="section-title">文章列表</h2>
+            
+            <div class="tags">
+                <span class="tag active">全部</span>
+                <span class="tag">技术</span>
+                <span class="tag">生活</span>
+                <span class="tag">旅行</span>
+                <span class="tag">读书</span>
+            </div>
+
+            <div class="article-list">
+                <div class="article-item">
+                    <div class="article-header">
+                        <img src="https://tse4.mm.bing.net/th/id/OIP.N_X2K45tjldZ8Wc7BM-xuQHaMw?w=250&h=250&c=7&rs=1&o=5&pid=1.1" alt="文章封面" class="article-thumb">
+                        <div class="article-info">
+                            <h3 class="article-title"><a href="#">现代Web开发技术栈解析</a></h3>
+                            <p class="article-excerpt">探讨当前最流行的前端框架与后端技术，为开发者提供技术选型建议...</p>
+                            <div class="article-meta">
+                                <span>2024-05-15</span>
+                                <span>阅读: 125</span>
+                                <span>分类: 技术</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="article-item">
+                    <div class="article-header">
+                        <img src="https://tse4.mm.bing.net/th/id/OIP.IZVZig2kpQVJv3y3dUIvawHaFj?w=250&h=250&c=7&rs=1&o=5&pid=1.1" alt="文章封面" class="article-thumb">
+                        <div class="article-info">
+                            <h3 class="article-title"><a href="#">高效学习方法分享</a></h3>
+                            <p class="article-excerpt">基于认知科学的高效学习策略，帮助你在短时间内掌握更多知识...</p>
+                            <div class="article-meta">
+                                <span>2024-05-10</span>
+                                <span>阅读: 98</span>
+                                <span>分类: 生活</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="article-item">
+                    <div class="article-header">
+                        <img src="https://tse2.mm.bing.net/th/id/OIP.RRMMUMGsJBA-4CX7Q3CHrQHaGs?w=250&h=250&c=7&rs=1&o=5&pid=1.1" alt="文章封面" class="article-thumb">
+                        <div class="article-info">
+                            <h3 class="article-title"><a href="#">城市漫步与摄影</a></h3>
+                            <p class="article-excerpt">记录城市街头的瞬间美好，分享摄影技巧与构图心得...</p>
+                            <div class="article-meta">
+                                <span>2024-05-05</span>
+                                <span>阅读: 142</span>
+                                <span>分类: 旅行</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="article-item">
+                    <div class="article-header">
+                        <img src="https://tse1.mm.bing.net/th/id/OIP.zfH9zP2NDdlX9z8jWnjVfAAAAA?w=250&h=250&c=7&rs=1&o=5&pid=1.1" alt="文章封面" class="article-thumb">
+                        <div class="article-info">
+                            <h3 class="article-title"><a href="#">读书笔记：《人性的弱点》</a></h3>
+                            <p class="article-excerpt">总结阅读《人性的弱点》后的收获与感悟，探讨人际关系的智慧...</p>
+                            <div class="article-meta">
+                                <span>2024-04-28</span>
+                                <span>阅读: 87</span>
+                                <span>分类: 读书</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="article-item">
+                    <div class="article-header">
+                        <img src="https://tse4.mm.bing.net/th/id/OIP.Bej9cmw3d4N0hV0ckMBCZgHaFC?w=250&h=250&c=7&rs=1&o=5&pid=1.1" alt="文章封面" class="article-thumb">
+                        <div class="article-info">
+                            <h3 class="article-title"><a href="#">人工智能发展趋势</a></h3>
+                            <p class="article-excerpt">分析当前AI技术的发展现状与未来趋势，探讨对社会的影响...</p>
+                            <div class="article-meta">
+                                <span>2024-04-20</span>
+                                <span>阅读: 210</span>
+                                <span>分类: 技术</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pagination">
+                <button class="page-btn disabled" disabled>上一页</button>
+                <button class="page-btn active">1</button>
+                <button class="page-btn">2</button>
+                <button class="page-btn">3</button>
+                <button class="page-btn">下一页</button>
+            </div>
+        </section>
+
+        <aside class="sidebar">
+            <h3 class="sidebar-title">分类</h3>
+            <div class="categories">
+                <div class="category active">全部 (5)</div>
+                <div class="category">技术 (2)</div>
+                <div class="category">生活 (1)</div>
+                <div class="category">旅行 (1)</div>
+                <div class="category">读书 (1)</div>
+            </div>
+
+            <h3 class="sidebar-title" style="margin-top: 2rem;">热门文章</h3>
+            <div class="categories">
+                <div class="category">人工智能发展趋势</div>
+                <div class="category">现代Web开发技术栈解析</div>
+                <div class="category">城市漫步与摄影</div>
+            </div>
+        </aside>
+    </main>
+
+    <footer>
+        <p>&copy; 2024 我的博客. 保留所有权利.</p>
+        <div class="social-links">
+            <a href="#">Twitter</a>
+            <a href="#">GitHub</a>
+            <a href="#">RSS</a>
+        </div>
+    </footer>
+
+    <script>
+        document.querySelectorAll('.tag').forEach(tag => {
+            tag.addEventListener('click', () => {
+                document.querySelectorAll('.tag').forEach(t => t.classList.remove('active'));
+                tag.classList.add('active');
+            });
+        });
+
+        document.querySelectorAll('.category').forEach(cat => {
+            cat.addEventListener('click', () => {
+                document.querySelectorAll('.category').forEach(c => c.classList.remove('active'));
+                cat.classList.add('active');
+            });
+        });
+
+        document.querySelectorAll('.page-btn:not(.disabled)').forEach(btn => {
+            btn.addEventListener('click', () => {
+                if(btn.textContent.match(/\d+/)) {
+                    document.querySelectorAll('.page-btn').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

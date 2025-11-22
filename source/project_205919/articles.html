@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>文章详情 - 极客博客</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #0f172a;
+            color: #e2e8f0;
+        }
+        .nav-link {
+            position: relative;
+            padding: 0.5rem 1rem;
+            transition: color 0.3s ease;
+        }
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 1rem;
+            right: 1rem;
+            height: 2px;
+            background-color: #6366f1;
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+        .nav-link:hover::after {
+            transform: scaleX(1);
+        }
+        .reading-progress {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 0%;
+            height: 4px;
+            background: linear-gradient(90deg, #6366f1, #8b5cf6);
+            z-index: 100;
+            transition: width 0.3s ease;
+        }
+        .table-of-contents {
+            position: sticky;
+            top: 20px;
+            background-color: #1e293b;
+            border-radius: 0.5rem;
+            padding: 1.5rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+        .toc-item {
+            padding: 0.25rem 0;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+        .toc-item:hover {
+            color: #818cf8;
+        }
+        .toc-item.level-2 {
+            padding-left: 0.5rem;
+        }
+        .toc-item.level-3 {
+            padding-left: 1.5rem;
+        }
+        .article-content {
+            line-height: 1.8;
+        }
+        .article-content h2 {
+            font-size: 1.75rem;
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+            color: #ffffff;
+            border-left: 4px solid #6366f1;
+            padding-left: 0.75rem;
+        }
+        .article-content h3 {
+            font-size: 1.5rem;
+            margin-top: 1.75rem;
+            margin-bottom: 0.75rem;
+            color: #e2e8f0;
+        }
+        .article-content p {
+            margin-bottom: 1rem;
+        }
+        .article-content code {
+            background-color: #334155;
+            padding: 0.2rem 0.4rem;
+            border-radius: 0.25rem;
+            font-family: monospace;
+        }
+        .article-content pre {
+            background-color: #1e293b;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            overflow-x: auto;
+            margin: 1.5rem 0;
+        }
+        .article-content blockquote {
+            border-left: 4px solid #6366f1;
+            padding-left: 1rem;
+            margin: 1.5rem 0;
+            color: #94a3b8;
+        }
+    </style>
+</head>
+<body class="bg-slate-900 text-slate-100">
+    <!-- 阅读进度条 -->
+    <div class="reading-progress" id="reading-progress"></div>
+
+    <!-- 导航栏 -->
+    <nav class="fixed top-0 w-full bg-slate-900/90 backdrop-blur-sm z-50 shadow-lg">
+        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <a href="index.html" class="text-xl font-bold text-indigo-400">极客博客</a>
+            <div class="hidden md:flex space-x-8">
+                <a href="index.html" class="nav-link text-slate-300 hover:text-white">首页</a>
+                <a href="articles.html" class="nav-link text-slate-300 hover:text-white">文章</a>
+                <a href="about.html" class="nav-link text-slate-300 hover:text-white">关于</a>
+            </div>
+            <button id="mobile-menu-btn" class="md:hidden text-slate-300">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                </svg>
+            </button>
+        </div>
+        <!-- 移动端菜单 -->
+        <div id="mobile-menu" class="hidden md:hidden bg-slate-800 py-2">
+            <a href="index.html" class="block px-4 py-2 text-slate-300 hover:text-white">首页</a>
+            <a href="articles.html" class="block px-4 py-2 text-slate-300 hover:text-white">文章</a>
+            <a href="about.html" class="block px-4 py-2 text-slate-300 hover:text-white">关于</a>
+        </div>
+    </nav>
+
+    <div class="container mx-auto px-4 pt-24 pb-16 flex flex-col md:flex-row gap-8">
+        <!-- 文章内容区 -->
+        <main class="md:w-2/3">
+            <article class="bg-slate-800 rounded-xl p-6 shadow-lg">
+                <h1 class="text-3xl md:text-4xl font-bold mb-4 text-white">前端开发趋势分析</h1>
+                <div class="flex items-center text-slate-400 mb-6">
+                    <span class="mr-4">作者：极客</span>
+                    <span>发布于：2024年11月22日</span>
+                </div>
+                
+                <div class="article-content">
+                    <p>前端开发领域在近年来经历了快速的发展和变革。从早期的纯HTML/CSS/JS到如今复杂的生态系统，前端工程师需要掌握的技能越来越多。本文将从几个关键方面分析当前前端开发的趋势以及未来的发展方向。</p>
+                    
+                    <h2>框架选择：React vs Vue vs Angular</h2>
+                    <p>在前端开发中，选择合适的框架是项目成功的关键。三大主流框架各有优劣：</p>
+                    
+                    <h3>React</h3>
+                    <p>React由Facebook开发，是目前最流行的前端库之一。其核心优势在于：</p>
+                    <ul>
+                        <li>组件化架构，便于复用和维护</li>
+                        <li>虚拟DOM技术，提高渲染性能</li>
+                        <li>庞大的生态系统和社区支持</li>
+                    </ul>
+                    
+                    <pre><code class="language-javascript">function Welcome(props) {
+  return &lt;h1&gt;Hello, {props.name}&lt;/h1&gt;;
+}
+</code></pre>
+                    
+                    <h3>Vue</h3>
+                    <p>Vue以其简洁易用而著称，特别适合中小型项目。其特点包括：</p>
+                    <ul>
+                        <li>渐进式框架，可以逐步引入</li>
+                        <li>模板语法直观，学习成本较低</li>
+                        <li>官方文档完善，新手友好</li>
+                    </ul>
+                    
+                    <pre><code class="language-html">&lt;template&gt;
+  &lt;div&gt;
+    &lt;h1&gt;{{ message }}&lt;/h1&gt;
+  &lt;/div&gt;
+&lt;/template&gt;
+
+&lt;script&gt;
+export default {
+  data() {
+    return {
+      message: 'Hello Vue!'
+    }
+  }
+}
+&lt;/script&gt;
+</code></pre>
+                    
+                    <h2>性能优化：现代前端工程化</h2>
+                    <p>随着应用复杂度的提升，性能优化变得越来越重要。现代前端工程化包括：</p>
+                    <ul>
+                        <li>代码分割（Code Splitting）</li>
+                        <li>懒加载（Lazy Loading）</li>
+                        <li>服务端渲染（SSR）</li>
+                        <li>静态站点生成（SSG）</li>
+                    </ul>
+                    
+                    <h3>代码分割示例</h3>
+                    <p>通过动态import实现代码分割，可以有效减少初始包体积：</p>
+                    
+                    <pre><code class="language-javascript">import('./myModule')
+  .then((module) => {
+    // 使用模块
+    module.default.show();
+  });
+</code></pre>
+                    
+                    <blockquote>
+                        <p>现代前端开发不仅仅是写代码，更需要考虑用户体验、性能优化和维护成本。</p>
+                    </blockquote>
+                    
+                    <h2>工具链发展</h2>
+                    <p>前端工具链的演进也推动了开发效率的提升：</p>
+                    <ul>
+                        <li>Vite：新一代构建工具，提供快速的冷启动和热更新</li>
+                        <li>ESLint：代码规范工具，确保代码质量</li>
+                        <li>Prettier：代码格式化工具，统一代码风格</li>
+                        <li>Webpack：模块打包器，处理复杂的依赖关系</li>
+                    </ul>
+                    
+                    <h3>构建工具对比</h3>
+                    <table class="w-full border-collapse border border-slate-600">
+                        <thead>
+                            <tr class="bg-slate-700">
+                                <th class="border border-slate-600 p-2">工具</th>
+                                <th class="border border-slate-600 p-2">优势</th>
+                                <th class="border border-slate-600 p-2">适用场景</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="border border-slate-600 p-2">Webpack</td>
+                                <td class="border border-slate-600 p-2">功能强大，生态完善</td>
+                                <td class="border border-slate-600 p-2">复杂项目</td>
+                            </tr>
+                            <tr>
+                                <td class="border border-slate-600 p-2">Vite</td>
+                                <td class="border border-slate-600 p-2">启动快，开发体验好</td>
+                                <td class="border border-slate-600 p-2">新项目，中小型项目</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    
+                    <h2>未来展望</h2>
+                    <p>前端开发的未来趋势可能包括：</p>
+                    <ul>
+                        <li>WebAssembly的普及：允许在Web上运行高性能代码</li>
+                        <li>Web Components的标准化：原生组件化方案</li>
+                        <li>AI辅助开发：提升开发效率</li>
+                        <li>Web3技术整合：区块链相关功能</li>
+                    </ul>
+                    
+                    <p>综上所述，前端开发正朝着更专业、更高效的方向发展。选择合适的工具和框架，持续学习新技术，是前端工程师保持竞争力的关键。</p>
+                </div>
+            </article>
+        </main>
+        
+        <!-- 文章目录侧边栏 -->
+        <aside class="md:w-1/3">
+            <div class="table-of-contents">
+                <h3 class="text-xl font-bold mb-4 text-white">文章目录</h3>
+                <div class="space-y-2">
+                    <div class="toc-item level-2" data-target="框架选择：React vs Vue vs Angular">框架选择：React vs Vue vs Angular</div>
+                    <div class="toc-item level-3" data-target="React">React</div>
+                    <div class="toc-item level-3" data-target="Vue">Vue</div>
+                    <div class="toc-item level-2" data-target="性能优化：现代前端工程化">性能优化：现代前端工程化</div>
+                    <div class="toc-item level-3" data-target="代码分割示例">代码分割示例</div>
+                    <div class="toc-item level-2" data-target="工具链发展">工具链发展</div>
+                    <div class="toc-item level-3" data-target="构建工具对比">构建工具对比</div>
+                    <div class="toc-item level-2" data-target="未来展望">未来展望</div>
+                </div>
+            </div>
+        </aside>
+    </div>
+
+    <!-- 页脚 -->
+    <footer class="py-8 bg-slate-800 border-t border-slate-700">
+        <div class="container mx-auto px-4 text-center">
+            <p class="text-slate-400">&copy; 2024 极客博客. 保留所有权利.</p>
+        </div>
+    </footer>
+
+    <script>
+        // 移动端菜单切换
+        document.getElementById('mobile-menu-btn').addEventListener('click', function() {
+            const menu = document.getElementById('mobile-menu');
+            menu.classList.toggle('hidden');
+        });
+
+        // 阅读进度条
+        window.addEventListener('scroll', function() {
+            const scrollTop = window.pageYOffset;
+            const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+            const scrollPercent = (scrollTop / docHeight) * 100;
+            document.getElementById('reading-progress').style.width = scrollPercent + '%';
+        });
+
+        // 文章目录滚动定位
+        document.querySelectorAll('.toc-item').forEach(item => {
+            item.addEventListener('click', function() {
+                const targetText = this.getAttribute('data-target');
+                const targetElement = document.querySelector(`h2:contains('${targetText}'), h3:contains('${targetText}')`);
+                if (targetElement) {
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 100,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+
+        // 为兼容性添加contains方法
+        if (typeof HTMLElement.prototype.contains !== 'function') {
+            HTMLElement.prototype.contains = function (element) {
+                while (element && (element !== this)) {
+                    element = element.parentNode;
+                }
+                return element === this;
+            };
+        }
+
+        // 代码高亮
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('pre code').forEach(function(block) {
+                hljs.highlightElement(block);
+            });
+        });
+    </script>
+</body>
+</html>

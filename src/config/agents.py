@@ -17,6 +17,6 @@ AGENT_LLM_MAP: dict[str, LLMType] = {
     "prompt_enhancer": "basic",
     "developer": "basic",
     "web_source": "basic",
-    "document": "basic",
+    "outline": "reasoning",
     "codegen": "coder",
 }

@@ -1,9 +1,12 @@
 from src.graph.State import State
 import dataclasses
 import os
+import logging
 from datetime import datetime
 from jinja2 import Environment, FileSystemLoader, TemplateNotFound, select_autoescape
 from langchain_core.messages import SystemMessage
+
+logger = logging.getLogger(__name__)
 
 # ========== Jinja2 模板引擎初始化 ==========
 # 创建 Jinja2 环境对象，用于加载和渲染 Prompt 模板
@@ -32,7 +35,16 @@ def get_prompt_template(prompt_name: str, locale: str = "zh-CN") -> str:
         # ========== 1. 规范化语言环境格式 ==========
         normalized_locale = locale.replace("-", "_") if locale and locale.strip() else "zh_CN"
         # ========== 2. 尝试加载本地化模板 ==========
-        template = env.get_template(f"{prompt_name}.{normalized_locale}.md")
+        try:
+            template = env.get_template(f"{prompt_name}.{normalized_locale}.md")
+        except TemplateNotFound:
+            # Fallback mechanism
+            if normalized_locale != "zh_CN":
+                logger.warning(f"Template {prompt_name}.{normalized_locale}.md not found, falling back to zh_CN")
+                template = env.get_template(f"{prompt_name}.zh_CN.md")
+            else:
+                raise
+
         # 渲染模板（此处不传入变量，只是返回模板内容）
         return template.render()
     except Exception as e:
@@ -80,7 +92,15 @@ def apply_prompt_template(
 
         # ========== 4. 加载模板文件 ==========
         # 尝试加载特定语言的模板（如 coordinator.zh_CN.md）
-        template = env.get_template(f"{prompt_name}.{normalized_locale}.md")
+        try:
+            template = env.get_template(f"{prompt_name}.{normalized_locale}.md")
+        except TemplateNotFound:
+            # Fallback mechanism
+            if normalized_locale != "zh_CN":
+                logger.warning(f"Template {prompt_name}.{normalized_locale}.md not found, falling back to zh_CN")
+                template = env.get_template(f"{prompt_name}.zh_CN.md")
+            else:
+                raise
 
         # ========== 5. 渲染模板 ==========
         # 使用 state_vars 中的变量渲染模板，生成系统 Prompt
@@ -134,7 +154,15 @@ def apply_prompt_template_not_with_messages(
 
         # ========== 4. 加载模板文件 ==========
         # 尝试加载特定语言的模板（如 coordinator.zh_CN.md）
-        template = env.get_template(f"{prompt_name}.{normalized_locale}.md")
+        try:
+            template = env.get_template(f"{prompt_name}.{normalized_locale}.md")
+        except TemplateNotFound:
+            # Fallback mechanism
+            if normalized_locale != "zh_CN":
+                logger.warning(f"Template {prompt_name}.{normalized_locale}.md not found, falling back to zh_CN")
+                template = env.get_template(f"{prompt_name}.zh_CN.md")
+            else:
+                raise
 
         # ========== 5. 渲染模板 ==========
         # 使用 state_vars 中的变量渲染模板，生成系统 Prompt

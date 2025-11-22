@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>文章列表 - 学术博客</title>
+    <style>
+        :root {
+            --primary-color: #2563eb;
+            --secondary-color: #64748b;
+            --background-color: #ffffff;
+            --text-color: #1e293b;
+            --border-color: #e2e8f0;
+            --card-bg: #f8fafc;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+
+        [data-theme="dark"] {
+            --primary-color: #3b82f6;
+            --secondary-color: #94a3b8;
+            --background-color: #0f172a;
+            --text-color: #f1f5f9;
+            --border-color: #334155;
+            --card-bg: #1e293b;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        header {
+            background-color: var(--background-color);
+            border-bottom: 1px solid var(--border-color);
+            padding: 1rem 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: var(--shadow);
+        }
+
+        nav {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .nav-links a {
+            color: var(--text-color);
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 0.375rem;
+            transition: all 0.2s ease;
+        }
+
+        .nav-links a:hover {
+            background-color: var(--card-bg);
+            color: var(--primary-color);
+        }
+
+        .theme-toggle {
+            background: none;
+            border: 1px solid var(--border-color);
+            padding: 0.5rem;
+            border-radius: 0.375rem;
+            cursor: pointer;
+            color: var(--text-color);
+        }
+
+        .breadcrumb {
+            padding: 1rem 2rem;
+            background-color: var(--card-bg);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .breadcrumb a {
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+
+        .breadcrumb span {
+            color: var(--secondary-color);
+        }
+
+        .articles-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+            display: grid;
+            grid-template-columns: 1fr 300px;
+            gap: 2rem;
+        }
+
+        @media (max-width: 768px) {
+            .articles-content {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .article-list {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        .article-card {
+            background-color: var(--card-bg);
+            border-radius: 0.5rem;
+            padding: 2rem;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border-color);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .article-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+
+        .article-card h2 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: var(--primary-color);
+        }
+
+        .article-meta {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            font-size: 0.875rem;
+            color: var(--secondary-color);
+        }
+
+        .tag {
+            display: inline-block;
+            background-color: var(--primary-color);
+            color: white;
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.375rem;
+            font-size: 0.75rem;
+            text-decoration: none;
+        }
+
+        .tags-list {
+            display: flex;
+            gap: 0.5rem;
+            margin: 1rem 0;
+        }
+
+        .sidebar {
+            background-color: var(--card-bg);
+            border-radius: 0.5rem;
+            padding: 2rem;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border-color);
+            align-self: start;
+        }
+
+        .sidebar h3 {
+            margin-bottom: 1.5rem;
+            color: var(--primary-color);
+        }
+
+        .reading-progress {
+            height: 10px;
+            background-color: var(--border-color);
+            border-radius: 5px;
+            margin-bottom: 2rem;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background-color: var(--primary-color);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .toc-item {
+            padding: 0.5rem 0;
+            border-left: 2px solid var(--border-color);
+            padding-left: 1rem;
+            margin-bottom: 0.5rem;
+            cursor: pointer;
+            transition: border-color 0.2s ease, padding-left 0.2s ease;
+        }
+
+        .toc-item:hover {
+            border-left-color: var(--primary-color);
+            padding-left: 1.5rem;
+        }
+
+        .toc-item.active {
+            border-left-color: var(--primary-color);
+            font-weight: bold;
+        }
+
+        .toc-item.level-2 {
+            padding-left: 1.5rem;
+        }
+
+        .toc-item.level-3 {
+            padding-left: 2.5rem;
+        }
+
+        footer {
+            background-color: var(--card-bg);
+            border-top: 1px solid var(--border-color);
+            padding: 2rem;
+            text-align: center;
+            margin-top: 4rem;
+        }
+
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--text-color);
+        }
+
+        @media (max-width: 768px) {
+            .mobile-menu-btn {
+                display: block;
+            }
+
+            .nav-links {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav>
+            <a href="index.html" class="logo">学术博客</a>
+            <div class="nav-links">
+                <a href="index.html">首页</a>
+                <a href="articles.html">文章</a>
+                <a href="about.html">关于</a>
+            </div>
+            <button class="theme-toggle" onclick="toggleTheme()">切换主题</button>
+            <button class="mobile-menu-btn">☰</button>
+        </nav>
+    </header>
+
+    <section class="breadcrumb">
+        <a href="index.html">首页</a> > <span>文章列表</span>
+    </section>
+
+    <main class="articles-content">
+        <section class="article-list">
+            <article class="article-card">
+                <h2>现代Web开发最佳实践</h2>
+                <div class="article-meta">
+                    <span>2025-01-15</span>
+                    <span>阅读时间: 15分钟</span>
+                    <span>字数: 4,250</span>
+                </div>
+                <p>探讨现代Web开发中的核心概念与最佳实践，包括性能优化、可访问性、安全性等关键主题。文章将深入分析现代前端框架的工作原理，以及如何构建可维护的大规模应用。</p>
+                <div class="tags-list">
+                    <a href="#" class="tag">前端</a>
+                    <a href="#" class="tag">Web开发</a>
+                    <a href="#" class="tag">性能优化</a>
+                </div>
+                <a href="#">阅读全文 →</a>
+            </article>
+
+            <article class="article-card">
+                <h2>结构化数据在学术研究中的应用</h2>
+                <div class="article-meta">
+                    <span>2025-01-10</span>
+                    <span>阅读时间: 12分钟</span>
+                    <span>字数: 3,800</span>
+                </div>
+                <p>分析结构化数据如何提升学术研究的效率和准确性，包括数据建模、存储和分析方法。通过实际案例展示结构化数据在研究项目中的具体应用。</p>
+                <div class="tags-list">
+                    <a href="#" class="tag">数据科学</a>
+                    <a href="#" class="tag">学术研究</a>
+                    <a href="#" class="tag">数据分析</a>
+                </div>
+                <a href="#">阅读全文 →</a>
+            </article>
+
+            <article class="article-card">
+                <h2>响应式设计的理论与实践</h2>
+                <div class="article-meta">
+                    <span>2025-01-05</span>
+                    <span>阅读时间: 18分钟</span>
+                    <span>字数: 5,100</span>
+                </div>
+                <p>深入探讨响应式设计的原理，从断点设计到交互优化，构建跨设备的用户体验。文章结合理论与实践，提供完整的设计思路和实现方案。</p>
+                <div class="tags-list">
+                    <a href="#" class="tag">UI/UX</a>
+                    <a href="#" class="tag">设计理论</a>
+                    <a href="#" class="tag">用户体验</a>
+                </div>
+                <a href="#">阅读全文 →</a>
+            </article>
+
+            <article class="article-card">
+                <h2>JavaScript异步编程深度解析</h2>
+                <div class="article-meta">
+                    <span>2024-12-28</span>
+                    <span>阅读时间: 20分钟</span>
+                    <span>字数: 6,200</span>
+                </div>
+                <p>详细解析JavaScript中的异步编程模式，从回调函数到Promise，再到async/await。探讨不同场景下的最佳实践和常见陷阱。</p>
+                <div class="tags-list">
+                    <a href="#" class="tag">JavaScript</a>
+                    <a href="#" class="tag">异步编程</a>
+                    <a href="#" class="tag">ES6</a>
+                </div>
+                <a href="#">阅读全文 →</a>
+            </article>
+        </section>
+
+        <aside class="sidebar">
+            <h3>阅读进度</h3>
+            <div class="reading-progress">
+                <div class="progress-bar" id="progressBar"></div>
+            </div>
+            
+            <h3>文章目录</h3>
+            <div class="toc">
+                <div class="toc-item level-1">引言</div>
+                <div class="toc-item level-2">现代Web开发背景</div>
+                <div class="toc-item level-2">关键概念解析</div>
+                <div class="toc-item level-3">性能优化</div>
+                <div class="toc-item level-3">可访问性</div>
+                <div class="toc-item level-3">安全性</div>
+                <div class="toc-item level-2">前端框架比较</div>
+                <div class="toc-item level-2">实践案例</div>
+                <div class="toc-item level-1">结论</div>
+            </div>
+        </aside>
+    </main>
+
+    <footer>
+        <p>&copy; 2025 学术博客. 保留所有权利.</p>
+    </footer>
+
+    <script>
+        // 主题切换功能
+        function toggleTheme() {
+            const currentTheme = document.body.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            document.body.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+        }
+
+        // 从本地存储恢复主题设置
+        const savedTheme = localStorage.getItem('theme') || 'light';
+        document.body.setAttribute('data-theme', savedTheme);
+
+        // 文章卡片交互
+        document.addEventListener('DOMContentLoaded', function() {
+            // 阅读进度条模拟
+            const progressBar = document.getElementById('progressBar');
+            let progress = 0;
+            const interval = setInterval(() => {
+                if (progress >= 100) {
+                    clearInterval(interval);
+                } else {
+                    progress += 2;
+                    progressBar.style.width = progress + '%';
+                }
+            }, 100);
+
+            // 目录项点击交互
+            const tocItems = document.querySelectorAll('.toc-item');
+            tocItems.forEach(item => {
+                item.addEventListener('click', function() {
+                    tocItems.forEach(i => i.classList.remove('active'));
+                    this.classList.add('active');
+                    // 这里可以实现滚动到对应标题的功能
+                });
+            });
+
+            // 模拟滚动时更新进度条
+            window.addEventListener('scroll', function() {
+                const scrollTop = window.pageYOffset;
+                const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+                const progress = (scrollTop / docHeight) * 100;
+                progressBar.style.width = Math.min(progress, 100) + '%';
+            });
+        });
+    </script>
+</body>
+</html>
