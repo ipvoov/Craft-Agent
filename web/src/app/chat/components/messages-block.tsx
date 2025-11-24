@@ -130,6 +130,7 @@ export function MessagesBlock({ className }: { className?: string }) {
           className="flex flex-grow"
           onFeedback={handleFeedback}
           onSendMessage={handleSend}
+          isWebDev={isWebDev}
         />
         {!isReplay ? (
           <div className="relative flex h-42 shrink-0 pb-4">

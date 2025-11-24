@@ -45,6 +45,20 @@
   <img src="docs/WebGenerate.png" alt="Craft-Agent 网站生成架构图" width="800" />
 </p>
 
+## 界面示例
+
+### 深度研究页面
+
+<p align="center">
+  <img src="docs/deep-research-demo.png" alt="Craft-Agent 深度研究页面示例" width="800" />
+</p>
+
+### 网站生成页面
+
+<p align="center">
+  <img src="docs/webgenerate-demo.png" alt="Craft-Agent 网站生成页面示例" width="800" />
+</p>
+
 ---
 
 ## 项目结构总览

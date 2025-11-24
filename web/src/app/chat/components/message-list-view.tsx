@@ -57,6 +57,7 @@ export function MessageListView({
   className,
   onFeedback,
   onSendMessage,
+  isWebDev = false,
 }: {
   className?: string;
   onFeedback?: (feedback: { option: Option }) => void;
@@ -64,6 +65,7 @@ export function MessageListView({
     message: string,
     options?: { interruptFeedback?: string },
   ) => void;
+  isWebDev?: boolean;
 }) {
   const scrollContainerRef = useRef<ScrollContainerRef>(null);
   // Use renderable message IDs to avoid React key warnings from duplicate or non-rendering messages
@@ -108,6 +110,7 @@ export function MessageListView({
             onFeedback={onFeedback}
             onSendMessage={onSendMessage}
             onToggleResearch={handleToggleResearch}
+            isWebDev={isWebDev}
           />
         ))}
         
@@ -118,18 +121,19 @@ export function MessageListView({
             The card inside MessageListItem checks for ID match, so if that fails, this one picks it up.
             If both match (unlikely given the issue), we might have two cards, but that is better than zero.
         */}
-        {interruptMessage && 
-         (interruptMessage.finishReason === "interrupt") && (
-           <li className="mt-3 px-4 w-full animate-in fade-in slide-in-from-bottom-4 pb-8">
-             <WebGenEditCard
-               message={interruptMessage}
-               interruptMessage={interruptMessage}
-               onFeedback={onFeedback}
-               waitForFeedback={true} 
-               onSendMessage={onSendMessage}
-             />
-           </li>
-        )}
+        {isWebDev &&
+          interruptMessage &&
+          interruptMessage.finishReason === "interrupt" && (
+            <li className="mt-3 px-4 w-full animate-in fade-in slide-in-from-bottom-4 pb-8">
+              <WebGenEditCard
+                message={interruptMessage}
+                interruptMessage={interruptMessage}
+                onFeedback={onFeedback}
+                waitForFeedback={true}
+                onSendMessage={onSendMessage}
+              />
+            </li>
+          )}
 
         <div className="flex h-8 w-full shrink-0"></div>
       </ul>
@@ -148,6 +152,7 @@ function MessageListItem({
   onFeedback,
   onSendMessage,
   onToggleResearch,
+  isWebDev = false,
 }: {
   className?: string;
   messageId: string;
@@ -159,6 +164,7 @@ function MessageListItem({
     options?: { interruptFeedback?: string },
   ) => void;
   onToggleResearch?: () => void;
+  isWebDev?: boolean;
 }) {
   const message = useMessage(messageId);
   const researchIds = useStore((state) => state.researchIds);
@@ -222,20 +228,29 @@ function MessageListItem({
               toolCalls={message.toolCalls}
             />
             {/* If this message has an active interrupt (e.g. finished generation), show the edit card */}
-            {interruptMessage && interruptMessage.id === messageId && (
-               <div className="w-full mt-4">
-                 <WebGenEditCard
-                   message={message}
-                   interruptMessage={interruptMessage}
-                   onFeedback={onFeedback}
-                   waitForFeedback={waitForFeedback}
-                   onSendMessage={onSendMessage}
-                 />
-               </div>
-            )}
+            {isWebDev &&
+              interruptMessage &&
+              interruptMessage.id === messageId && (
+                <div className="w-full mt-4">
+                  <WebGenEditCard
+                    message={message}
+                    interruptMessage={interruptMessage}
+                    onFeedback={onFeedback}
+                    waitForFeedback={waitForFeedback}
+                    onSendMessage={onSendMessage}
+                  />
+                </div>
+              )}
           </div>
         );
-      } else if ((message.agent as string) === "edit" || (interruptMessage && interruptMessage.id === messageId && interruptMessage.options && interruptMessage.options.length > 0)) {
+      } else if (
+        isWebDev &&
+        ((message.agent as string) === "edit" ||
+          (interruptMessage &&
+            interruptMessage.id === messageId &&
+            interruptMessage.options &&
+            interruptMessage.options.length > 0))
+      ) {
          // Handle WebGen Edit Interrupt
          // We match either by agent name 'edit' or by interrupt content/id pattern if agent name isn't propagated perfectly on interrupts
          content = (
