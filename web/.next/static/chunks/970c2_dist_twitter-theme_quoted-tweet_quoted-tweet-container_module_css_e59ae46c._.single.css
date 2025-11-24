@@ -1,0 +1,22 @@
+/* [project]/node_modules/.pnpm/react-tweet@3.2.2_react-dom@19.1.0_react@19.1.0__react@19.1.0/node_modules/react-tweet/dist/twitter-theme/quoted-tweet/quoted-tweet-container.module.css [app-client] (css) */
+.quoted-tweet-container-module__TEcBiG__root {
+  border: var(--tweet-border);
+  width: 100%;
+  margin: var(--tweet-quoted-container-margin);
+  cursor: pointer;
+  border-radius: 12px;
+  transition-property: background-color, box-shadow;
+  transition-duration: .2s;
+  overflow: hidden;
+}
+
+.quoted-tweet-container-module__TEcBiG__root:hover {
+  background-color: var(--tweet-quoted-bg-color-hover);
+}
+
+.quoted-tweet-container-module__TEcBiG__article {
+  box-sizing: inherit;
+  position: relative;
+}
+
+/*# sourceMappingURL=970c2_dist_twitter-theme_quoted-tweet_quoted-tweet-container_module_css_e59ae46c._.single.css.map*/

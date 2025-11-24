@@ -10,6 +10,9 @@ import {
   ChevronRight,
   Lightbulb,
   Wrench,
+  FileText,
+  Code2,
+  ChevronUp,
 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import React, { useCallback, useMemo, useRef, useState } from "react";
@@ -36,7 +39,7 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from "~/components/ui/collapsible";
-import type { Message, Option } from "~/core/messages";
+import type { Message, Option, ToolCallRuntime } from "~/core/messages";
 import {
   closeResearch,
   openResearch,
@@ -107,6 +110,27 @@ export function MessageListView({
             onToggleResearch={handleToggleResearch}
           />
         ))}
+        
+        {/* 
+            Fallback for WebGen interrupt: 
+            Force render the edit card if there is an active WebGen interrupt.
+            We relax the ID check to ensure it shows up even if ID matching fails.
+            The card inside MessageListItem checks for ID match, so if that fails, this one picks it up.
+            If both match (unlikely given the issue), we might have two cards, but that is better than zero.
+        */}
+        {interruptMessage && 
+         (interruptMessage.finishReason === "interrupt") && (
+           <li className="mt-3 px-4 w-full animate-in fade-in slide-in-from-bottom-4 pb-8">
+             <WebGenEditCard
+               message={interruptMessage}
+               interruptMessage={interruptMessage}
+               onFeedback={onFeedback}
+               waitForFeedback={true} 
+               onSendMessage={onSendMessage}
+             />
+           </li>
+        )}
+
         <div className="flex h-8 w-full shrink-0"></div>
       </ul>
       {responding && (noOngoingResearch || !ongoingResearchIsOpen) && (
@@ -147,6 +171,9 @@ function MessageListItem({
       message.agent === "coordinator" ||
       message.agent === "planner" ||
       message.agent === "podcast" ||
+      message.agent === "outline" ||
+      message.agent === "web_source" ||
+      message.agent === "codegen" ||
       startOfResearch
     ) {
       let content: React.ReactNode;
@@ -168,6 +195,60 @@ function MessageListItem({
             <PodcastCard message={message} />
           </div>
         );
+      } else if (message.agent === "outline") {
+        content = (
+          <div className="flex w-full flex-col px-4 items-start">
+            <ArtifactCard
+              message={message}
+              title="Project Outline"
+              type="document"
+              renderMode="raw"
+              defaultExpanded={true}
+              className="w-[85%]"
+              toolCalls={message.toolCalls}
+            />
+          </div>
+        );
+      } else if (message.agent === "codegen") {
+        content = (
+          <div className="flex w-full flex-col px-4 items-start">
+            <ArtifactCard
+              message={message}
+              title="Generated Code"
+              type="code"
+              renderMode="raw"
+              defaultExpanded={true}
+              className="w-[85%]"
+              toolCalls={message.toolCalls}
+            />
+            {/* If this message has an active interrupt (e.g. finished generation), show the edit card */}
+            {interruptMessage && interruptMessage.id === messageId && (
+               <div className="w-full mt-4">
+                 <WebGenEditCard
+                   message={message}
+                   interruptMessage={interruptMessage}
+                   onFeedback={onFeedback}
+                   waitForFeedback={waitForFeedback}
+                   onSendMessage={onSendMessage}
+                 />
+               </div>
+            )}
+          </div>
+        );
+      } else if ((message.agent as string) === "edit" || (interruptMessage && interruptMessage.id === messageId && interruptMessage.options && interruptMessage.options.length > 0)) {
+         // Handle WebGen Edit Interrupt
+         // We match either by agent name 'edit' or by interrupt content/id pattern if agent name isn't propagated perfectly on interrupts
+         content = (
+           <div className="w-full px-4">
+             <WebGenEditCard
+               message={message}
+               interruptMessage={interruptMessage}
+               onFeedback={onFeedback}
+               waitForFeedback={waitForFeedback}
+               onSendMessage={onSendMessage}
+             />
+           </div>
+         );
       } else if (startOfResearch) {
         content = (
           <div className="w-full px-4">
@@ -178,33 +259,55 @@ function MessageListItem({
           </div>
         );
       } else {
-        content = message.content ? (
+        const hasMainContent = Boolean(message.content && message.content.trim() !== "");
+        const reasoningContent = message.reasoningContent;
+        const isThinking = Boolean(reasoningContent && !hasMainContent);
+        
+        // For generic assistant messages (including web_source or other helpers), 
+        // wrap them in a card as well, but open by default and using Markdown rendering.
+        content = (
           <div
             className={cn(
-              "flex w-full px-4",
-              message.role === "user" && "justify-end",
+              "flex w-full flex-col px-4",
+              message.role === "user" ? "items-end" : "items-start",
               className,
             )}
           >
-            <MessageBubble message={message}>
-              <div className="flex w-full flex-col break-words">
-                <Markdown
-                  className={cn(
-                    message.role === "user" &&
-                      "prose-invert not-dark:text-secondary dark:text-inherit",
-                  )}
-                >
-                  {message?.content}
-                </Markdown>
-              </div>
-            </MessageBubble>
+            {/* We reuse ArtifactCard for assistant messages to keep style consistent */}
+            {message.role === "assistant" ? (
+              <ArtifactCard
+                message={message}
+                title={message.agent === "web_source" ? "Resource Plan" : "Assistant Response"}
+                type="document"
+                renderMode="raw"
+                defaultExpanded={true}
+                className="w-[85%]"
+                toolCalls={message.toolCalls}
+              />
+            ) : (
+              /* User messages keep the bubble style */
+              message.content && (
+                <MessageBubble message={message}>
+                  <div className="flex w-full flex-col break-words">
+                    <Markdown
+                      className={cn(
+                        message.role === "user" &&
+                          "prose-invert not-dark:text-secondary dark:text-inherit",
+                      )}
+                    >
+                      {message?.content}
+                    </Markdown>
+                  </div>
+                </MessageBubble>
+              )
+            )}
           </div>
-        ) : null;
+        );
       }
       if (content) {
         return (
           <motion.li
-            className="mt-10"
+            className="mt-3"
             key={messageId}
             initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
@@ -684,6 +787,134 @@ function PodcastCard({
   );
 }
 
+function ArtifactCard({
+  message,
+  title,
+  type = "document",
+  renderMode = "raw",
+  defaultExpanded = false,
+  className,
+  toolCalls,
+}: {
+  message: Message;
+  title: string;
+  type?: "document" | "code";
+  renderMode?: "raw" | "markdown";
+  defaultExpanded?: boolean;
+  className?: string;
+  toolCalls?: ToolCallRuntime[];
+}) {
+  const [expanded, setExpanded] = useState(defaultExpanded);
+  const [hasAutoCollapsed, setHasAutoCollapsed] = useState(false);
+  const contentRef = useRef<HTMLDivElement | null>(null);
+
+  // Simple heuristic for summary: first 100 chars or first line
+  const summary = useMemo(() => {
+    const content = message.content || "";
+    // Get first non-empty line that is NOT a code block delimiter
+    const lines = content.split("\n").filter((line) => {
+      const trimmed = line.trim();
+      return trimmed !== "" && !trimmed.startsWith("```");
+    });
+    const firstLine = lines[0] || "Content generated.";
+    return firstLine.replace(/^#+\s*/, "").slice(0, 100); // Remove markdown headers
+  }, [message.content]);
+
+  const reasoningContent = message.reasoningContent;
+  const hasMainContent = Boolean(
+    message.content && message.content.trim() !== "",
+  );
+  const isThinking = Boolean(reasoningContent && !hasMainContent);
+
+  // 当用于 WebGen / 资源规划等卡片时，希望：
+  // - 生成过程中默认展开（defaultExpanded = true）；
+  // - 内容生成完成后自动折叠一次，避免长期占用空间；
+  //   用户如果手动再次展开，则不再强制折叠。
+  React.useEffect(() => {
+    if (
+      defaultExpanded &&
+      !message.isStreaming &&
+      expanded &&
+      !hasAutoCollapsed
+    ) {
+      setExpanded(false);
+      setHasAutoCollapsed(true);
+    }
+  }, [defaultExpanded, message.isStreaming, expanded, hasAutoCollapsed]);
+
+  React.useEffect(() => {
+    if (!expanded) return;
+    if (!message.isStreaming) return;
+    const el = contentRef.current;
+    if (!el) return;
+    el.scrollTop = el.scrollHeight;
+  }, [message.content, message.isStreaming, expanded]);
+
+  return (
+    <div className="flex w-full flex-col">
+      {reasoningContent && (
+        <div className="w-[85%] mb-2">
+          <ThoughtBlock
+            content={reasoningContent}
+            isStreaming={isThinking}
+            hasMainContent={hasMainContent}
+            contentChunks={message.reasoningContentChunks}
+          />
+        </div>
+      )}
+
+      {toolCalls && toolCalls.length > 0 && (
+        <div className="w-[85%] mb-2">
+          <ToolCallsBlock toolCalls={toolCalls} />
+        </div>
+      )}
+      
+      {/* Only show the artifact card if there is main content */}
+      {hasMainContent && (
+        <Card className={cn("w-full overflow-hidden transition-all hover:border-primary/50", className)}>
+          <div className="flex items-center p-4 gap-4">
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
+              {type === "code" ? <Code2 size={20} /> : <FileText size={20} />}
+            </div>
+            <div className="flex-grow min-w-0 flex flex-col gap-0.5">
+              <h3 className="font-medium text-sm truncate">{title}</h3>
+              <p className="text-xs text-muted-foreground truncate">
+                {summary}
+                {message.isStreaming && <span className="ml-2 animate-pulse">Generating...</span>}
+              </p>
+            </div>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="h-8 w-8 p-0 hover:bg-muted"
+              onClick={() => setExpanded(!expanded)}
+            >
+              {expanded ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+            </Button>
+          </div>
+
+          {expanded && (
+            <div
+              ref={contentRef}
+              className="border-t bg-muted/30 p-4 max-h-[400px] overflow-y-auto text-sm"
+            >
+              {renderMode === "raw" ? (
+                <pre className="whitespace-pre-wrap font-mono text-sm leading-relaxed text-foreground/90">
+                  {message.content || ""}
+                </pre>
+              ) : (
+                <Markdown className="prose-sm dark:prose-invert">
+                  {message.content || ""}
+                </Markdown>
+              )}
+            </div>
+          )}
+        </Card>
+      )}
+    </div>
+  );
+}
+
 function ToolsDisplay({ tools }: { tools: string[] }) {
   return (
     <div className="mt-2 flex flex-wrap gap-1">
@@ -695,6 +926,174 @@ function ToolsDisplay({ tools }: { tools: string[] }) {
           {tool}
         </span>
       ))}
+    </div>
+  );
+}
+
+function ToolCallsBlock({ toolCalls }: { toolCalls: ToolCallRuntime[] }) {
+  return (
+    <div className="flex flex-col gap-2">
+      {toolCalls.map((toolCall) => {
+        // Infer running state from the absence of a result
+        const isRunning = toolCall.result === undefined;
+        return (
+          <motion.div
+            key={toolCall.id}
+            initial={{ opacity: 0, y: 5 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="flex items-center gap-3 rounded-lg border border-border/50 bg-muted/30 px-3 py-2 text-sm"
+          >
+            <div className="flex h-5 w-5 shrink-0 items-center justify-center">
+              {isRunning ? (
+                <div className="relative flex h-2.5 w-2.5">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
+                  <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-primary"></span>
+                </div>
+              ) : (
+                <div className="flex h-4 w-4 items-center justify-center rounded-full bg-primary/10 text-primary">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="3"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    className="h-2.5 w-2.5"
+                  >
+                    <polyline points="20 6 9 17 4 12" />
+                  </svg>
+                </div>
+              )}
+            </div>
+            <div className="flex flex-col gap-0.5">
+              <div className="flex items-center gap-2">
+                <span className="font-mono text-xs font-medium text-foreground/80">
+                  {toolCall.name}
+                </span>
+                <span className="text-xs text-muted-foreground">
+                  {isRunning ? "Running..." : "Completed"}
+                </span>
+              </div>
+              {toolCall.args && Object.keys(toolCall.args).length > 0 && (
+                <div className="text-xs text-muted-foreground/70 font-mono truncate max-w-md">
+                  {(() => {
+                    const args = toolCall.args as Record<string, any>;
+                    const primary = args.TargetFile || args.file_path || args.url || args.query || args.command || args.explanation;
+                    if (primary && typeof primary === 'string') return primary;
+                    try {
+                      return JSON.stringify(args).slice(0, 100);
+                    } catch (e) {
+                      return "Args...";
+                    }
+                  })()}
+                </div>
+              )}
+            </div>
+          </motion.div>
+        );
+      })}
+    </div>
+  );
+}
+
+function WebGenEditCard({
+  className,
+  message,
+  interruptMessage,
+  onFeedback,
+  waitForFeedback,
+  onSendMessage,
+}: {
+  className?: string;
+  message: Message;
+  interruptMessage?: Message | null;
+  onFeedback?: (feedback: { option: Option }) => void;
+  onSendMessage?: (
+    message: string,
+    options?: { interruptFeedback?: string },
+  ) => void;
+  waitForFeedback?: boolean;
+}) {
+  const handleAction = useCallback(async (value: string, text: string) => {
+    // Map "edit_plan" (default from backend interrupt if not customized) to "EDIT_CODE"
+    // and "accepted" to "DONE".
+    let feedbackValue = value;
+    if (value === "edit_plan" || text === "Continue Editing") feedbackValue = "EDIT_CODE";
+    if (value === "accepted" || text === "Finish") feedbackValue = "DONE";
+
+    if (feedbackValue === "EDIT_CODE") {
+      // For editing, we want the user to input text.
+      // So we use onFeedback to set the input box state, allowing user to type instructions.
+      if (onFeedback) {
+        onFeedback({ 
+          option: { 
+            value: feedbackValue, 
+            text: "Continue Editing" // Label shown in input box
+          } 
+        });
+      }
+    } else {
+      // For finishing, we can send immediately without content.
+      if (onSendMessage) {
+        onSendMessage(
+          text, 
+          {
+            interruptFeedback: feedbackValue,
+          },
+        );
+      }
+    }
+  }, [onSendMessage, onFeedback]);
+
+  return (
+    <div className={cn("w-full", className)}>
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.3, ease: "easeOut" }}
+      >
+        <Card className="w-full border-primary/20 bg-primary/5">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-lg">
+              <Lightbulb className="text-primary" size={20} />
+              <span>Code Generation Confirmation</span>
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-sm text-muted-foreground">
+              <Markdown animated={false}>
+                {message.content || "Code generation is complete. Please choose to continue editing or finish."}
+              </Markdown>
+            </div>
+          </CardContent>
+          <CardFooter className="flex justify-end gap-2">
+            {!message.isStreaming && interruptMessage && (
+              <motion.div
+                className="flex gap-2"
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3, delay: 0.3 }}
+              >
+                <Button
+                  variant="outline"
+                  disabled={!waitForFeedback}
+                  onClick={() => handleAction("edit_plan", "Continue Editing")}
+                >
+                  Continue Editing
+                </Button>
+                <Button
+                  variant="default"
+                  disabled={!waitForFeedback}
+                  onClick={() => handleAction("accepted", "Finish")}
+                >
+                  Finish
+                </Button>
+              </motion.div>
+            )}
+          </CardFooter>
+        </Card>
+      </motion.div>
     </div>
   );
 }

@@ -1,0 +1,6 @@
+{
+  "version": 3,
+  "sources": [],
+  "sections": [
+    {"offset": {"line": 1, "column": 0}, "map": {"version":3,"sources":["turbopack:///[project]/node_modules/.pnpm/react-tweet@3.2.2_react-dom@19.1.0_react@19.1.0__react@19.1.0/node_modules/react-tweet/dist/twitter-theme/tweet-in-reply-to.module.css"],"sourcesContent":[".root {\n  text-decoration: none;\n  color: var(--tweet-font-color-secondary);\n  font-size: 0.9375rem;\n  line-height: 1.25rem;\n  margin-bottom: 0.25rem;\n  overflow-wrap: break-word;\n  white-space: pre-wrap;\n}\n.root:hover {\n  text-decoration-thickness: 1px;\n  text-decoration-line: underline;\n}\n"],"names":[],"mappings":"AAAA;;;;;;;;;;AASA","ignoreList":[0]}}]
+}

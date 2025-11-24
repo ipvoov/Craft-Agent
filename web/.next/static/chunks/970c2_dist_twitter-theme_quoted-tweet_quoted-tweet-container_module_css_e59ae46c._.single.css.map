@@ -1,0 +1,6 @@
+{
+  "version": 3,
+  "sources": [],
+  "sections": [
+    {"offset": {"line": 1, "column": 0}, "map": {"version":3,"sources":["turbopack:///[project]/node_modules/.pnpm/react-tweet@3.2.2_react-dom@19.1.0_react@19.1.0__react@19.1.0/node_modules/react-tweet/dist/twitter-theme/quoted-tweet/quoted-tweet-container.module.css"],"sourcesContent":[".root {\n  width: 100%;\n  overflow: hidden;\n  border: var(--tweet-border);\n  border-radius: 12px;\n  margin: var(--tweet-quoted-container-margin);\n  transition-property: background-color, box-shadow;\n  transition-duration: 0.2s;\n  cursor: pointer;\n}\n\n.root:hover {\n  background-color: var(--tweet-quoted-bg-color-hover);\n}\n\n.article {\n  position: relative;\n  box-sizing: inherit;\n}\n"],"names":[],"mappings":"AAAA;;;;;;;;;;;AAWA;;;;AAIA","ignoreList":[0]}}]
+}

@@ -1,0 +1,6 @@
+{
+  "version": 3,
+  "sources": [],
+  "sections": [
+    {"offset": {"line": 1, "column": 0}, "map": {"version":3,"sources":["turbopack:///[project]/node_modules/.pnpm/react-tweet@3.2.2_react-dom@19.1.0_react@19.1.0__react@19.1.0/node_modules/react-tweet/dist/twitter-theme/tweet-info.module.css"],"sourcesContent":[".info {\n  display: flex;\n  align-items: center;\n  color: var(--tweet-font-color-secondary);\n  margin-top: 0.125rem;\n  overflow-wrap: break-word;\n  white-space: nowrap;\n  text-overflow: ellipsis;\n}\n.infoLink {\n  color: inherit;\n  text-decoration: none;\n}\n.infoLink {\n  height: var(--tweet-actions-icon-wrapper-size);\n  width: var(--tweet-actions-icon-wrapper-size);\n  font: inherit;\n  margin-left: auto;\n  display: flex;\n  justify-content: center;\n  align-items: center;\n  margin-right: -4px;\n  border-radius: 9999px;\n  transition-property: background-color;\n  transition-duration: 0.2s;\n}\n.infoLink:hover {\n  background-color: var(--tweet-color-blue-secondary-hover);\n}\n.infoIcon {\n  color: inherit;\n  fill: currentColor;\n  height: var(--tweet-actions-icon-size);\n  user-select: none;\n}\n.infoLink:hover > .infoIcon {\n  color: var(--tweet-color-blue-secondary);\n}\n"],"names":[],"mappings":"AAAA;;;;;;;;;;AASA;;;;;;;;;;;;;;;;AAiBA;;;;AAGA;;;;;;;;;AAMA","ignoreList":[0]}}]
+}

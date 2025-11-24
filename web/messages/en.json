@@ -16,21 +16,21 @@
     "placeholderWithRag": "What can I do for you? \nYou may refer to RAG resources by using @."
   },
   "header": {
-    "title": "DeepCraft"
+    "title": "Craft-Agent"
   },
   "hero": {
     "title": "Deep Research",
     "subtitle": "at Your Fingertips",
-    "description": "Meet DeepCraft, your personal Deep Research assistant. With powerful tools like search engines, web crawlers, Python and MCP services, it delivers instant insights, comprehensive reports, and even captivating podcasts.",
-    "footnote": "* DEER stands for Deep Exploration and Efficient Research."
+    "description": "Meet Craft-Agent, your personal deep research and website generation assistant. With powerful tools like search engines, web crawlers, Python and MCP services, it delivers instant insights, comprehensive reports, and even full websites.",
+    "footnote": "* Powered by a deep exploration and efficient research architecture."
   },
   "settings": {
-    "title": "DeepCraft Settings",
-    "description": "Manage your DeepCraft settings here.",
+    "title": "Craft-Agent Settings",
+    "description": "Manage your Craft-Agent settings here.",
     "addServers": "Add Servers",
     "cancel": "Cancel",
     "addNewMCPServers": "Add New MCP Servers",
-    "mcpConfigDescription": "DeepCraft uses the standard JSON MCP config to create a new server.",
+    "mcpConfigDescription": "Craft-Agent uses the standard JSON MCP config to create a new server.",
     "pasteConfigBelow": "Paste your config below and click \"Add\" to add new servers.",
     "add": "Add",
     "general": {
@@ -48,7 +48,7 @@
     },
     "mcp": {
       "title": "MCP Servers",
-      "description": "The Model Context Protocol boosts DeepCraft by integrating external tools for tasks like private domain searches, web browsing, food ordering, and more. Click here to",
+      "description": "The Model Context Protocol boosts Craft-Agent by integrating external tools for tasks like private domain searches, web browsing, food ordering, and more. Click here to",
       "learnMore": "learn more about MCP.",
       "enableDisable": "Enable/disable server",
       "deleteServer": "Delete server",
@@ -84,17 +84,17 @@
   "footer": {
     "quote": "Originated from Open Source, give back to Open Source.",
     "license": "Licensed under MIT License",
-    "copyright": "DeepCraft"
+    "copyright": "Craft-Agent"
   },
   "chat": {
     "page": {
-      "loading": "Loading DeepCraft...",
+      "loading": "Loading Craft-Agent...",
       "welcomeUser": "Welcome, {username}",
-      "starOnGitHub": "Star DeepCraft on GitHub"
+      "starOnGitHub": "Star Craft-Agent on GitHub"
     },
     "welcome": {
       "greeting": "👋 Hello, there!",
-      "description": "Welcome to 📺 DeepCraft, a deep research assistant built on cutting-edge language models, helps you search on web, browse information, and handle complex tasks."
+      "description": "Welcome to 📺 Craft-Agent, a deep research and website generation assistant built on cutting-edge language models, helping you search the web, browse information, and handle complex tasks."
     },
     "conversationStarters": [
       "How many times taller is the Eiffel Tower than the tallest building in the world?",
@@ -106,12 +106,12 @@
       "deepThinking": "Deep Thinking",
       "deepThinkingTooltip": {
         "title": "Deep Thinking Mode: {status}",
-        "description": "When enabled, DeepCraft will use reasoning model ({model}) to generate more thoughtful plans."
+        "description": "When enabled, Craft-Agent will use reasoning model ({model}) to generate more thoughtful plans."
       },
       "investigation": "Investigation",
       "investigationTooltip": {
         "title": "Investigation Mode: {status}",
-        "description": "When enabled, DeepCraft will perform a quick search before planning. This is useful for researches related to ongoing events and news."
+        "description": "When enabled, Craft-Agent will perform a quick search before planning. This is useful for researches related to ongoing events and news."
       },
       "enhancePrompt": "Enhance prompt with AI",
       "on": "On",
@@ -146,9 +146,9 @@
     },
     "messages": {
       "replaying": "Replaying",
-      "replayDescription": "DeepCraft is now replaying the conversation...",
+      "replayDescription": "Craft-Agent is now replaying the conversation...",
       "replayHasStopped": "The replay has been stopped.",
-      "replayModeDescription": "You're now in DeepCraft's replay mode. Click the \"Play\" button on the right to start.",
+      "replayModeDescription": "You're now in Craft-Agent's replay mode. Click the \"Play\" button on the right to start.",
       "play": "Play",
       "fastForward": "Fast Forward",
       "demoNotice": "* This site is for demo purposes only. If you want to try your own question, please",
@@ -165,7 +165,7 @@
   "landing": {
     "caseStudies": {
       "title": "Case Studies",
-      "description": "See DeepCraft in action through replays.",
+      "description": "See Craft-Agent in action through replays.",
       "clickToWatch": "Click to watch replay",
       "cases": [
         {
@@ -204,7 +204,7 @@
     },
     "coreFeatures": {
       "title": "Core Features",
-      "description": "Find out what makes DeepCraft effective.",
+      "description": "Find out what makes Craft-Agent effective.",
       "features": [
         {
           "name": "Dive Deeper and Reach Wider",
@@ -233,8 +233,8 @@
       "description": "Experience the agent teamwork with our Supervisor + Handoffs design pattern."
     },
     "joinCommunity": {
-      "title": "Join the DeepCraft Community",
-      "description": "Contribute brilliant ideas to shape the future of DeepCraft. Collaborate, innovate, and make impacts.",
+      "title": "Join the Craft-Agent Community",
+      "description": "Contribute brilliant ideas to shape the future of Craft-Agent. Collaborate, innovate, and make impacts.",
       "contributeNow": "Contribute Now"
     }
   }

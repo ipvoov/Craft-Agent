@@ -26,6 +26,8 @@ export const useStore = create<{
   researchActivityIds: Map<string, string[]>;
   ongoingResearchId: string | null;
   openResearchId: string | null;
+  webDevProjectId: string | null;
+  inputContent: string;
 
   appendMessage: (message: Message) => void;
   updateMessage: (message: Message) => void;
@@ -33,6 +35,8 @@ export const useStore = create<{
   openResearch: (researchId: string | null) => void;
   closeResearch: () => void;
   setOngoingResearch: (researchId: string | null) => void;
+  setWebDevProjectId: (id: string | null) => void;
+  setInputContent: (content: string) => void;
   resetStore: () => void;
 }>((set) => ({
   responding: false,
@@ -45,6 +49,15 @@ export const useStore = create<{
   researchActivityIds: new Map<string, string[]>(),
   ongoingResearchId: null,
   openResearchId: null,
+  webDevProjectId: null,
+  inputContent: "",
+
+  setWebDevProjectId(id: string | null) {
+    set({ webDevProjectId: id });
+  },
+  setInputContent(content: string) {
+    set({ inputContent: content });
+  },
 
   resetStore() {
     set({
@@ -58,6 +71,8 @@ export const useStore = create<{
       researchActivityIds: new Map<string, string[]>(),
       ongoingResearchId: null,
       openResearchId: null,
+      webDevProjectId: null,
+      inputContent: "",
     });
   },
 
@@ -101,9 +116,11 @@ export async function sendMessage(
   {
     interruptFeedback,
     resources,
+    extraParams,
   }: {
     interruptFeedback?: string;
     resources?: Array<Resource>;
+    extraParams?: Record<string, unknown>;
   } = {},
   options: { abortSignal?: AbortSignal } = {},
 ) {
@@ -136,6 +153,7 @@ export async function sendMessage(
       max_search_results: settings.maxSearchResults,
       report_style: settings.reportStyle,
       mcp_settings: settings.mcpSettings,
+      ...extraParams,
     },
     options,
   );
@@ -203,8 +221,9 @@ export async function sendMessage(
         scheduleUpdate();
       }
     }
-  } catch {
-    toast("An error occurred while generating the response. Please try again.");
+  } catch (error) {
+    console.error("sendMessage error:", error);
+    toast(`Error: ${error instanceof Error ? error.message : String(error)}`);
     // Update message status.
     // TODO: const isAborted = (error as Error).name === "AbortError";
     if (messageId != null) {
@@ -437,6 +456,9 @@ export function useRenderableMessageIds() {
           message.agent === "coordinator" ||
           message.agent === "planner" ||
           message.agent === "podcast" ||
+          message.agent === "outline" ||
+          message.agent === "web_source" ||
+          message.agent === "codegen" ||
           state.researchIds.includes(messageId) // startOfResearch condition
         );
       });

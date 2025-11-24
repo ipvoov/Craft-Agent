@@ -1,0 +1,89 @@
+/* [project]/node_modules/.pnpm/react-tweet@3.2.2_react-dom@19.1.0_react@19.1.0__react@19.1.0/node_modules/react-tweet/dist/twitter-theme/tweet-media-video.module.css [app-client] (css) */
+.tweet-media-video-module__74LCAq__anchor {
+  color: #fff;
+  cursor: pointer;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  user-select: none;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  border: 1px solid rgba(0, 0, 0, 0);
+  border-radius: 9999px;
+  outline-style: none;
+  align-items: center;
+  padding: 0 1rem;
+  font-weight: 700;
+  text-decoration: none;
+  transition: background-color .2s;
+  display: flex;
+}
+
+.tweet-media-video-module__74LCAq__videoButton {
+  background-color: var(--tweet-color-blue-primary);
+  cursor: pointer;
+  border: 4px solid #fff;
+  border-radius: 9999px;
+  justify-content: center;
+  align-items: center;
+  width: 67px;
+  height: 67px;
+  transition-property: background-color;
+  transition-duration: .2s;
+  display: flex;
+  position: relative;
+}
+
+.tweet-media-video-module__74LCAq__videoButton:hover {
+  background-color: var(--tweet-color-blue-primary-hover);
+}
+
+.tweet-media-video-module__74LCAq__videoButton:focus-visible {
+  background-color: var(--tweet-color-blue-primary-hover);
+}
+
+.tweet-media-video-module__74LCAq__videoButtonIcon {
+  color: #fff;
+  fill: currentColor;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  user-select: none;
+  width: calc(50% + 4px);
+  max-width: 100%;
+  height: calc(50% + 4px);
+  margin-left: 3px;
+}
+
+.tweet-media-video-module__74LCAq__watchOnTwitter {
+  position: absolute;
+  top: 12px;
+  right: 8px;
+}
+
+.tweet-media-video-module__74LCAq__watchOnTwitter > a {
+  -webkit-backdrop-filter: blur(4px);
+  backdrop-filter: blur(4px);
+  background-color: rgba(15, 20, 25, .75);
+  min-width: 2rem;
+  min-height: 2rem;
+  font-size: .875rem;
+  line-height: 1rem;
+}
+
+.tweet-media-video-module__74LCAq__watchOnTwitter > a:hover {
+  background-color: rgba(39, 44, 48, .75);
+}
+
+.tweet-media-video-module__74LCAq__viewReplies {
+  background-color: var(--tweet-color-blue-primary);
+  border-color: var(--tweet-color-blue-primary);
+  min-height: 2rem;
+  font-size: .9375rem;
+  line-height: 1.25rem;
+  position: relative;
+}
+
+.tweet-media-video-module__74LCAq__viewReplies:hover {
+  background-color: var(--tweet-color-blue-primary-hover);
+}
+
+/*# sourceMappingURL=48a05_react-tweet_dist_twitter-theme_tweet-media-video_module_css_e59ae46c._.single.css.map*/

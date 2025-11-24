@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# DeerFlow 停止脚本
+# Craft-Agent 停止脚本
 
 # 颜色输出定义
 RED='\033[0;31m'
@@ -11,7 +11,7 @@ NC='\033[0m' # No Color
 # 脚本所在目录
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-echo -e "${YELLOW}正在停止 DeerFlow 服务...${NC}"
+echo -e "${YELLOW}正在停止 Craft-Agent 服务...${NC}"
 echo ""
 
 # 读取PID文件
@@ -82,5 +82,5 @@ fi
 
 echo ""
 echo -e "${GREEN}========================================${NC}"
-echo -e "${GREEN}✅ DeerFlow 服务已完全停止${NC}"
+echo -e "${GREEN}✅ Craft-Agent 服务已完全停止${NC}"
 echo -e "${GREEN}========================================${NC}"

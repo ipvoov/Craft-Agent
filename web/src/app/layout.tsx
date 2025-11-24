@@ -15,9 +15,9 @@ import { env } from "~/env";
 import { Toaster } from "../components/deer-flow/toaster";
 
 export const metadata: Metadata = {
-  title: "📺 DeepCraft",
+  title: "📺 Craft-Agent",
   description:
-    "Deep Exploration and Efficient Research, an AI tool that combines language models with specialized tools for research tasks.",
+    "Craft-Agent is an AI agent that combines deep research workflows with website generation, built on language models and specialized tools.",
   icons: [{ rel: "icon", url: "/favicon.ico" }],
 };
 

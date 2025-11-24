@@ -1,0 +1,6 @@
+{
+  "version": 3,
+  "sources": [],
+  "sections": [
+    {"offset": {"line": 6, "column": 0}, "map": {"version":3,"sources":["file:///Users/ouyangsihao/code/python/deer/web/node_modules/.pnpm/next%4015.4.7_%40babel%2Bcore%407.28.5_%40opentelemetry%2Bapi%401.9.0_react-dom%4019.1.0_react%4019.1.0__react%4019.1.0/node_modules/next/error.js"],"sourcesContent":["module.exports = require('./dist/pages/_error')\n"],"names":[],"mappings":"AAAA,OAAO,OAAO","ignoreList":[0],"debugId":null}}]
+}

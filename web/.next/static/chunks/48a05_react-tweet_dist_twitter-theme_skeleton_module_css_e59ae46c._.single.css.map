@@ -1,0 +1,6 @@
+{
+  "version": 3,
+  "sources": [],
+  "sections": [
+    {"offset": {"line": 1, "column": 0}, "map": {"version":3,"sources":["turbopack:///[project]/node_modules/.pnpm/react-tweet@3.2.2_react-dom@19.1.0_react@19.1.0__react@19.1.0/node_modules/react-tweet/dist/twitter-theme/skeleton.module.css"],"sourcesContent":[".skeleton {\n  display: block;\n  width: 100%;\n  border-radius: 5px;\n  background-image: var(--tweet-skeleton-gradient);\n  background-size: 400% 100%;\n  animation: loading 8s ease-in-out infinite;\n}\n\n@media (prefers-reduced-motion: reduce) {\n  .skeleton {\n    animation: none;\n    background-position: 200% 0;\n  }\n}\n\n@keyframes loading {\n  0% {\n    background-position: 200% 0;\n  }\n  100% {\n    background-position: -200% 0;\n  }\n}\n"],"names":[],"mappings":"AAAA;;;;;;;;;AASA;EACE;;;;;;AAMF","ignoreList":[0]}}]
+}

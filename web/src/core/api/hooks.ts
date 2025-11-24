@@ -5,7 +5,7 @@ import { useEffect, useRef, useState } from "react";
 
 import { env } from "~/env";
 
-import type { DeerFlowConfig } from "../config";
+import type { CraftAgentConfig } from "../config";
 import { useReplay } from "../replay";
 
 import { fetchReplayTitle } from "./chat";
@@ -29,13 +29,13 @@ export function useReplayMetadata() {
         setError(false);
         setTitle(title ?? null);
         if (title) {
-          document.title = `${title} - DeepCraft`;
+          document.title = `${title} - Craft-Agent`;
         }
       })
       .catch(() => {
         setError(true);
         setTitle("Error: the replay is not available.");
-        document.title = "DeepCraft";
+        document.title = "Craft-Agent";
       })
       .finally(() => {
         isLoading.current = false;
@@ -44,20 +44,20 @@ export function useReplayMetadata() {
   return { title, isLoading, hasError: error };
 }
 
-const DEFAULT_CONFIG: DeerFlowConfig = {
+const DEFAULT_CONFIG: CraftAgentConfig = {
   rag: { provider: "" },
   models: { basic: [], reasoning: [] },
 };
 
-let configCache: DeerFlowConfig | null = null;
-let configPromise: Promise<DeerFlowConfig> | null = null;
+let configCache: CraftAgentConfig | null = null;
+let configPromise: Promise<CraftAgentConfig> | null = null;
 
 export function useConfig(enabled: boolean = true): {
-  config: DeerFlowConfig;
+  config: CraftAgentConfig;
   loading: boolean;
 } {
   const [loading, setLoading] = useState(enabled);
-  const [config, setConfig] = useState<DeerFlowConfig>(DEFAULT_CONFIG);
+  const [config, setConfig] = useState<CraftAgentConfig>(DEFAULT_CONFIG);
 
   useEffect(() => {
     if (!enabled) {
@@ -70,7 +70,7 @@ export function useConfig(enabled: boolean = true): {
       return;
     }
 
-    const fetchConfigWithRetry = async (): Promise<DeerFlowConfig> => {
+    const fetchConfigWithRetry = async (): Promise<CraftAgentConfig> => {
       const maxRetries = 2;
       let lastError: Error | null = null;
 
@@ -84,7 +84,7 @@ export function useConfig(enabled: boolean = true): {
             throw new Error(`HTTP ${res.status}: ${res.statusText}`);
           }
 
-          const configData: DeerFlowConfig = await res.json();
+          const configData: CraftAgentConfig = await res.json();
           return configData; // Success, exit retry loop
         } catch (err) {
           lastError = err instanceof Error ? err : new Error(String(err));

@@ -5,6 +5,7 @@ build/
 dist/
 wheels/
 *.egg-info
+web/node_modules/
 
 # Virtual environments
 .venv
@@ -14,4 +15,4 @@ logs/
 *.log
 .backend.pid
 .frontend.pid
-# test/
+ test/

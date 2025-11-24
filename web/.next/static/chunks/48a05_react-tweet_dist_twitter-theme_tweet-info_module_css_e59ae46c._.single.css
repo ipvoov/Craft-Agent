@@ -1,0 +1,45 @@
+/* [project]/node_modules/.pnpm/react-tweet@3.2.2_react-dom@19.1.0_react@19.1.0__react@19.1.0/node_modules/react-tweet/dist/twitter-theme/tweet-info.module.css [app-client] (css) */
+.tweet-info-module__2-N1yq__info {
+  color: var(--tweet-font-color-secondary);
+  overflow-wrap: break-word;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  align-items: center;
+  margin-top: .125rem;
+  display: flex;
+}
+
+.tweet-info-module__2-N1yq__infoLink {
+  color: inherit;
+  height: var(--tweet-actions-icon-wrapper-size);
+  width: var(--tweet-actions-icon-wrapper-size);
+  font: inherit;
+  border-radius: 9999px;
+  justify-content: center;
+  align-items: center;
+  margin-left: auto;
+  margin-right: -4px;
+  text-decoration: none;
+  transition-property: background-color;
+  transition-duration: .2s;
+  display: flex;
+}
+
+.tweet-info-module__2-N1yq__infoLink:hover {
+  background-color: var(--tweet-color-blue-secondary-hover);
+}
+
+.tweet-info-module__2-N1yq__infoIcon {
+  color: inherit;
+  fill: currentColor;
+  height: var(--tweet-actions-icon-size);
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  user-select: none;
+}
+
+.tweet-info-module__2-N1yq__infoLink:hover > .tweet-info-module__2-N1yq__infoIcon {
+  color: var(--tweet-color-blue-secondary);
+}
+
+/*# sourceMappingURL=48a05_react-tweet_dist_twitter-theme_tweet-info_module_css_e59ae46c._.single.css.map*/

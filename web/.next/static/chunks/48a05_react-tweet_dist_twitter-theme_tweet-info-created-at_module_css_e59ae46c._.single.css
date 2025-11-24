@@ -1,0 +1,15 @@
+/* [project]/node_modules/.pnpm/react-tweet@3.2.2_react-dom@19.1.0_react@19.1.0__react@19.1.0/node_modules/react-tweet/dist/twitter-theme/tweet-info-created-at.module.css [app-client] (css) */
+.tweet-info-created-at-module__PjXJIG__root {
+  color: inherit;
+  font-size: var(--tweet-info-font-size);
+  line-height: var(--tweet-info-line-height);
+  text-decoration: none;
+}
+
+.tweet-info-created-at-module__PjXJIG__root:hover {
+  -webkit-text-decoration-line: underline;
+  text-decoration-line: underline;
+  text-decoration-thickness: 1px;
+}
+
+/*# sourceMappingURL=48a05_react-tweet_dist_twitter-theme_tweet-info-created-at_module_css_e59ae46c._.single.css.map*/

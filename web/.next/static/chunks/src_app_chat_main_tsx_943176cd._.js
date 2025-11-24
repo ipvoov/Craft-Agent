@@ -1,0 +1,30 @@
+(globalThis.TURBOPACK_CHUNK_LISTS = globalThis.TURBOPACK_CHUNK_LISTS || []).push({
+    script: typeof document === "object" ? document.currentScript : undefined,
+    chunks: [
+  "static/chunks/src_c053fbb7._.js",
+  "static/chunks/40c62_framer-motion_dist_es_3285e220._.js",
+  "static/chunks/4aed3_@radix-ui_react-icons_dist_react-icons_esm_c5594b42.js",
+  "static/chunks/f6ba5_prosemirror-view_dist_index_284a5ba1.js",
+  "static/chunks/09028_@tiptap_core_dist_index_4ccf1bd2.js",
+  "static/chunks/23d63_@popperjs_core_lib_8be2f6b1._.js",
+  "static/chunks/a2e29_react-moveable_dist_moveable_esm_45cde618.js",
+  "static/chunks/65c02_katex_dist_3a8deae3._.js",
+  "static/chunks/48a05_react-tweet_dist_86c5a253._.js",
+  "static/chunks/22eef_entities_lib_esm_9ae3b640._.js",
+  "static/chunks/f0645_markdown-it_4880a955._.js",
+  "static/chunks/52bc5_motion_dist_es_223495e7._.js",
+  "static/chunks/a2029_micromark_dev_lib_33943764._.js",
+  "static/chunks/42800_micromark-core-commonmark_dev_lib_f3ec2821._.js",
+  "static/chunks/dbd1f_lru-cache_dist_esm_index_4ad3ac84.js",
+  "static/chunks/0c55d_highlight_js_lib_languages_mathematica_c1aaa245.js",
+  "static/chunks/0c55d_highlight_js_lib_languages_eecba7a5._.js",
+  "static/chunks/0c55d_highlight_js_lib_core_dedb852c.js",
+  "static/chunks/6f673_highlight_js_es_4259f19b._.js",
+  "static/chunks/6f673_highlight_js_lib_languages_mathematica_dcbbc035.js",
+  "static/chunks/6f673_highlight_js_lib_languages_a2fc2663._.js",
+  "static/chunks/6f673_highlight_js_lib_1ba524b4._.js",
+  "static/chunks/node_modules__pnpm_927b3484._.js",
+  "static/chunks/_56565448._.css"
+],
+    source: "dynamic"
+});

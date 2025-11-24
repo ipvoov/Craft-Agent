@@ -61,7 +61,7 @@ export default function HomePage() {
         {/* Main Content */}
         <div className="mt-20 mb-12 flex-grow flex flex-col justify-center px-4 md:px-12">
           <h1 className="text-xl font-bold mb-16 flex items-center gap-2">
-            📺 DeepCraft
+            📺 Craft-Agent
           </h1>
           
           <div className="mb-8 space-y-8">
@@ -74,7 +74,7 @@ export default function HomePage() {
             
             <div className="space-y-4 text-lg opacity-80 max-w-lg leading-relaxed">
               <p>
-                认识 DeepCraft，您的个人深度研究助手与网站构建引擎。
+                认识 Craft-Agent，您的个人深度研究助手与网站构建引擎。
               </p>
               <p>
                 凭借搜索引擎、网络爬虫、Python等强大工具，它不仅能提供即时洞察、全面报告、制作引人入胜的播客，更能将研究成果瞬间转化为精美前端网站。让从探索到呈现，一气呵成。
@@ -110,7 +110,7 @@ export default function HomePage() {
                 </DropdownMenuContent>
               </DropdownMenu>
               <a 
-                href="https://github.com/ipvoov/Deep-Research" 
+                href="https://github.com/ipvoov/Craft-Agent" 
                 target="_blank" 
                 className={`px-8 py-3 border rounded font-bold transition-all ${
                   isDarkMode 
@@ -130,7 +130,7 @@ export default function HomePage() {
             <span>Links</span>
             <a href="https://twitter.com" target="_blank" className="hover:underline">Twitter</a>
             <a href="mailto:contact@deepflow.ai" className="hover:underline">Email</a>
-            <a href="https://github.com/ipvoov/Deep-Research" target="_blank" className="hover:underline">GitHub</a>
+            <a href="https://github.com/ipvoov/Craft-Agent" target="_blank" className="hover:underline">GitHub</a>
           </div>
         </div>
       </div>

@@ -1,0 +1,18 @@
+/* [project]/node_modules/.pnpm/react-tweet@3.2.2_react-dom@19.1.0_react@19.1.0__react@19.1.0/node_modules/react-tweet/dist/twitter-theme/tweet-in-reply-to.module.css [app-client] (css) */
+.tweet-in-reply-to-module__WNLhFG__root {
+  color: var(--tweet-font-color-secondary);
+  overflow-wrap: break-word;
+  white-space: pre-wrap;
+  margin-bottom: .25rem;
+  font-size: .9375rem;
+  line-height: 1.25rem;
+  text-decoration: none;
+}
+
+.tweet-in-reply-to-module__WNLhFG__root:hover {
+  -webkit-text-decoration-line: underline;
+  text-decoration-line: underline;
+  text-decoration-thickness: 1px;
+}
+
+/*# sourceMappingURL=48a05_react-tweet_dist_twitter-theme_tweet-in-reply-to_module_css_e59ae46c._.single.css.map*/

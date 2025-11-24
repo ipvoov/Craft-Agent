@@ -5,7 +5,8 @@ import { motion } from "framer-motion";
 import { FastForward, Play } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { usePathname } from "next/navigation";
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { toast } from "sonner";
 
 import { RainbowText } from "~/components/deer-flow/rainbow-text";
 import { Button } from "~/components/ui/button";
@@ -25,9 +26,9 @@ import { cn } from "~/lib/utils";
 
 import { InputBox } from "./input-box";
 import { MessageListView } from "./message-list-view";
-import { Welcome } from "./welcome";
 import { VibeHome } from "./vibe-home";
 import { WebDevHome } from "./web-dev-home";
+import { Welcome } from "./welcome";
 
 export function MessagesBlock({ className }: { className?: string }) {
   const t = useTranslations("chat.messages");
@@ -37,6 +38,17 @@ export function MessagesBlock({ className }: { className?: string }) {
   const messageIds = useMessageIds();
   const messageCount = messageIds.length;
   const responding = useStore((state) => state.responding);
+  
+  const webDevProjectId = useStore((state) => state.webDevProjectId);
+  const setWebDevProjectId = useStore((state) => state.setWebDevProjectId);
+
+  useEffect(() => {
+    if (isWebDev && !webDevProjectId) {
+      const newId = Math.floor(100000 + Math.random() * 900000).toString();
+      setWebDevProjectId(newId);
+    }
+  }, [isWebDev, webDevProjectId, setWebDevProjectId]);
+
   const { isReplay } = useReplay();
   const { title: replayTitle, hasError: replayHasError } = useReplayMetadata();
   const [replayStarted, setReplayStarted] = useState(false);
@@ -59,14 +71,18 @@ export function MessagesBlock({ className }: { className?: string }) {
             interruptFeedback:
               options?.interruptFeedback ?? feedback?.option.value,
             resources: options?.resources,
+            extraParams: isWebDev ? { number: webDevProjectId } : undefined,
           },
           {
             abortSignal: abortController.signal,
           },
         );
-      } catch {}
+      } catch (e) {
+        console.error("Failed to send message:", e);
+        toast.error(`发送失败: ${e instanceof Error ? e.message : String(e)}`);
+      }
     },
-    [feedback],
+    [feedback, isWebDev, webDevProjectId],
   );
   const handleCancel = useCallback(() => {
     abortControllerRef.current?.abort();
@@ -213,24 +229,24 @@ export function MessagesBlock({ className }: { className?: string }) {
                   </div>
                 )}
               </div>
-              </Card>
-              {!replayStarted && env.NEXT_PUBLIC_STATIC_WEBSITE_ONLY && (
-                <div className="text-muted-foreground w-full text-center text-xs">
-                  {t("demoNotice")}{" "}
-                  <a
-                    className="underline"
-                    href="https://github.com/bytedance/deer-flow"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    {t("clickHere")}
-                  </a>{" "}
-                  {t("cloneLocally")}
-                </div>
-              )}
-            </motion.div>
-          </>
-        )}
+            </Card>
+            {!replayStarted && env.NEXT_PUBLIC_STATIC_WEBSITE_ONLY && (
+              <div className="text-muted-foreground w-full text-center text-xs">
+                {t("demoNotice")}{" "}
+                <a
+                  className="underline"
+                  href="https://github.com/ipvoov/Craft-Agent"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  {t("clickHere")}
+                </a>{" "}
+                {t("cloneLocally")}
+              </div>
+            )}
+          </motion.div>
+        </>
+      )}
       </div>
     </div>
   );

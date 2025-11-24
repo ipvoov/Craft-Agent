@@ -57,7 +57,7 @@ export function VibeHome({
               )}
               style={{ fontFamily: "system-ui, -apple-system, sans-serif" }}
             >
-              DeepCraft
+              Craft-Agent
             </h1>
             <h2
               className={cn(
@@ -76,7 +76,7 @@ export function VibeHome({
             )}
             style={{ fontFamily: "system-ui, sans-serif" }}
           >
-            使用 DeepCraft 探索复杂问题、运行多步骤研究，并生成高质量的研究报告。
+            使用 Craft-Agent 探索复杂问题、运行多步骤研究，并生成高质量的研究报告。
           </p>
         </div>
 

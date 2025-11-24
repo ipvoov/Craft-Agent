@@ -1,0 +1,6 @@
+{
+  "version": 3,
+  "sources": [],
+  "sections": [
+    {"offset": {"line": 1, "column": 0}, "map": {"version":3,"sources":["turbopack:///[project]/node_modules/.pnpm/react-tweet@3.2.2_react-dom@19.1.0_react@19.1.0__react@19.1.0/node_modules/react-tweet/dist/twitter-theme/icons/icons.module.css"],"sourcesContent":[".verified {\n  margin-left: 0.125rem;\n  max-width: 20px;\n  max-height: 20px;\n  height: 1.25em;\n  fill: currentColor;\n  user-select: none;\n  vertical-align: text-bottom;\n}\n"],"names":[],"mappings":"AAAA","ignoreList":[0]}}]
+}

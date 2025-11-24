@@ -1,0 +1,65 @@
+/* [project]/node_modules/.pnpm/react-tweet@3.2.2_react-dom@19.1.0_react@19.1.0__react@19.1.0/node_modules/react-tweet/dist/twitter-theme/tweet-media.module.css [app-client] (css) */
+.tweet-media-module__Y5TNEq__root {
+  margin-top: .75rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.tweet-media-module__Y5TNEq__rounded {
+  border: var(--tweet-border);
+  border-radius: 12px;
+}
+
+.tweet-media-module__Y5TNEq__mediaWrapper {
+  grid-auto-rows: 1fr;
+  gap: 2px;
+  width: 100%;
+  height: 100%;
+  display: grid;
+}
+
+.tweet-media-module__Y5TNEq__grid2Columns {
+  grid-template-columns: repeat(2, 1fr);
+}
+
+.tweet-media-module__Y5TNEq__grid3 > a:first-child {
+  grid-row: span 2;
+}
+
+.tweet-media-module__Y5TNEq__grid2x2 {
+  grid-template-rows: repeat(2, 1fr);
+}
+
+.tweet-media-module__Y5TNEq__mediaContainer {
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  position: relative;
+}
+
+.tweet-media-module__Y5TNEq__mediaLink {
+  outline-style: none;
+  text-decoration: none;
+}
+
+.tweet-media-module__Y5TNEq__skeleton {
+  width: 100%;
+  padding-bottom: 56.25%;
+  display: block;
+}
+
+.tweet-media-module__Y5TNEq__image {
+  object-fit: cover;
+  object-position: center;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+}
+
+/*# sourceMappingURL=48a05_react-tweet_dist_twitter-theme_tweet-media_module_css_e59ae46c._.single.css.map*/

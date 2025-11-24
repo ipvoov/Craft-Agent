@@ -18,7 +18,7 @@ export function SiteHeader() {
       <div className="container flex h-15 items-center justify-between px-3">
         <div className="text-xl font-medium">
           <span className="mr-1 text-2xl">📺</span>
-          <span>DeepCraft</span>
+          <span>Craft-Agent</span>
         </div>
         <div className="relative flex items-center gap-2">
           <LanguageSwitcher />
@@ -35,7 +35,7 @@ export function SiteHeader() {
             asChild
             className="group relative z-10"
           >
-            <Link href="https://github.com/bytedance/deer-flow" target="_blank">
+            <Link href="https://github.com/ipvoov/Craft-Agent" target="_blank">
               <GitHubLogoIcon className="size-4" />
               {t('starOnGitHub')}
               {env.NEXT_PUBLIC_STATIC_WEBSITE_ONLY &&
@@ -54,7 +54,7 @@ export async function StarCounter() {
 
   try {
     const response = await fetch(
-      "https://api.github.com/repos/bytedance/deer-flow",
+      "https://api.github.com/repos/ipvoov/Craft-Agent",
       {
         headers: env.GITHUB_OAUTH_TOKEN
           ? {

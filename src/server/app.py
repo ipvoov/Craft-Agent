@@ -1,9 +1,11 @@
 import json
 import random
 import os
+import io
+import zipfile
 from uuid import uuid4
 from dotenv import load_dotenv
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
@@ -48,8 +50,8 @@ def get_configured_llm_models() -> ModelConfig:
     return ModelConfig(basic=basic_models, reasoning=reasoning_models)
 
 app = FastAPI(
-    title="Deer API",
-    description="API for Deer",
+    title="Craft-Agent API",
+    description="API for Craft-Agent",
     version="0.1.0",
 )
 
@@ -60,6 +62,72 @@ if not os.path.exists(source_dir):
     os.makedirs(source_dir)
 
 app.mount("/api/preview", StaticFiles(directory=source_dir), name="preview")
+
+def get_file_tree(path: str):
+    tree = []
+    try:
+        # Sort: directories first, then files
+        items = sorted(os.listdir(path), key=lambda x: (not os.path.isdir(os.path.join(path, x)), x))
+        for item in items:
+            if item in [".DS_Store", "__pycache__", ".git", "node_modules"]:
+                continue
+            full_path = os.path.join(path, item)
+            node = {"name": item}
+            if os.path.isdir(full_path):
+                node["type"] = "directory"
+                node["children"] = get_file_tree(full_path)
+            else:
+                node["type"] = "file"
+            tree.append(node)
+    except Exception:
+        pass
+    return tree
+
+@app.get("/api/files/{project_num}")
+async def get_project_files(project_num: str):
+    project_path = os.path.join(source_dir, f"project_{project_num}")
+    if not os.path.exists(project_path):
+        return {"tree": []}
+    return {"tree": get_file_tree(project_path)}
+
+
+@app.get("/api/download/{project_num}")
+async def download_project(project_num: str):
+    """打包并下载指定项目目录。
+
+    - 输入的 project_num 形如 "212210"；
+    - 实际目录为 source/project_{project_num}；
+    - 返回一个 zip 压缩包，文件名为 project_{project_num}.zip。
+    """
+
+    project_path = os.path.join(source_dir, f"project_{project_num}")
+    if not os.path.exists(project_path) or not os.path.isdir(project_path):
+        raise HTTPException(status_code=404, detail="Project not found")
+
+    # 需要忽略的系统/缓存目录和文件
+    ignore_names = {".DS_Store", "__pycache__", ".git", "node_modules"}
+
+    buffer = io.BytesIO()
+    # 使用 zipfile 将整个目录打包到内存中
+    with zipfile.ZipFile(buffer, "w", zipfile.ZIP_DEFLATED) as zipf:
+        for root, dirs, files in os.walk(project_path):
+            # 过滤不需要打包的子目录
+            dirs[:] = [d for d in dirs if d not in ignore_names]
+            for filename in files:
+                if filename in ignore_names:
+                    continue
+                file_path = os.path.join(root, filename)
+                # 归档名使用相对 project 根目录的路径，避免把本机绝对路径暴露给客户端
+                arcname = os.path.relpath(file_path, project_path)
+                zipf.write(file_path, arcname)
+
+    buffer.seek(0)
+    zip_filename = f"project_{project_num}.zip"
+    headers = {
+        "Content-Disposition": f'attachment; filename="{zip_filename}"'
+    }
+
+    return StreamingResponse(buffer, media_type="application/zip", headers=headers)
 
 # 配置CORS中间件,允许前端跨域访问
 app.add_middleware(
@@ -130,6 +198,7 @@ async def web_chat_stream(request: WebChatRequest):
             request.number,
             request.tree,
             request.locale,
+            request.interrupt_feedback,
         ),
         media_type="text/event-stream",
     )
@@ -348,6 +417,7 @@ async def _astream_webgen_generator(
         number: Optional[str],
         tree: Optional[str],
         locale: str = "zh-CN",
+        interrupt_feedback: Optional[str] = None,
 ):
     """WebGenAgent 的异步流式生成器"""
 
@@ -378,12 +448,23 @@ async def _astream_webgen_generator(
         else:
             lc_messages.append(HumanMessage(content=content))
 
-    workflow_input = {
-        "messages": lc_messages,
-        "name": name,
-        "number": number,
-        "tree": tree,
-    }
+    # 当存在中断反馈时，使用 Command(resume=...) 恢复上一次中断的 WebGen 会话
+    # 为了支持多轮编辑，这里将最新一条用户消息内容一并拼接到 resume_msg 中，
+    # 使得 edit_node 能够解析出自然语言的修改指令。
+    if interrupt_feedback:
+        resume_msg = f"[{interrupt_feedback}]"
+        if messages:
+            last_content = messages[-1].get("content", "")
+            if last_content:
+                resume_msg += f" {last_content}"
+        workflow_input = Command(resume=resume_msg)
+    else:
+        workflow_input = {
+            "messages": lc_messages,
+            "name": name,
+            "number": number,
+            "tree": tree,
+        }
 
     workflow_config = {
         "thread_id": thread_id,
@@ -786,6 +867,12 @@ def _create_interrupt_event(thread_id, event_data):
     event_data["__interrupt__"] 可能包含两种类型的数据：
     1. Interrupt 对象（从 langgraph.types.interrupt() 函数）
     2. 元组列表 [("node_name", "content")]（手动创建）
+
+    为了支持 **多轮中断**（例如 WebGen 的多轮编辑），必须确保
+    每一次 interrupt 都对应一个 **唯一的事件 id**。否则如果所有
+    中断都复用同一个 id（例如 "edit"），前端只会在第一次中断
+    时创建一条消息，后续中断无法被识别为“最新一次中断”，
+    导致确认卡片只出现一次。
     """
     interrupt_list = event_data["__interrupt__"]
     
@@ -796,7 +883,7 @@ def _create_interrupt_event(thread_id, event_data):
             "interrupt",
             {
                 "thread_id": thread_id,
-                "id": "unknown",
+                "id": f"interrupt-{uuid4().hex}",
                 "role": "assistant",
                 "content": "收到中断请求",
                 "finish_reason": "interrupt",
@@ -813,7 +900,7 @@ def _create_interrupt_event(thread_id, event_data):
     if hasattr(interrupt_data, 'value'):
         # Interrupt 对象通常有 value 属性存储中断消息
         content = str(interrupt_data.value) if interrupt_data.value else ""
-        # 尝试获取 ns 属性作为 id，如果没有则使用默认值
+        # 尝试获取 ns 属性作为节点名，如果没有则使用默认值
         node_id = interrupt_data.ns[0] if hasattr(interrupt_data, 'ns') and interrupt_data.ns else "interrupt"
     # 情况2: 元组 (node_name, content)
     elif isinstance(interrupt_data, tuple) and len(interrupt_data) >= 2:
@@ -822,12 +909,15 @@ def _create_interrupt_event(thread_id, event_data):
     else:
         node_id = "interrupt"
         content = str(interrupt_data)
+
+    # 为本次中断生成唯一的事件 id，避免与历史中断复用同一个 id
+    event_id = f"{node_id}-{uuid4().hex}"
     
     return _make_event(
         "interrupt",
         {
             "thread_id": thread_id,
-            "id": node_id,
+            "id": event_id,
             "role": "assistant",
             "content": content,
             "finish_reason": "interrupt",

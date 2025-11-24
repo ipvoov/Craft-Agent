@@ -1,0 +1,30 @@
+# Craft-Agent 配置示例（请复制为 config.yaml 并填写自己的密钥）
+
+# 智能体递归调用限制
+AGENT_RECURSION_LIMIT: 20
+
+# 基础模型配置（用于一般对话 / 研究）
+BASIC_MODEL:
+  base_url: "<YOUR_BASIC_MODEL_BASE_URL>"
+  model: "qwen3-coder-plus"
+  api_key: "<YOUR_BASIC_MODEL_API_KEY>"  # 请填写你自己的 API Key
+
+# 推理模型配置（用于更复杂的推理任务）
+REASONING_MODEL:
+  base_url: "<YOUR_BASIC_MODEL_BASE_URL>"
+  model: "deepseek-r1"
+  api_key: "<YOUR_REASONING_MODEL_API_KEY>"  # 请填写你自己的 API Key
+  max_retries: 3  # LLM 调用的最大重试次数
+
+# Coder 模型配置（用于代码生成 / 重构等）
+CODER_MODEL:
+  base_url: "<YOUR_BASIC_MODEL_BASE_URL>"
+  model: "qwen3-coder-plus"
+  api_key: "<YOUR_CODER_MODEL_API_KEY>"  # 请填写你自己的 API Key
+
+# Tavily 搜索 API 配置（获取 API 密钥: https://app.tavily.com/playground）
+TAVILY_API_KEY: "<YOUR_TAVILY_API_KEY>"
+TAVILY_MAX_RESULTS: 3  # 搜索结果的最大数量
+
+# Jina API 配置（获取 API 密钥: https://jina.ai/reader）可以不配置，但crawl速度会慢一些
+# JINA_API_KEY: "<YOUR_JINA_API_KEY>"

@@ -1,0 +1,29 @@
+/* [project]/node_modules/.pnpm/react-tweet@3.2.2_react-dom@19.1.0_react@19.1.0__react@19.1.0/node_modules/react-tweet/dist/twitter-theme/tweet-container.module.css [app-client] (css) */
+.tweet-container-module__OjsQAW__root {
+  width: 100%;
+  min-width: 250px;
+  max-width: 550px;
+  color: var(--tweet-font-color);
+  font-family: var(--tweet-font-family);
+  box-sizing: border-box;
+  border: var(--tweet-border);
+  margin: var(--tweet-container-margin);
+  background-color: var(--tweet-bg-color);
+  border-radius: 12px;
+  font-weight: 400;
+  transition-property: background-color, box-shadow;
+  transition-duration: .2s;
+  overflow: hidden;
+}
+
+.tweet-container-module__OjsQAW__root:hover {
+  background-color: var(--tweet-bg-color-hover);
+}
+
+.tweet-container-module__OjsQAW__article {
+  box-sizing: inherit;
+  padding: .75rem 1rem;
+  position: relative;
+}
+
+/*# sourceMappingURL=48a05_react-tweet_dist_twitter-theme_tweet-container_module_css_e59ae46c._.single.css.map*/

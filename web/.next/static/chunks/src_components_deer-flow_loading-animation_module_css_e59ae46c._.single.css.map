@@ -1,0 +1,6 @@
+{
+  "version": 3,
+  "sources": [],
+  "sections": [
+    {"offset": {"line": 1, "column": 0}, "map": {"version":3,"sources":["turbopack:///[project]/src/components/deer-flow/loading-animation.module.css"],"sourcesContent":["@keyframes bouncing-animation {\n  to {\n    opacity: 0.1;\n    transform: translateY(-8px);\n  }\n}\n\n.loadingAnimation {\n  display: flex;\n}\n\n.loadingAnimation > div {\n  width: 8px;\n  height: 8px;\n  margin: 2px 4px;\n  border-radius: 50%;\n  background-color: #a3a1a1;\n  opacity: 1;\n  animation: bouncing-animation 0.5s infinite alternate;\n}\n\n.loadingAnimation.sm > div {\n  width: 6px;\n  height: 6px;\n  margin: 1px 2px;\n}\n\n.loadingAnimation > div:nth-child(2) {\n  animation-delay: 0.2s;\n}\n\n.loadingAnimation > div:nth-child(3) {\n  animation-delay: 0.4s;\n}\n"],"names":[],"mappings":"AAAA;;;;;;;AAOA;;;;AAIA;;;;;;;;;;AAUA;;;;;;AAMA;;;;AAIA"}}]
+}

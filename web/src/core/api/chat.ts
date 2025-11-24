@@ -61,7 +61,7 @@ export async function* chatStream(
         }
       >;
     };
-  },
+  } & Record<string, unknown>,
   options: { abortSignal?: AbortSignal } = {},
 ) {
   if (
@@ -69,11 +69,17 @@ export async function* chatStream(
     location.search.includes("mock") ||
     location.search.includes("replay=")
   ) 
-    return yield* chatReplayStream(userMessage, params, options);
+    return yield* chatReplayStream(userMessage, params as any, options);
   
   try{
     const locale = getLocaleFromCookie();
-    const stream = fetchStream(resolveServiceURL("chat/stream"), {
+    
+    let endpoint = "chat/stream";
+    if (typeof window !== "undefined" && window.location.pathname.startsWith("/web-dev")) {
+      endpoint = "chat/web/stream";
+    }
+
+    const stream = fetchStream(resolveServiceURL(endpoint), {
       body: JSON.stringify({
         messages: [{ role: "user", content: userMessage }],
         locale,

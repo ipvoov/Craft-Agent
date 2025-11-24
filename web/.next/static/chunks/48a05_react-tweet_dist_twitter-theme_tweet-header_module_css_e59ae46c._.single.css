@@ -1,0 +1,132 @@
+/* [project]/node_modules/.pnpm/react-tweet@3.2.2_react-dom@19.1.0_react@19.1.0__react@19.1.0/node_modules/react-tweet/dist/twitter-theme/tweet-header.module.css [app-client] (css) */
+.tweet-header-module__T3YMAa__header {
+  line-height: var(--tweet-header-line-height);
+  font-size: var(--tweet-header-font-size);
+  white-space: nowrap;
+  overflow-wrap: break-word;
+  padding-bottom: .75rem;
+  display: flex;
+  overflow: hidden;
+}
+
+.tweet-header-module__T3YMAa__avatar {
+  width: 48px;
+  height: 48px;
+  position: relative;
+}
+
+.tweet-header-module__T3YMAa__avatarOverflow {
+  border-radius: 9999px;
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  overflow: hidden;
+}
+
+.tweet-header-module__T3YMAa__avatarSquare {
+  border-radius: 4px;
+}
+
+.tweet-header-module__T3YMAa__avatarShadow {
+  width: 100%;
+  height: 100%;
+  transition-property: background-color;
+  transition-duration: .2s;
+  box-shadow: inset 0 0 2px rgba(0, 0, 0, .03);
+}
+
+.tweet-header-module__T3YMAa__avatarShadow:hover {
+  background-color: rgba(26, 26, 26, .15);
+}
+
+.tweet-header-module__T3YMAa__author {
+  flex-direction: column;
+  justify-content: center;
+  max-width: calc(100% - 84px);
+  margin: 0 .5rem;
+  display: flex;
+}
+
+.tweet-header-module__T3YMAa__authorLink {
+  color: inherit;
+  align-items: center;
+  text-decoration: none;
+  display: flex;
+}
+
+.tweet-header-module__T3YMAa__authorLink:hover {
+  -webkit-text-decoration-line: underline;
+  text-decoration-line: underline;
+}
+
+.tweet-header-module__T3YMAa__authorVerified {
+  display: inline-flex;
+}
+
+.tweet-header-module__T3YMAa__authorLinkText {
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-weight: 700;
+  overflow: hidden;
+}
+
+.tweet-header-module__T3YMAa__authorMeta, .tweet-header-module__T3YMAa__authorFollow {
+  display: flex;
+}
+
+.tweet-header-module__T3YMAa__username {
+  color: var(--tweet-font-color-secondary);
+  text-overflow: ellipsis;
+  text-decoration: none;
+}
+
+.tweet-header-module__T3YMAa__follow {
+  color: var(--tweet-color-blue-secondary);
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.tweet-header-module__T3YMAa__follow:hover {
+  -webkit-text-decoration-line: underline;
+  text-decoration-line: underline;
+}
+
+.tweet-header-module__T3YMAa__separator {
+  padding: 0 .25rem;
+}
+
+.tweet-header-module__T3YMAa__brand:not(:-webkit-any(:lang(ae), :lang(ar), :lang(arc), :lang(bcc), :lang(bqi), :lang(ckb), :lang(dv), :lang(fa), :lang(glk), :lang(he), :lang(ku), :lang(mzn), :lang(nqo), :lang(pnb), :lang(ps), :lang(sd), :lang(ug), :lang(ur), :lang(yi))) {
+  margin-left: auto;
+}
+
+.tweet-header-module__T3YMAa__brand:not(:-moz-any(:lang(ae), :lang(ar), :lang(arc), :lang(bcc), :lang(bqi), :lang(ckb), :lang(dv), :lang(fa), :lang(glk), :lang(he), :lang(ku), :lang(mzn), :lang(nqo), :lang(pnb), :lang(ps), :lang(sd), :lang(ug), :lang(ur), :lang(yi))) {
+  margin-left: auto;
+}
+
+.tweet-header-module__T3YMAa__brand:not(:is(:lang(ae), :lang(ar), :lang(arc), :lang(bcc), :lang(bqi), :lang(ckb), :lang(dv), :lang(fa), :lang(glk), :lang(he), :lang(ku), :lang(mzn), :lang(nqo), :lang(pnb), :lang(ps), :lang(sd), :lang(ug), :lang(ur), :lang(yi))) {
+  margin-left: auto;
+}
+
+.tweet-header-module__T3YMAa__brand:-webkit-any(:lang(ae), :lang(ar), :lang(arc), :lang(bcc), :lang(bqi), :lang(ckb), :lang(dv), :lang(fa), :lang(glk), :lang(he), :lang(ku), :lang(mzn), :lang(nqo), :lang(pnb), :lang(ps), :lang(sd), :lang(ug), :lang(ur), :lang(yi)) {
+  margin-right: auto;
+}
+
+.tweet-header-module__T3YMAa__brand:-moz-any(:lang(ae), :lang(ar), :lang(arc), :lang(bcc), :lang(bqi), :lang(ckb), :lang(dv), :lang(fa), :lang(glk), :lang(he), :lang(ku), :lang(mzn), :lang(nqo), :lang(pnb), :lang(ps), :lang(sd), :lang(ug), :lang(ur), :lang(yi)) {
+  margin-right: auto;
+}
+
+.tweet-header-module__T3YMAa__brand:is(:lang(ae), :lang(ar), :lang(arc), :lang(bcc), :lang(bqi), :lang(ckb), :lang(dv), :lang(fa), :lang(glk), :lang(he), :lang(ku), :lang(mzn), :lang(nqo), :lang(pnb), :lang(ps), :lang(sd), :lang(ug), :lang(ur), :lang(yi)) {
+  margin-right: auto;
+}
+
+.tweet-header-module__T3YMAa__twitterIcon {
+  width: 23.75px;
+  height: 23.75px;
+  color: var(--tweet-twitter-icon-color);
+  fill: currentColor;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  user-select: none;
+}
+
+/*# sourceMappingURL=48a05_react-tweet_dist_twitter-theme_tweet-header_module_css_e59ae46c._.single.css.map*/

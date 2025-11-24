@@ -101,5 +101,13 @@ function mergeToolCallResultMessage(
 
 function mergeInterruptMessage(message: Message, event: InterruptEvent) {
   message.isStreaming = false;
+  message.finishReason = "interrupt"; 
   message.options = event.data.options;
+  
+  const interruptValue = (event.data as any).value;
+  if (interruptValue && (!message.content || !message.content.includes(interruptValue))) {
+     if (!message.content) {
+        message.content = interruptValue;
+     }
+  }
 }

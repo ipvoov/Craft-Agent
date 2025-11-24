@@ -27,12 +27,12 @@ type FeatureIcon = {
 const featureIcons: Array<FeatureIcon> = [
   {
     Icon: Microscope,
-    href: "https://github.com/bytedance/deer-flow/blob/main/src/tools",
+    href: "https://github.com/ipvoov/Craft-Agent/blob/main/src/tools",
     className: "lg:col-start-1 lg:col-end-2 lg:row-start-1 lg:row-end-3",
   },
   {
     Icon: User,
-    href: "https://github.com/bytedance/deer-flow/blob/main/src/graph/nodes.py",
+    href: "https://github.com/ipvoov/Craft-Agent/blob/main/src/graph/nodes.py",
     className: "lg:col-start-1 lg:col-end-2 lg:row-start-3 lg:row-end-4",
   },
   {
@@ -42,12 +42,12 @@ const featureIcons: Array<FeatureIcon> = [
   },
   {
     Icon: Usb,
-    href: "https://github.com/bytedance/deer-flow/blob/main/src/graph/nodes.py",
+    href: "https://github.com/ipvoov/Craft-Agent/blob/main/src/graph/nodes.py",
     className: "lg:col-start-2 lg:col-end-3 lg:row-start-2 lg:row-end-3",
   },
   {
     Icon: Podcast,
-    href: "https://github.com/bytedance/deer-flow/blob/main/src/podcast",
+    href: "https://github.com/ipvoov/Craft-Agent/blob/main/src/podcast",
     className: "lg:col-start-2 lg:col-end-3 lg:row-start-3 lg:row-end-4",
   },
 ];

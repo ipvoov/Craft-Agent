@@ -19,7 +19,7 @@ def crawl_tool(
         article = crawler.crawl(url)
         markdown = article.to_markdown()
 
-        # 与 deer-flow 一致：做长度截断，避免单次消息过长
+        # 与参考实现一致：做长度截断，避免单次消息过长
         markdown = markdown[:1000]
 
         return json.dumps({"url": url, "crawled_content": markdown}, ensure_ascii=False)

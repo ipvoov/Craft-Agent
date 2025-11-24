@@ -1,0 +1,6 @@
+{
+  "version": 3,
+  "sources": [],
+  "sections": [
+    {"offset": {"line": 1, "column": 0}, "map": {"version":3,"sources":["turbopack:///[project]/node_modules/.pnpm/react-tweet@3.2.2_react-dom@19.1.0_react@19.1.0__react@19.1.0/node_modules/react-tweet/dist/twitter-theme/quoted-tweet/quoted-tweet-header.module.css"],"sourcesContent":[".header {\n  display: flex;\n  padding: 0.75rem 0.75rem 0 0.75rem;\n  line-height: var(--tweet-header-line-height);\n  font-size: var(--tweet-header-font-size);\n  white-space: nowrap;\n  overflow-wrap: break-word;\n  overflow: hidden;\n}\n\n.avatar {\n  position: relative;\n  height: 20px;\n  width: 20px;\n}\n\n.avatarSquare {\n  border-radius: 4px;\n}\n\n.author {\n  display: flex;\n  margin: 0 0.5rem;\n}\n\n.authorText {\n  font-weight: 700;\n  text-overflow: ellipsis;\n  overflow: hidden;\n  white-space: nowrap;\n}\n\n.username {\n  color: var(--tweet-font-color-secondary);\n  text-decoration: none;\n  text-overflow: ellipsis;\n  margin-left: 0.125rem;\n}\n"],"names":[],"mappings":"AAAA;;;;;;;;;;AAUA;;;;;;AAMA;;;;AAIA;;;;;AAKA;;;;;;;AAOA","ignoreList":[0]}}]
+}

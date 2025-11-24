@@ -1,0 +1,6 @@
+{
+  "version": 3,
+  "sources": [],
+  "sections": [
+    {"offset": {"line": 1, "column": 0}, "map": {"version":3,"sources":["turbopack:///[project]/node_modules/.pnpm/react-tweet@3.2.2_react-dom@19.1.0_react@19.1.0__react@19.1.0/node_modules/react-tweet/dist/twitter-theme/tweet-info-created-at.module.css"],"sourcesContent":[".root {\n  color: inherit;\n  text-decoration: none;\n  font-size: var(--tweet-info-font-size);\n  line-height: var(--tweet-info-line-height);\n}\n.root:hover {\n  text-decoration-thickness: 1px;\n  text-decoration-line: underline;\n}\n"],"names":[],"mappings":"AAAA;;;;;;;AAMA","ignoreList":[0]}}]
+}

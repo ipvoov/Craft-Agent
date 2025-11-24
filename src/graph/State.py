@@ -8,7 +8,7 @@ from src.prompts.planner_model import Plan
 # from src.rag import Resource
 
 class State(MessagesState):
-    """DeepResearchAgent 系统的状态类，继承 MessagesState 并扩展了额外字段"""
+    """Craft-Agent 系统的状态类，继承 MessagesState 并扩展了额外字段"""
 
     # 运行时变量
     locale: str = "zh-CN"  # 语言环境，如 "zh-CN" 或 "en-US"
@@ -42,3 +42,7 @@ class WebGenState(MessagesState):
     name: str = None  # 项目名称
     number: str = None  # 项目编号
     tree: str = None  # 项目大纲内容（outline.md 的文本）
+    is_editing: bool = False
+    edit_round: int = 0
+    edit_history: list[str] = field(default_factory=list)
+    last_edit_instruction: str = ""

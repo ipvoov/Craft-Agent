@@ -120,12 +120,14 @@ def _build_web_gent_graph() -> StateGraph:
     build.add_node("outline", outline_node)
     build.add_node("web_source", web_source_node)
     build.add_node("codegen", code_gen_node)
+    build.add_node("edit", edit_node)
 
-    # 线性流程：START -> outline -> web_source -> codegen -> END
+    # 流程：START -> outline -> web_source -> codegen -> edit -> (codegen / END)
     build.add_edge(START, "outline")
     build.add_edge("outline", "web_source")
     build.add_edge("web_source", "codegen")
-    build.add_edge("codegen", END)
+    build.add_edge("codegen", "edit")
+    # edit_node 内部通过 Command.goto 决定回到 "codegen" 还是 "__end__"
     
     return build
 

@@ -1,0 +1,39 @@
+/* [project]/node_modules/.pnpm/react-tweet@3.2.2_react-dom@19.1.0_react@19.1.0__react@19.1.0/node_modules/react-tweet/dist/twitter-theme/tweet-replies.module.css [app-client] (css) */
+.tweet-replies-module__DsB8nG__replies {
+  padding: .25rem 0;
+}
+
+.tweet-replies-module__DsB8nG__link {
+  color: var(--tweet-color-blue-secondary);
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  user-select: none;
+  border: var(--tweet-border);
+  border-radius: 9999px;
+  outline-style: none;
+  justify-content: center;
+  align-items: center;
+  min-width: 32px;
+  min-height: 32px;
+  padding: 0 1rem;
+  text-decoration: none;
+  transition-property: background-color;
+  transition-duration: .2s;
+  display: flex;
+}
+
+.tweet-replies-module__DsB8nG__link:hover {
+  background-color: var(--tweet-color-blue-secondary-hover);
+}
+
+.tweet-replies-module__DsB8nG__text {
+  font-weight: var(--tweet-replies-font-weight);
+  font-size: var(--tweet-replies-font-size);
+  line-height: var(--tweet-replies-line-height);
+  overflow-wrap: break-word;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+/*# sourceMappingURL=48a05_react-tweet_dist_twitter-theme_tweet-replies_module_css_e59ae46c._.single.css.map*/

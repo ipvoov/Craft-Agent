@@ -3,44 +3,31 @@
 
 "use client";
 
-import { useMemo } from "react";
+import { Panel, PanelGroup, PanelResizeHandle } from "react-resizable-panels";
 
-import { useStore } from "~/core/store";
-import { cn } from "~/lib/utils";
-
-// Imports adjusted to point to chat components
 import { MessagesBlock } from "../chat/components/messages-block";
-import { ResearchBlock } from "../chat/components/research-block";
+import { IdeBlock } from "./ide";
 
 export default function Main() {
-  const openResearchId = useStore((state) => state.openResearchId);
-  const doubleColumnMode = useMemo(
-    () => openResearchId !== null,
-    [openResearchId],
-  );
   return (
-    <div
-      className={cn(
-        "flex h-full w-full justify-center-safe px-4 pt-12 pb-4 text-[15px] md:text-[16px]",
-        doubleColumnMode && "gap-8",
-      )}
-    >
-      <MessagesBlock
-        className={cn(
-          "shrink-0 transition-all duration-300 ease-out",
-          !doubleColumnMode &&
-            `w-[768px] translate-x-[min(max(calc((100vw-538px)*0.75),575px)/2,960px/2)]`,
-          doubleColumnMode && `w-[538px]`,
-        )}
-      />
-      <ResearchBlock
-        className={cn(
-          "w-[min(max(calc((100vw-538px)*0.75),575px),960px)] pb-4 transition-all duration-300 ease-out",
-          !doubleColumnMode && "scale-0",
-          doubleColumnMode && "",
-        )}
-        researchId={openResearchId}
-      />
+    <div className="h-full w-full px-4 pt-16 pb-4">
+      <PanelGroup direction="horizontal" className="h-full w-full gap-4">
+        {/* Left Panel: Chat Area */}
+        <Panel defaultSize={40} minSize={20} maxSize={50} className="flex flex-col">
+          <div className="h-full w-full overflow-hidden rounded-2xl border bg-card shadow-sm">
+            <MessagesBlock className="h-full w-full" />
+          </div>
+        </Panel>
+        
+        <PanelResizeHandle className="w-1.5 rounded-full bg-border/30 hover:bg-primary/50 transition-colors cursor-col-resize flex flex-col justify-center items-center">
+            <div className="h-8 w-1 rounded-full bg-border/50" />
+        </PanelResizeHandle>
+        
+        {/* Right Panel: IDE Area */}
+        <Panel defaultSize={60} minSize={30} className="flex flex-col">
+           <IdeBlock className="h-full w-full shadow-sm" />
+        </Panel>
+      </PanelGroup>
     </div>
   );
 }

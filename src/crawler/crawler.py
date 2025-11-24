@@ -11,7 +11,7 @@ class Crawler:
     def crawl(self, url: str) -> Article:
         """Crawl a URL and return an Article with readable content.
 
-        This follows the same design as deer-flow:
+        This follows the same design as the original reference implementation:
         - Use Jina API to fetch raw HTML
         - Use Readability to extract main article content
         - Convert to markdown when needed via Article.to_markdown()

@@ -110,6 +110,10 @@ class WebChatRequest(BaseModel):
         None,
         description="项目目录结构",
     )
+    interrupt_feedback: Optional[str] = Field(
+        None,
+        description="来自用户的中断反馈，用于恢复 WebGen 流程",
+    )
 
 
 class EnhancePromptRequest(BaseModel):

@@ -212,8 +212,30 @@ class ChatDashscope(ChatOpenAI):
             async with response:
                 is_first_chunk = True
                 async for chunk in response:
+                    # DEBUG LOGGING
+                    logger.info(f"DEBUG: _astream chunk type: {type(chunk)}")
+                    logger.info(f"DEBUG: _astream raw chunk: {chunk}")
+
+                    # Capture reasoning_content before model_dump might strip it
+                    reasoning_content = None
+                    try:
+                        if hasattr(chunk, "choices") and chunk.choices:
+                            delta = chunk.choices[0].delta
+                            reasoning_content = getattr(delta, "reasoning_content", None)
+                    except Exception:
+                        pass
+
                     if not isinstance(chunk, dict):
                         chunk = chunk.model_dump()
+                    
+                    # Inject reasoning_content back if it was found but lost in dump
+                    if reasoning_content:
+                        try:
+                            if "choices" in chunk and chunk["choices"]:
+                                if "delta" in chunk["choices"][0]:
+                                    chunk["choices"][0]["delta"]["reasoning_content"] = reasoning_content
+                        except Exception:
+                            pass
 
                     generation_chunk = _convert_chunk_to_generation_chunk(
                         chunk,
@@ -276,10 +298,28 @@ class ChatDashscope(ChatOpenAI):
             with context_manager as response:
                 is_first_chunk = True
                 for chunk in response:
+                    # Capture reasoning_content before model_dump might strip it
+                    reasoning_content = None
+                    try:
+                        if hasattr(chunk, "choices") and chunk.choices:
+                            delta = chunk.choices[0].delta
+                            reasoning_content = getattr(delta, "reasoning_content", None)
+                    except Exception:
+                        pass
+
                     # DEBUG LOGGING
                     logger.debug(f"DEBUG: Raw chunk: {chunk}")
                     if not isinstance(chunk, Dict):
                         chunk = chunk.model_dump()
+                    
+                    # Inject reasoning_content back if it was found but lost in dump
+                    if reasoning_content:
+                        try:
+                            if "choices" in chunk and chunk["choices"]:
+                                if "delta" in chunk["choices"][0]:
+                                    chunk["choices"][0]["delta"]["reasoning_content"] = reasoning_content
+                        except Exception:
+                            pass
                     
                     logger.debug(f"DEBUG: Processed chunk: {chunk}")
 

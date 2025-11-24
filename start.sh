@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# DeerFlow 前后端统一启动脚本
+# Craft-Agent 前后端统一启动脚本
 # 该脚本会同时启动后端API服务（8001端口）和前端Web服务（3001端口）
 
 # 颜色输出定义
@@ -13,7 +13,7 @@ NC='\033[0m' # No Color
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 echo -e "${GREEN}========================================${NC}"
-echo -e "${GREEN}🦌 DeerFlow 启动脚本${NC}"
+echo -e "${GREEN}📺 Craft-Agent 启动脚本${NC}"
 echo -e "${GREEN}========================================${NC}"
 echo ""
 
@@ -92,7 +92,7 @@ echo "$BACKEND_PID" > "$SCRIPT_DIR/.backend.pid"
 echo "$FRONTEND_PID" > "$SCRIPT_DIR/.frontend.pid"
 
 echo -e "${GREEN}========================================${NC}"
-echo -e "${GREEN}🎉 DeerFlow 已成功启动！${NC}"
+echo -e "${GREEN}🎉 Craft-Agent 已成功启动！${NC}"
 echo -e "${GREEN}========================================${NC}"
 echo ""
 echo -e "${GREEN}访问地址:${NC}"

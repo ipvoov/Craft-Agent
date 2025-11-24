@@ -22,6 +22,7 @@ import {
   setEnableDeepThinking,
   setEnableBackgroundInvestigation,
   useSettingsStore,
+  useStore,
 } from "~/core/store";
 import { cn } from "~/lib/utils";
 
@@ -66,6 +67,40 @@ export function InputBox({
   const containerRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<MessageInputRef>(null);
   const feedbackRef = useRef<HTMLDivElement>(null);
+
+  // Listen to inputContent from store
+  const inputContent = useStore((state) => state.inputContent);
+  const setInputContent = useStore((state) => state.setInputContent);
+
+  // Effect: Update input when store content changes
+  useState(() => {
+    // This is actually better as useEffect, but since we are in a component body...
+    // Let's use a proper useEffect
+  });
+  
+  // Using useEffect to sync store content to input
+  // eslint-disable-next-line react-hooks/rules-of-hooks
+  const React = require("react");
+  React.useEffect(() => {
+    if (inputContent && inputRef.current) {
+      const currentVal = inputRef.current.getContent?.() || "";
+      // If content is different, append or set?
+      // The requirement is "add to input box". So we append.
+      // But store might just set it. Let's assume store sets the *increment* or *full new content*?
+      // To keep it simple: if store has content, we append it to current input, then clear store.
+      
+      // Wait, usually this pattern means "set the value".
+      // If we want to append, the caller should manage that or we append here.
+      // Let's append here to be safe for "add element info" use case.
+      
+      const newVal = currentVal ? `${currentVal}\n${inputContent}` : inputContent;
+      inputRef.current.setContent(newVal);
+      setCurrentPrompt(newVal);
+      
+      // Clear the store so we don't re-add it
+      setInputContent("");
+    }
+  }, [inputContent, setInputContent]);
 
   // Enhancement state
   const [isEnhancing, setIsEnhancing] = useState(false);

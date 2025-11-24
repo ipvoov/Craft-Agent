@@ -22,7 +22,7 @@ import { resourceSuggestion } from "./resource-suggestion";
 import React, { forwardRef, useEffect, useMemo, useRef } from "react";
 import type { Resource } from "~/core/messages";
 import { LoadingOutlined } from "@ant-design/icons";
-import type { DeerFlowConfig } from "~/core/config";
+import type { CraftAgentConfig } from "~/core/config";
 
 export interface MessageInputRef {
   focus: () => void;
@@ -34,7 +34,7 @@ export interface MessageInputProps {
   className?: string;
   placeholder?: string;
   loading?: boolean;
-  config?: DeerFlowConfig | null;
+  config?: CraftAgentConfig | null;
   onChange?: (markdown: string) => void;
   onEnter?: (message: string, resources: Array<Resource>) => void;
 }

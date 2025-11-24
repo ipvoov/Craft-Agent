@@ -24,7 +24,7 @@ export function JoinCommunitySection() {
         description={t("description")}
       />
       <Button className="text-xl" size="lg" asChild>
-        <Link href="https://github.com/bytedance/deer-flow" target="_blank">
+        <Link href="https://github.com/ipvoov/Craft-Agent" target="_blank">
           <GithubFilled />
           {t("contributeNow")}
         </Link>

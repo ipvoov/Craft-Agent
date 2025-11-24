@@ -57,7 +57,7 @@ export function WebDevHome({
               )}
               style={{ fontFamily: "system-ui, -apple-system, sans-serif" }}
             >
-              DeepCraft
+              Craft-Agent
             </h1>
             <h2
               className={cn(
@@ -76,7 +76,7 @@ export function WebDevHome({
             )}
             style={{ fontFamily: "system-ui, sans-serif" }}
           >
-            使用 DeepCraft 将你的研究成果、一手资料与创意，一键转化为高质量的前端网站。从信息架构到页面文案，几分钟完成整站搭建。
+            使用 Craft-Agent 将你的研究成果、一手资料与创意，一键转化为高质量的前端网站。从信息架构到页面文案，几分钟完成整站搭建。
           </p>
         </div>
 

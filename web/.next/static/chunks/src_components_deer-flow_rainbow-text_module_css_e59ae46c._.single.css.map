@@ -1,0 +1,6 @@
+{
+  "version": 3,
+  "sources": [],
+  "sections": [
+    {"offset": {"line": 1, "column": 0}, "map": {"version":3,"sources":["turbopack:///[project]/src/components/deer-flow/rainbow-text.module.css"],"sourcesContent":[".animated {\n  background: linear-gradient(\n    to right,\n    rgb(from var(--card-foreground) r g b / 0.3) 15%,\n    rgb(from var(--card-foreground) r g b / 0.75) 35%,\n    rgb(from var(--card-foreground) r g b / 0.75) 65%,\n    rgb(from var(--card-foreground) r g b / 0.3) 85%\n  );\n  -webkit-background-clip: text;\n  background-clip: text;\n  -webkit-text-fill-color: transparent;\n  text-fill-color: transparent;\n  background-size: 500% auto;\n  animation: textShine 2s ease-in-out infinite alternate;\n}\n\n@keyframes textShine {\n  0% {\n    background-position: 0% 50%;\n  }\n  100% {\n    background-position: 100% 50%;\n  }\n}\n"],"names":[],"mappings":"AAAA;;;;;;;;;;AAgBA"}}]
+}
