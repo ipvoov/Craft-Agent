@@ -30,37 +30,6 @@
 
 ---
 
-
-## 架构图
-
-### 深度研究工作流架构
-
-<p align="center">
-  <img src="docs/DeepResearch.png" alt="Craft-Agent 深度研究架构图" width="800" />
-</p>
-
-### 网站生成工作流架构
-
-<p align="center">
-  <img src="docs/WebGenerate.png" alt="Craft-Agent 网站生成架构图" width="800" />
-</p>
-
-## 界面示例
-
-### 深度研究页面
-
-<p align="center">
-  <img src="docs/deep-research-demo.png" alt="Craft-Agent 深度研究页面示例" width="800" />
-</p>
-
-### 网站生成页面
-
-<p align="center">
-  <img src="docs/webgenerate-demo.png" alt="Craft-Agent 网站生成页面示例" width="800" />
-</p>
-
----
-
 ## 项目结构总览
 
 核心目录（简化）：
@@ -152,6 +121,36 @@ Ctrl+C
 2. 用自然语言描述你想要的网站（例如：结构、页面、文案风格）
 3. 提交后端会生成对应的项目结构与代码
 4. 在右侧代码区域查看生成结果，并使用内置预览功能进行预览
+
+---
+
+## 架构图
+
+### 深度研究工作流架构
+
+<p align="center">
+  <img src="docs/DeepResearch.png" alt="Craft-Agent 深度研究架构图" width="800" />
+</p>
+
+### 网站生成工作流架构
+
+<p align="center">
+  <img src="docs/WebGenerate.png" alt="Craft-Agent 网站生成架构图" width="800" />
+</p>
+
+## 界面示例
+
+### 深度研究页面
+
+<p align="center">
+  <img src="docs/deep-research-demo.png" alt="Craft-Agent 深度研究页面示例" width="800" />
+</p>
+
+### 网站生成页面
+
+<p align="center">
+  <img src="docs/webgenerate-demo.png" alt="Craft-Agent 网站生成页面示例" width="800" />
+</p>
 
 ---
 
