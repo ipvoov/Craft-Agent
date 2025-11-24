@@ -135,7 +135,7 @@ Ctrl+C
 ### 网站生成工作流架构
 
 <p align="center">
-  <img src="docs/WebGenerate.png" alt="Craft-Agent 网站生成架构图" width="800" />
+  <img src="docs/WebGenerate.png" alt="Craft-Agent 网站生成架构图" width="600" />
 </p>
 
 ## 界面示例
