@@ -177,7 +177,7 @@ Ctrl+C
 本仓库已适配：
 
 - 后端：任何支持运行 Python/uvicorn 的环境（本地、Docker、云服务）
-- 前端：可构建为静态资源或托管在 Vercel / Netlify / 自建 Node 环境
+- 前端：可构建为静态资源或托管在 Vercel / Netlify / 自建 Node 环境x
 
 简单的 Docker 化前端示例见 `web/README.md`：
 
