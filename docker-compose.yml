@@ -1,0 +1,29 @@
+services:
+  backend:
+    image: ipvoov/craft-agent-backend:latest
+    container_name: craft-agent-backend
+    networks:
+      - craft-network
+    ports:
+      - "8001:8001"
+    volumes:
+      - ./.env:/app/.env
+      - ./conf.yaml:/app/conf.yaml
+    restart: unless-stopped
+
+  frontend:
+    image: ipvoov/craft-agent-frontend:latest
+    container_name: craft-agent-frontend
+    networks:
+      - craft-network
+    depends_on:
+      - backend
+    ports:
+      - "3001:3001"
+    environment:
+      PORT: "3001"
+    restart: unless-stopped
+
+networks:
+  craft-network:
+    driver: bridge

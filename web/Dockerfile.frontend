@@ -1,0 +1,54 @@
+# Frontend Dockerfile for Craft-Agent (Next.js + pnpm, standalone runtime)
+
+############################
+# Dependencies stage
+############################
+FROM node:20-alpine AS deps
+
+WORKDIR /web
+
+# 安装 pnpm 并安装前端依赖
+COPY package.json pnpm-lock.yaml ./
+RUN npm install -g pnpm && \
+    pnpm install --frozen-lockfile
+
+
+############################
+# Build stage
+############################
+FROM node:20-alpine AS builder
+
+WORKDIR /web
+
+# 用于在构建阶段注入前端访问后端的地址
+# 注意：浏览器端需要能访问到的地址，不能用 Docker 内部 hostname
+ARG NEXT_PUBLIC_API_URL
+ENV NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL}
+
+COPY --from=deps /web/node_modules ./node_modules
+COPY . .
+
+ENV NODE_ENV=production
+ENV NEXT_TELEMETRY_DISABLED=1
+
+RUN npm install -g pnpm && pnpm build
+
+
+############################
+# Runtime stage - 使用 distroless 镜像大幅减小体积
+############################
+FROM gcr.io/distroless/nodejs20-debian12
+
+WORKDIR /web
+
+ENV NODE_ENV=production
+ENV NEXT_TELEMETRY_DISABLED=1
+
+# 复制 standalone 产物
+COPY --from=builder /web/public ./public
+COPY --from=builder /web/.next/standalone ./
+COPY --from=builder /web/.next/static ./.next/static
+
+EXPOSE 3001
+
+CMD ["server.js"]

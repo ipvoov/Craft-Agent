@@ -1,0 +1,55 @@
+# Backend Dockerfile for Craft-Agent (FastAPI + uv)
+
+FROM python:3.13-slim AS builder
+
+WORKDIR /app
+
+ENV PYTHONUNBUFFERED=1 \
+    PIP_DISABLE_PIP_VERSION_CHECK=on \
+    UV_COMPILE_BYTECODE=1 \
+    UV_LINK_MODE=copy \
+    UV_PYTHON=python3.13
+
+# 安装后端构建所需系统依赖
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+      git \
+      build-essential && \
+    rm -rf /var/lib/apt/lists/*
+
+# 先安装 uv
+RUN pip install --no-cache-dir uv
+
+# 先复制依赖文件和 README（hatchling 构建需要）
+COPY pyproject.toml uv.lock README.md ./
+
+# 安装依赖到 .venv
+RUN uv sync --frozen --no-dev && \
+    rm -rf /root/.cache/uv /root/.cache/pip
+COPY config.yaml.example ./config.yaml
+COPY src ./src
+COPY source ./source
+
+
+# 运行时镜像
+FROM python:3.13-slim
+
+WORKDIR /app
+
+ENV PYTHONUNBUFFERED=1 \
+    PATH="/app/.venv/bin:$PATH"
+
+# 只在需要 ffmpeg 时才安装，否则可以注释掉这段
+# RUN apt-get update && \
+#     apt-get install -y --no-install-recommends ffmpeg && \
+#     rm -rf /var/lib/apt/lists/*
+
+# 只复制运行所需的虚拟环境和源码
+COPY --from=builder /app/.venv /app/.venv
+COPY --from=builder /app/src /app/src
+COPY --from=builder /app/source /app/source
+COPY --from=builder /app/config.yaml /app/config.yaml
+
+EXPOSE 8001
+
+CMD ["uvicorn", "src.server.app:app", "--host", "0.0.0.0", "--port", "8001"]

@@ -16,3 +16,4 @@ logs/
 .backend.pid
 .frontend.pid
  test/
+.idea/

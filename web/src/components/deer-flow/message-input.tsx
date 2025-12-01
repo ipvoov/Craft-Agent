@@ -28,6 +28,7 @@ export interface MessageInputRef {
   focus: () => void;
   submit: () => void;
   setContent: (content: string) => void;
+  getContent: () => string;
 }
 
 export interface MessageInputProps {
@@ -122,6 +123,13 @@ const MessageInput = forwardRef<MessageInputRef, MessageInputProps>(
         if (editorRef.current) {
           editorRef.current.commands.setContent(content);
         }
+      },
+      getContent: () => {
+        if (!editorRef.current) {
+          return "";
+        }
+        const { text } = formatMessage(editorRef.current.getJSON() ?? []);
+        return text;
       },
     }));
 

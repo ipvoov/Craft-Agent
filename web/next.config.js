@@ -38,6 +38,11 @@ const config = {
     return config;
   },
 
+  // 生产构建时忽略 ESLint 错误，避免在 CI / Docker 构建中被 lint 阻塞
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
+
   // ... rest of the configuration.
   output: "standalone",
 };

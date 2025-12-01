@@ -40,6 +40,7 @@ export interface ToolCallRuntime {
   args: Record<string, unknown>;
   argsChunks?: string[];
   result?: string;
+  artifact?: unknown;
 }
 
 export interface Resource {
