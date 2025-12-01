@@ -77,31 +77,77 @@
 
 ---
 
-## 安装/启动（前提要有uv https://docs.astral.sh/uv/）
+## 快速开始
+
+### 方式一：Docker Compose（推荐）
+
+最简单的部署方式，一条命令启动前后端：
+
 ```bash
 # 克隆仓库
 git clone https://github.com/ipvoov/Craft-Agent
 cd Craft-Agent
 
-# 安装依赖，uv将负责Python解释器和虚拟环境的创建，并安装所需的包
+# 配置环境变量
+cp .env.example .env
+cp conf.yaml.example conf.yaml
+
+# 编辑 .env 和 conf.yaml，添加你的 API 密钥
+
+# 启动服务
+docker-compose up -d
+
+# 查看日志
+docker-compose logs -f
+
+# 停止服务
+docker-compose down
+```
+
+**访问地址：**
+- 前端：http://localhost:3001
+- 后端 API：http://localhost:8001
+
+**镜像信息：**
+- 前端镜像：`pveev/craft-agent-frontend:latest`
+- 后端镜像：`pveev/craft-agent-backend:latest`
+
+> 如需修改端口，编辑 `docker-compose.yml` 中的 `ports` 配置
+
+---
+
+### 方式二：本地开发（需要 uv）
+
+适合开发者本地调试和扩展：
+
+```bash
+# 克隆仓库
+git clone https://github.com/ipvoov/Craft-Agent
+cd Craft-Agent
+
+# 安装依赖，uv 将负责 Python 解释器和虚拟环境的创建
 uv sync
 
-# 根据需要编辑 .env 文件，添加您的API密钥
+# 配置环境变量
 cp .env.example .env
-
-# # 根据需要编辑 conf.yaml 文件，添加您的API密钥
 cp conf.yaml.example conf.yaml
+
+# 编辑 .env 和 conf.yaml，添加你的 API 密钥
 
 # 安装前端依赖
 cd web && pnpm install
 
 # 启动前后端服务
 ./start.sh
-# 关闭
+
+# 停止服务
 ./stop.sh
-或者
-Ctrl+C
+# 或按 Ctrl+C
 ```
+
+**访问地址：**
+- 前端：http://localhost:3001
+- 后端 API：http://localhost:8001
 
 ---
 
@@ -172,18 +218,152 @@ Ctrl+C
 
 ---
 
-## 部署建议
+## 部署指南
 
-本仓库已适配：
+### Docker Compose 部署（生产环境）
 
-- 后端：任何支持运行 Python/uvicorn 的环境（本地、Docker、云服务）
-- 前端：可构建为静态资源或托管在 Vercel / Netlify / 自建 Node 环境x
+本项目已优化 Docker 镜像体积，使用多阶段构建和轻量级基础镜像：
 
-简单的 Docker 化前端示例见 `web/README.md`：
+**镜像优化：**
+- 前端：使用 `distroless/nodejs20-debian12`，体积约 200-300MB
+- 后端：使用 `python:3.13-slim`，体积约 500-700MB
 
+**部署步骤：**
+
+1. **配置环境**
+   ```bash
+   cp .env.example .env
+   cp conf.yaml.example conf.yaml
+   # 编辑 .env 和 conf.yaml，添加必要的 API 密钥
+   ```
+
+2. **启动服务**
+   ```bash
+   docker-compose up -d
+   ```
+
+3. **验证服务**
+   ```bash
+   # 检查容器状态
+   docker-compose ps
+   
+   # 查看日志
+   docker-compose logs -f backend
+   docker-compose logs -f frontend
+   ```
+
+4. **停止服务**
+   ```bash
+   docker-compose down
+   ```
+
+**网络配置：**
+- 前后端通过 `craft-network` 桥接网络通信
+- 前端通过 `http://localhost:8001` 访问后端 API
+- 浏览器访问 `http://localhost:3001`
+
+---
+
+### 云服务部署
+
+#### Vercel（前端）
 ```bash
 cd web
-docker build --build-arg NEXT_PUBLIC_API_URL=YOUR_CRAFT_AGENT_API -t craft-agent-web .
+vercel deploy --prod
 ```
+
+#### 云服务器（Docker）
+```bash
+# 登录 Docker Hub
+docker login
+
+# 拉取镜像
+docker pull pveev/craft-agent-backend:latest
+docker pull pveev/craft-agent-frontend:latest
+
+# 使用 docker-compose 启动
+docker-compose up -d
+```
+
+#### 自建服务器（Python + Node.js）
+参考「方式二：本地开发」的安装步骤
+
+---
+
+### 环境变量配置
+
+**后端 (.env)：**
+```env
+# LLM 配置
+OPENAI_API_KEY=your_key_here
+OPENAI_BASE_URL=https://api.openai.com/v1
+
+# 其他配置
+ENABLE_PYTHON_REPL=false
+```
+
+**前端 (docker-compose.yml)：**
+```yaml
+NEXT_PUBLIC_API_URL: "http://localhost:8001"  # 本地开发
+# 生产环境改为实际域名
+NEXT_PUBLIC_API_URL: "https://api.yourdomain.com"
+```
+
+---
+
+## 故障排查
+
+### 前端无法连接后端
+
+**症状：** 前端请求返回 404 或连接超时
+
+**解决方案：**
+1. 检查 `docker-compose.yml` 中的 `NEXT_PUBLIC_API_URL` 是否正确
+2. 确保后端容器正在运行：`docker-compose ps`
+3. 检查后端日志：`docker-compose logs backend`
+4. 验证网络连接：`docker network ls`
+
+### 镜像拉取失败
+
+**症状：** `docker pull` 超时或 404
+
+**解决方案：**
+1. 检查网络连接
+2. 确认镜像名称正确：`pveev/craft-agent-backend:latest`
+3. 尝试手动登录 Docker Hub：`docker login`
+
+### 容器内存占用过高
+
+**症状：** 容器频繁重启或 OOM
+
+**解决方案：**
+1. 增加 Docker 内存限制
+2. 检查后端日志中的错误信息
+3. 优化 LLM 模型配置
+
+---
+
+## 贡献指南
+
+欢迎提交 Issue 和 Pull Request！
+
+1. Fork 本仓库
+2. 创建特性分支：`git checkout -b feature/your-feature`
+3. 提交更改：`git commit -am 'Add new feature'`
+4. 推送到分支：`git push origin feature/your-feature`
+5. 提交 Pull Request
+
+---
+
+## 许可证
+
+MIT License - 详见 [LICENSE](LICENSE) 文件
+
+---
+
+## 联系方式
+
+- GitHub Issues：[提交问题](https://github.com/ipvoov/Craft-Agent/issues)
+- 讨论区：[GitHub Discussions](https://github.com/ipvoov/Craft-Agent/discussions)
 
 ---
