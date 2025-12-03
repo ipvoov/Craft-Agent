@@ -517,7 +517,7 @@ async def _stream_graph_events(
             safe_agent = agent
             logger.debug(f"[{safe_thread_id}] 收到图事件 #{event_count}，来自 agent: {safe_agent}")
             # Todo
-            print(f"agent = {agent}\nx={x}\nevent_data={event_data}\n")
+            # print(f"agent = {agent}\nx={x}\nevent_data={event_data}\n")
 
             # 处理字典类型的事件（通常是状态更新或中断事件）
             if isinstance(event_data, dict):
