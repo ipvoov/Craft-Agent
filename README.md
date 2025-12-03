@@ -2,6 +2,13 @@
 
 > 📺 **Craft-Agent** 是一个集「深度研究助手」与「网站生成」于一体的智能体系统，基于大语言模型、多智能体编排与现代 Web 技术栈构建。
 
+[![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+[![Python](https://img.shields.io/badge/python-3.11+-green.svg)](https://python.org)
+[![Node.js](https://img.shields.io/badge/node.js-18+-green.svg)](https://nodejs.org)
+[![Docker](https://img.shields.io/badge/docker-supported-blue.svg)](https://docker.com)
+
+🌐 [在线 Demo 体验](https://http://47.107.140.195:3001) | 📖 [配置指南](docs/configuration_guide.md) | 🤔 [常见问题](docs/FAQ.md)
+
 - 深度研究：自动规划、搜索、阅读与整理资料，生成结构化研究报告
 - 网站生成：将研究成果或你的想法，一键转化为可预览的前端网站
 - 现代前后端架构：FastAPI + LangGraph/LangChain 后端，Next.js + TypeScript + shadcn/ui 前端
@@ -95,7 +102,7 @@ cd Craft-Agent
 
 # 配置环境变量
 cp .env.example .env
-cp conf.yaml.example conf.yaml
+cp config.yaml.example config.yaml
 
 # 编辑 .env 和 conf.yaml，添加你的 API 密钥
 
@@ -114,8 +121,8 @@ docker-compose down
 - 🔌 后端 API：http://localhost:8001
 
 **📦 镜像信息：**
-- 🎨 前端镜像：`pveev/craft-agent-frontend:latest` (~200-300MB)
-- 🔧 后端镜像：`pveev/craft-agent-backend:latest` (~500-700MB)
+- 🎨 前端镜像：`pveev/craft-agent-frontend:latest` (~300MB)
+- 🔧 后端镜像：`pveev/craft-agent-backend:latest` (~500MB)
 
 > 💡 如需修改端口，编辑 `docker-compose.yml` 中的 `ports` 配置
 
@@ -135,7 +142,7 @@ uv sync
 
 # 配置环境变量
 cp .env.example .env
-cp conf.yaml.example conf.yaml
+cp config.yaml.example config.yaml
 
 # 编辑 .env 和 conf.yaml，添加你的 API 密钥
 
@@ -220,92 +227,9 @@ cd web && pnpm install
   - 对应文案见 `web/messages/en.json` / `zh.json` 的 `settings.mcp` 段落
 
 > ⚠️ 请严格避免在仓库中提交任何 API Key、密码等敏感信息。
-
----
-
-## 📦 部署指南
-
-### 🐳 Docker Compose 部署（生产环境）
-
-本项目已优化 Docker 镜像体积，使用多阶段构建和轻量级基础镜像：
-
-**📊 镜像优化：**
-- 🎨 前端：使用 `distroless/nodejs20-debian12`，体积约 **200-300MB** ⬇️
-- 🔧 后端：使用 `python:3.13-slim`，体积约 **500-700MB** ⬇️
-
-**📋 部署步骤：**
-
-1. **⚙️ 配置环境**
-   ```bash
-   cp .env.example .env
-   cp conf.yaml.example conf.yaml
-   # 编辑 .env 和 conf.yaml，添加必要的 API 密钥
-   ```
-
-2. **🚀 启动服务**
-   ```bash
-   docker-compose up -d
-   ```
-
-3. **✅ 验证服务**
-   ```bash
-   # 检查容器状态
-   docker-compose ps
-   
-   # 查看日志
-   docker-compose logs -f backend
-   docker-compose logs -f frontend
-   ```
-
-4. **⛔ 停止服务**
-   ```bash
-   docker-compose down
-   ```
-
-**🌐 网络配置：**
-- 🔗 前后端通过 `craft-network` 桥接网络通信
-- 🎨 前端通过 `http://localhost:8001` 访问后端 API
-- 🌍 浏览器访问 `http://localhost:3001`
-
----
-
-### ☁️ 云服务部署
-
-#### 🚀 Vercel（前端）
-```bash
-cd web
-vercel deploy --prod
-```
-
-#### 🖥️ 云服务器（Docker）
-```bash
-# 登录 Docker Hub
-docker login
-
-# 拉取镜像
-docker pull pveev/craft-agent-backend:latest
-docker pull pveev/craft-agent-frontend:latest
-
-# 使用 docker-compose 启动
-docker-compose up -d
-```
-
-#### 🏠 自建服务器（Python + Node.js）
-参考「💻 方式二：本地开发」的安装步骤
-
 ---
 
 ### 🔐 环境变量配置
-
-**🔧 后端 (.env)：**
-```env
-# 🤖 LLM 配置
-OPENAI_API_KEY=your_key_here
-OPENAI_BASE_URL=https://api.openai.com/v1
-
-# ⚙️ 其他配置
-ENABLE_PYTHON_REPL=false
-```
 
 **🎨 前端 (docker-compose.yml)：**
 ```yaml
