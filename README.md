@@ -2,12 +2,16 @@
 
 > 📺 **Craft-Agent** 是一个集「深度研究助手」与「网站生成」于一体的智能体系统，基于大语言模型、多智能体编排与现代 Web 技术栈构建。
 
-[![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
-[![Python](https://img.shields.io/badge/python-3.11+-green.svg)](https://python.org)
-[![Node.js](https://img.shields.io/badge/node.js-18+-green.svg)](https://nodejs.org)
-[![Docker](https://img.shields.io/badge/docker-supported-blue.svg)](https://docker.com)
+<p align="center">
+  <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="License"></a>
+  <a href="https://python.org"><img src="https://img.shields.io/badge/python-3.11+-green.svg" alt="Python"></a>
+  <a href="https://nodejs.org"><img src="https://img.shields.io/badge/node.js-18+-green.svg" alt="Node.js"></a>
+  <a href="https://docker.com"><img src="https://img.shields.io/badge/docker-supported-blue.svg" alt="Docker"></a>
+</p>
 
-🌐 [在线 Demo 体验](https://http://47.107.140.195:3001) | 📖 [配置指南](docs/configuration_guide.md) | 🤔 [常见问题](docs/FAQ.md)
+<p align="center">
+  🌐 <a href="http://47.107.140.195:3001">在线 Demo 体验</a> | 📖 <a href="docs/configuration_guide.md">配置指南</a> | 🤔 <a href="docs/FAQ.md">常见问题</a>
+</p>
 
 - 深度研究：自动规划、搜索、阅读与整理资料，生成结构化研究报告
 - 网站生成：将研究成果或你的想法，一键转化为可预览的前端网站
