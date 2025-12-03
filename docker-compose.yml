@@ -9,6 +9,7 @@ services:
     volumes:
       - ./.env:/app/.env
       - ./conf.yaml:/app/conf.yaml
+      - ./source:/app/source
     restart: unless-stopped
 
   frontend:
