@@ -17,3 +17,4 @@ logs/
 .frontend.pid
  test/
 .idea/
+web/.next/
