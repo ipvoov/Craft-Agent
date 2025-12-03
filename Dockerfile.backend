@@ -1,4 +1,5 @@
 # Backend Dockerfile for Craft-Agent (FastAPI + uv)
+# 优化后镜像体积约 400-500MB
 
 FROM python:3.13-slim AS builder
 
@@ -10,39 +11,28 @@ ENV PYTHONUNBUFFERED=1 \
     UV_LINK_MODE=copy \
     UV_PYTHON=python3.13
 
-# 安装后端构建所需系统依赖
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends \
-      git \
-      build-essential && \
-    rm -rf /var/lib/apt/lists/*
-
-# 先安装 uv
-RUN pip install --no-cache-dir uv
+# 使用 uv 官方安装方式（更小）
+COPY --from=ghcr.io/astral-sh/uv:latest /uv /usr/local/bin/uv
 
 # 先复制依赖文件和 README（hatchling 构建需要）
 COPY pyproject.toml uv.lock README.md ./
 
-# 安装依赖到 .venv
+# 安装依赖到 .venv（纯 Python 包不需要 build-essential）
 RUN uv sync --frozen --no-dev && \
-    rm -rf /root/.cache/uv /root/.cache/pip
+    rm -rf /root/.cache/uv
+
 COPY config.yaml.example ./config.yaml
 COPY src ./src
 COPY source ./source
 
 
-# 运行时镜像
+# 运行时镜像 - 使用更小的基础镜像
 FROM python:3.13-slim
 
 WORKDIR /app
 
 ENV PYTHONUNBUFFERED=1 \
     PATH="/app/.venv/bin:$PATH"
-
-# 只在需要 ffmpeg 时才安装，否则可以注释掉这段
-# RUN apt-get update && \
-#     apt-get install -y --no-install-recommends ffmpeg && \
-#     rm -rf /var/lib/apt/lists/*
 
 # 只复制运行所需的虚拟环境和源码
 COPY --from=builder /app/.venv /app/.venv
