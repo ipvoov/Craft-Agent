@@ -8,7 +8,7 @@ services:
       - "8001:8001"
     volumes:
       - ./.env:/app/.env
-      - ./conf.yaml:/app/conf.yaml
+      - ./config.yaml:/app/config.yaml
       - ./source:/app/source
     restart: unless-stopped
 
