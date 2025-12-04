@@ -26,5 +26,10 @@ CODER_MODEL:
 TAVILY_API_KEY: "<YOUR_TAVILY_API_KEY>"
 TAVILY_MAX_RESULTS: 3  # 搜索结果的最大数量
 
+# Pexels API 密钥
+# 用于图片搜索和下载功能
+# 获取地址: https://www.pexels.com/api/
+PEXELS_API_KEY: "<YOUR_Pexels_API_KEY>"
+
 # Jina API 配置（获取 API 密钥: https://jina.ai/reader）可以不配置，但crawl速度会慢一些
 # JINA_API_KEY: "<YOUR_JINA_API_KEY>"

@@ -6,27 +6,21 @@ from typing import Annotated
 import httpx
 from langchain_core.tools import tool
 
+from src.config.config import Config
 from .file import _get_project_dir
 
 logger = logging.getLogger(__name__)
 
-BING_IMAGE_SEARCH_URL = "https://www.bing.com/images/vsasync"
-BING_HEADERS = {
-    "accept": "*/*",
-    "accept-encoding": "gzip, deflate, br, zstd",
-    "accept-language": "zh-CN,zh;q=0.9",
-    "cache-control": "no-cache",
-    "pragma": "no-cache",
-    "referer": "https://www.bing.com/visualsearch?mkt=zh-CN",
-    "sec-fetch-dest": "empty",
-    "sec-fetch-mode": "cors",
-    "sec-fetch-site": "same-origin",
-    "user-agent": (
-        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
-        "AppleWebKit/537.36 (KHTML, like Gecko) "
-        "Chrome/142.0.0.0 Safari/537.36"
-    ),
-}
+PEXELS_API_URL = "https://api.pexels.com/v1/search"
+PEXELS_API_KEY = Config.get("PEXELS_API_KEY", "")
+
+
+def _get_pexels_headers() -> dict:
+    """获取 Pexels API 请求头"""
+    return {
+        "Authorization": PEXELS_API_KEY,
+        "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36",
+    }
 
 
 @tool("batch_download_images_tool")
@@ -60,7 +54,20 @@ def batch_download_images_tool(
         "image_links": [],
     }
     
-    with httpx.Client(timeout=10.0, headers=BING_HEADERS) as client:
+    # 检查 API 密钥
+    if not PEXELS_API_KEY:
+        logger.error("PEXELS_API_KEY 未设置")
+        for img_info in images:
+            results["failed"].append({
+                "image_name": img_info.get("image_name", ""),
+                "keyword": img_info.get("keyword", ""),
+                "error": "PEXELS_API_KEY 未设置"
+            })
+        return json.dumps(results, ensure_ascii=False)
+    
+    headers = _get_pexels_headers()
+    
+    with httpx.Client(timeout=15.0, headers=headers) as client:
         for img_info in images:
             image_name = img_info.get("image_name", "")
             keyword = img_info.get("keyword", "")
@@ -74,16 +81,16 @@ def batch_download_images_tool(
                 continue
             
             try:
-                # 搜索图片
+                # 使用 Pexels API 搜索图片
                 search_resp = client.get(
-                    BING_IMAGE_SEARCH_URL,
-                    params={"q": keyword},
+                    PEXELS_API_URL,
+                    params={"query": keyword, "per_page": 1},
                 )
                 search_resp.raise_for_status()
                 data = search_resp.json()
-                items = data.get("results") or data.get("value") or []
+                photos = data.get("photos") or []
                 
-                if not items:
+                if not photos:
                     results["failed"].append({
                         "image_name": image_name,
                         "keyword": keyword,
@@ -91,8 +98,11 @@ def batch_download_images_tool(
                     })
                     continue
                 
-                first = items[0] or {}
-                resolved_image_url = first.get("imageUrl") or first.get("contentUrl")
+                # 从 Pexels 响应中提取原始尺寸图片 URL
+                first_photo = photos[0]
+                src = first_photo.get("src", {})
+                resolved_image_url = src.get("original") or src.get("large") or src.get("medium")
+                
                 if not resolved_image_url:
                     results["failed"].append({
                         "image_name": image_name,
@@ -141,16 +151,17 @@ def batch_download_images_tool(
             try:
                 logger.info("正在搜索图片链接: keyword=%s", link_keyword)
                 link_search_resp = client.get(
-                    BING_IMAGE_SEARCH_URL,
-                    params={"q": link_keyword},
+                    PEXELS_API_URL,
+                    params={"query": link_keyword, "per_page": 10},
                 )
                 link_search_resp.raise_for_status()
                 link_data = link_search_resp.json()
-                link_items = link_data.get("results") or link_data.get("value") or []
+                photos = link_data.get("photos") or []
                 
                 # 提取前 10 张图片链接
-                for item in link_items[:10]:
-                    image_url = item.get("imageUrl") or item.get("contentUrl")
+                for photo in photos[:10]:
+                    src = photo.get("src", {})
+                    image_url = src.get("original") or src.get("large")
                     if image_url:
                         results["image_links"].append(image_url)
                 
