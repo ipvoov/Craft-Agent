@@ -8,7 +8,7 @@ from src.graph.State import WebGenState
 from src.config import AGENT_LLM_MAP
 from src.llms.llm import get_llm_by_type
 from src.prompts.template import apply_prompt_template_not_with_messages
-from src.tools.file import Tools, write_file_tool, read_file_tool, modify_file_tool, delete_file_tool
+from src.tools.file import Tools, write_file_tool, read_file_tool, modify_file_tool, delete_file_tool, read_directory_tool
 from src.utils.json_utils import sanitize_tool_response
 
 logger = logging.getLogger(__name__)
@@ -17,6 +17,7 @@ logger = logging.getLogger(__name__)
 TOOL_MAP = {
     "write_file_tool": write_file_tool,
     "read_file_tool": read_file_tool,
+    "read_directory_tool": read_directory_tool,
     "modify_file_tool": modify_file_tool,
     "delete_file_tool": delete_file_tool,
 }
