@@ -122,7 +122,7 @@ async def web_source_node(
                 content=json.dumps(download_results, ensure_ascii=False, indent=2),
                 tool_call_id=tool_call_id,
                 name="batch_download_images_tool",
-                status="success" if download_results.get("failed", []) == [] else "partial_success",
+                status="success" if download_results.get("failed", []) == [] else "error",
                 artifact={
                     "success_count": len(download_results.get("success", [])),
                     "failed_count": len(download_results.get("failed", [])),
