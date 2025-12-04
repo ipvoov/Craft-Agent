@@ -148,6 +148,7 @@ export function MessagesBlock({ className }: { className?: string }) {
                   : undefined
               }
               enableConfig={!isWebDev}
+              showEnhanceButton={!isWebDev}
             />
           </div>
         ) : (

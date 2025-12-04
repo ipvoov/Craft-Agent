@@ -36,6 +36,7 @@ export function InputBox({
   showModeToggles = true,
   placeholder,
   enableConfig = true,
+  showEnhanceButton = true,
 }: {
   className?: string;
   size?: "large" | "normal";
@@ -53,6 +54,7 @@ export function InputBox({
   showModeToggles?: boolean;
   placeholder?: string;
   enableConfig?: boolean;
+  showEnhanceButton?: boolean;
 }) {
   const t = useTranslations("chat.inputBox");
   const tCommon = useTranslations("common");
@@ -325,26 +327,28 @@ export function InputBox({
             !showModeToggles && "ml-auto",
           )}
         >
-          <Tooltip title={t("enhancePrompt")}>
-            <Button
-              variant="ghost"
-              size="icon"
-              className={cn(
-                "hover:bg-accent h-10 w-10",
-                isEnhancing && "animate-pulse",
-              )}
-              onClick={handleEnhancePrompt}
-              disabled={isEnhancing || currentPrompt.trim() === ""}
-            >
-              {isEnhancing ? (
-                <div className="flex h-10 w-10 items-center justify-center">
-                  <div className="bg-foreground h-3 w-3 animate-bounce rounded-full opacity-70" />
-                </div>
-              ) : (
-                <MagicWandIcon className="text-brand" />
-              )}
-            </Button>
-          </Tooltip>
+          {showEnhanceButton && (
+            <Tooltip title={t("enhancePrompt")}>
+              <Button
+                variant="ghost"
+                size="icon"
+                className={cn(
+                  "hover:bg-accent h-10 w-10",
+                  isEnhancing && "animate-pulse",
+                )}
+                onClick={handleEnhancePrompt}
+                disabled={isEnhancing || currentPrompt.trim() === ""}
+              >
+                {isEnhancing ? (
+                  <div className="flex h-10 w-10 items-center justify-center">
+                    <div className="bg-foreground h-3 w-3 animate-bounce rounded-full opacity-70" />
+                  </div>
+                ) : (
+                  <MagicWandIcon className="text-brand" />
+                )}
+              </Button>
+            </Tooltip>
+          )}
           <Tooltip title={responding ? tCommon("stop") : tCommon("send")}>
             <Button
               variant="outline"

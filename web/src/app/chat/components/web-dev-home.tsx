@@ -92,6 +92,7 @@ export function WebDevHome({
             showModeToggles={false}
             placeholder="请描述你想生成的网站或页面，例如结构、内容和风格…"
             enableConfig={false}
+            showEnhanceButton={false}
           />
         </div>
 
