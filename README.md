@@ -10,7 +10,7 @@
 </p>
 
 <p align="center">
-  🌐 <a href="http://47.107.140.195:3001">在线 Demo 体验</a> | 📖 <a href="docs/configuration_guide.md">配置指南</a> | 🤔 <a href="docs/FAQ.md">常见问题</a>
+  🌐 <a href="https://ai.ipvoov.top">在线 Demo 体验</a> | 📖 <a href="docs/configuration_guide.md">配置指南</a> | 🤔 <a href="docs/FAQ.md">常见问题</a>
 </p>
 
 - 深度研究：自动规划、搜索、阅读与整理资料，生成结构化研究报告
