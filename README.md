@@ -13,7 +13,7 @@
   🌐 <a href="https://ai.ipvoov.top">在线 Demo 体验</a> | 📖 <a href="docs/configuration_guide.md">配置指南</a> | 🤔 <a href="docs/FAQ.md">常见问题</a>
 </p>
 
-    在线 Demo 体验已经挺不住了，一些api会需要💰，请直接去找一些免费的api搭建在本地
+    在线 Demo 体验已经挺不住了，一些api会需要💰，请自己去找一些免费的api搭建在本地
 
 - 深度研究：自动规划、搜索、阅读与整理资料，生成结构化研究报告
 - 网站生成：将研究成果或你的想法，一键转化为可预览的前端网站
